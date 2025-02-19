@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Palette Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            padding: 2rem;
+            transition: background 0.3s ease;
+        }
+
+        .dark body {
+            background: #121212;
+            color: white;
+        }
+
+        .color-grid {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .color-swatch {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            display: flex;
+            align-items: end;
+            padding: 0.5rem;
+            font-size: 0.8rem;
+            font-family: sans-serif;
+        }
+
+        .toggle-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <button class="toggle-btn" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+
+    <!-- Light Mode Colors -->
+    <div class="light-demo">
+        <h2>Light Mode Colors</h2>
+        <div class="color-group">
+            <h3>Primary</h3>
+            <div class="color-grid">
+                <div class="color-swatch" style="background-color: #E0E1F1">Primary 100</div>
+                <div class="color-swatch" style="background-color: #C1C3E3">Primary 200</div>
+                <div class="color-swatch" style="background-color: #A4A7D6">Primary 300</div>
+                <div class="color-swatch" style="background-color: #8589C8">Primary 400</div>
+                <div class="color-swatch" style="background-color: #676BB9">Primary 500</div>
+                <div class="color-swatch" style="background-color: #494DAB">Primary 600</div>
+                <div class="color-swatch" style="background-color: #2A2D5D">Primary 700</div>
+                <div class="color-swatch" style="background-color: #191A3E">Primary 800</div>
+                <div class="color-swatch" style="background-color: #0A0B1F">Primary 900</div>
+            </div>
+        </div>
+
+        <div class="color-group">
+            <h3>Accent</h3>
+            <div class="color-grid">
+                <div class="color-swatch" style="background-color: #F0F7DA">Accent 100</div>
+                <div class="color-swatch" style="background-color: #E1EFC4">Accent 200</div>
+                <div class="color-swatch" style="background-color: #D2E6AD">Accent 300</div>
+                <div class="color-swatch" style="background-color: #C3DE97">Accent 400</div>
+                <div class="color-swatch" style="background-color: #B3D34A">Accent 500</div>
+                <div class="color-swatch" style="background-color: #95B52C">Accent 600</div>
+                <div class="color-swatch" style="background-color: #77871F">Accent 700</div>
+                <div class="color-swatch" style="background-color: #595912">Accent 800</div>
+                <div class="color-swatch" style="background-color: #3A3A06">Accent 900</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dark Mode Colors -->
+    <div class="dark-demo" style="display: none;">
+        <h2>Dark Mode Colors</h2>
+        <div class="color-group">
+            <h3>Primary</h3>
+            <div class="color-grid">
+                <div class="color-swatch" style="background-color: #E0E2F7">Primary 100</div>
+                <div class="color-swatch" style="background-color: #C1C5EF">Primary 200</div>
+                <div class="color-swatch" style="background-color: #A4A9E8">Primary 300</div>
+                <div class="color-swatch" style="background-color: #868CE0">Primary 400</div>
+                <div class="color-swatch" style="background-color: #6A71D9">Primary 500</div>
+                <div class="color-swatch" style="background-color: #4D56D1">Primary 600</div>
+                <div class="color-swatch" style="background-color: #313AC9">Primary 700</div>
+                <div class="color-swatch" style="background-color: #181C9A">Primary 800</div>
+                <div class="color-swatch" style="background-color: #0A0A6D">Primary 900</div>
+            </div>
+        </div>
+
+        <div class="color-group">
+            <h3>Accent</h3>
+            <div class="color-grid">
+                <div class="color-swatch" style="background-color: #EDF9D8">Accent 100</div>
+                <div class="color-swatch" style="background-color: #DCF3B0">Accent 200</div>
+                <div class="color-swatch" style="background-color: #CAF089">Accent 300</div>
+                <div class="color-swatch" style="background-color: #B9E762">Accent 400</div>
+                <div class="color-swatch" style="background-color: #A4D942">Accent 500</div>
+                <div class="color-swatch" style="background-color: #85B72F">Accent 600</div>
+                <div class="color-swatch" style="background-color: #67851C">Accent 700</div>
+                <div class="color-swatch" style="background-color: #495309">Accent 800</div>
+                <div class="color-swatch" style="background-color: #2A2A04">Accent 900</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            
+            const lightDemo = document.querySelector('.light-demo');
+            const darkDemo = document.querySelector('.dark-demo');
+            
+            lightDemo.style.display = html.classList.contains('dark') ? 'none' : 'block';
+            darkDemo.style.display = html.classList.contains('dark') ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>
