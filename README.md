@@ -1,6 +1,6 @@
 #Magazine Contribution System
 
-![Logo](/src/Assets/images/logo%20light.png)
+![Logo](./src/Assets/images/logo%20light.png)
 
 ##Project Overview
 
