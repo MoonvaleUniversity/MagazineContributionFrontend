@@ -24,7 +24,7 @@ export const MvThemeToggle: React.FC = () => {
   return (
     <button
       onClick={toggleTheme}
-      className="flex items-center justify-center w-12 h-12 transition-colors duration-300 rounded-full bg-accent-900 dark:bg-accent-300"
+      className="fixed flex justify-center w-12 h-12 p-2 transition-colors duration-300 rounded-full shadow-md hover:shadow-xl dark:shadow-primary-500/50 bottom-10 right-10 align-center bg-accent-900 dark:bg-accent-300"
     >
       {isDarkMode ? (
         <img src='/src/Assets/icons/moon.svg'/>

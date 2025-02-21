@@ -15,8 +15,8 @@ export const MvInput: React.FC<InputProps> = ({
   const [isFocused, setIsFocused] = useState(false);
   const [isFilled, setIsFilled] = useState(false);
 
-  const baseClasses = 'w-full p-4 text-base border-2 border-primary-600 text-primary-600 rounded-4xl focus:outline-none';
-  const variantClasses = "bg-background-50 border-primary-600 text-primary-600 dark:bg-secondary-dark-700 dark:border-primary-dark-50 dark:text-primary-dark-200";
+  const baseClasses = 'w-full pt-4 px-3 pb-2 text-sm border-2 border-primary-600 text-primary-600 rounded-4xl focus:outline-none';
+  const variantClasses = "bg-background-50 border-primary-600 text-primary-600 dark:bg-secondary-dark-500 dark:border-primary-dark-50 dark:text-primary-dark-200";
 
 
   const combinedClasses = clsx(
@@ -35,7 +35,7 @@ export const MvInput: React.FC<InputProps> = ({
   };
 
   return (
-    <div className="relative my-5">
+    <div className="relative ">
       <input
         id={id}
         type="text"
@@ -50,8 +50,8 @@ export const MvInput: React.FC<InputProps> = ({
       <label
         htmlFor={id}
         className={clsx(
-          "absolute left-4 top-4 text-base text-primary-400 dark:text-primary-dark-300 transition-all duration-300 ease-in-out pointer-events-none",
-          { 'transform -translate-y-4 scale-75': isFocused || isFilled } // Floating effect
+          "absolute left-4 top-3 text-sm text-primary-400 dark:text-primary-dark-300 transition-all duration-300 ease-in-out pointer-events-none",
+          { 'transform -translate-y-3 scale-75': isFocused || isFilled } // Floating effect
         )}
       >
         {label}
