@@ -22,7 +22,6 @@ export const MvPasswordInput: React.FC<PasswordInputProps> = ({
     setPassword(newPassword);
     if (password != null) { setIsFilled(true); }
    
-    console.log(newPassword); 
   };
 
   const togglePasswordVisibility = () => {

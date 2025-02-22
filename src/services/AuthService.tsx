@@ -1,17 +1,14 @@
 // services/authService.ts
 
 import { getData, postData } from "../app/MvApi";
-import { LoginParamHolder } from "../app/MvObjects/holder/MvLoginParamHolder";
 import { MvUrl } from "../app/MvUrl";
+import LoginPostData from "../app/Types/Auth/loginPostData";
 
-export const loginUser  = async (email: string, password: string, role: string) => {
-  const loginParams = new LoginParamHolder(email, password, role);
-  console.log(MvUrl.LOGIN);
+export const loginUser  = async (loginPostData: LoginPostData) => {
   try {
-    const response = await postData(MvUrl.LOGIN, loginParams.toMap());
+    const response = await postData(MvUrl.LOGIN, loginPostData);
     return response; // Return the response for further handling
   } catch (error) {
-    console.error("Login failed. Please check your credentials.",error); // Throw an error to be caught in the component
     throw error;
 }
 };

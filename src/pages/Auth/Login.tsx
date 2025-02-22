@@ -1,37 +1,42 @@
-import React, { useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { MvInput, MvPasswordInput } from "../../components/MvInput";
 import { MvButton } from "../../components/MvButton";
 import { MvThemeToggle } from "../../components/MvThemeToggle";
 import { loginUser } from "../../services/AuthService";
+import LoginPostData from "../../app/Types/Auth/loginPostData";
 
 
 
 const Login: React.FC = () => {
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [loginFormData, setLoginFormData] = useState<LoginPostData>({
+    email: "",
+    password: "",
+  })
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setLoginFormData((prevData) => ({
+      ...prevData,
+      [e.target.name]: e.target.value
+    }))
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(""); // Reset error message
 
     // Basic validation
-    if (!email || !password) {
+    if (!loginFormData.email || !loginFormData.password) {
       setError("Email and password are required.");
       return;
     }
 
     try {
       setLoading(true);
-      const response = await loginUser(email, password, "student"); // Call the service function
-      console.log("Login successful:", response);
-      // Handle successful login (e.g., redirect, store token, etc.)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error:any) {
-      setError(error.message); // Set the error message from the service
-      console.error("Login error:", error);
+      const response = await loginUser(loginFormData); // Call the service function
+    } catch (error: any) {
+      setError(error); // Set the error message from the service
     } finally {
       setLoading(false);
     }
@@ -54,22 +59,24 @@ const Login: React.FC = () => {
           className="hidden w-3/4 mx-auto dark:block"
         />
 
-        <MvInput 
-          label="Email address" 
-          value={email} 
-          onChange={(e) => setEmail(e.target.value)} // Update email state
+        <MvInput
+          label="Email address"
+          name="email"
+          value={loginFormData.email}
+          onChange={handleInputChange} // Update email state
         />
         <div className="flex flex-col w-full gap-0">
-          <MvPasswordInput 
-            label="Password" 
-            value={password} 
-            onChange={(e) => setPassword(e.target.value)} // Update password state
+          <MvPasswordInput
+            label="Password"
+            name="password"
+            value={loginFormData.password}
+            onChange={handleInputChange} // Update password state
           />
           <small className="self-end mr-4 dark:text-primary-50">
             Forget Password? <u>Click Here</u>
           </small>
         </div>
-        {error && <p className="text-center text-red-500">{error}</p>} {/* Display error message */}
+        {error && <p className="text-center text-red-500">{error.message}</p>} {/* Display error message */}
         <div className="flex flex-col w-full gap-0">
           <MvButton className="w-1/2 mx-auto mt-4" disabled={loading}>
             {loading ? "Logging In..." : "Log In"} {/* Show loading state */}

@@ -1,6 +1,6 @@
 import { BrowserRouter, Route,Routes } from "react-router-dom"
-import Login from "./pages/Login/Login"
-import Dashboard from "./pages/Dashboard/dashboard"
+import Login from "./pages/Auth/Login"
+import Dashboard from "./pages/Dashboard/Dashboard"
 import MvRoutes from "./app/MvRoute"
 
 
