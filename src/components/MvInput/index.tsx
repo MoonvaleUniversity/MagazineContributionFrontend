@@ -1,4 +1,3 @@
-// src/components/Input/index.ts
-
+export { MvTextarea } from './MvTextarea';
 export { MvInput } from './MvInput';
 export { MvPasswordInput } from './MvPasswordInput';
