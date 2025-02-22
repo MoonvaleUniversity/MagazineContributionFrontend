@@ -1,8 +1,7 @@
 const MvRoutes = {
     LOGIN: "/",
-    EMAILVERIFY: "/email-verification",
     DASHBOARD: "/dashboard",
-    EMAIL_VERIFY: "/email-verify"
+    EMAIL_VERIFY: "/email-verification"
   };
   
   export default MvRoutes

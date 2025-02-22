@@ -3,17 +3,21 @@ import { MvInput, MvPasswordInput } from "../../components/MvInput";
 import { MvButton } from "../../components/MvButton";
 import { MvThemeToggle } from "../../components/MvThemeToggle";
 import { loginUser } from "../../services/AuthService";
-import LoginPostData from "../../app/Types/Auth/loginPostData";
+import LoginPostData from "../../app/Types/Auth/LoginPostData";
+import { ApiError } from "../../app/MvApi";
+import { useNavigate } from "react-router-dom";
+import MvRoutes from "../../app/MvRoutes";
 
 
 
 const Login: React.FC = () => {
-  const [error, setError] = useState("");
+  const [error, setError] = useState<ApiError>();
   const [loading, setLoading] = useState(false);
   const [loginFormData, setLoginFormData] = useState<LoginPostData>({
     email: "",
     password: "",
   })
+  const navigate = useNavigate();
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setLoginFormData((prevData) => ({
@@ -24,19 +28,22 @@ const Login: React.FC = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(""); // Reset error message
+    setError({}); // Reset error message
 
     // Basic validation
     if (!loginFormData.email || !loginFormData.password) {
-      setError("Email and password are required.");
+      setError({ message: "Email and password are required." });
       return;
     }
 
     try {
       setLoading(true);
-      const response = await loginUser(loginFormData); // Call the service function
+      const response = await loginUser(loginFormData);
     } catch (error: any) {
-      setError(error); // Set the error message from the service
+      setError(error);
+      if (error.message == 'You need to verify your email first.') {
+        navigate(MvRoutes.EMAIL_VERIFY, { state: { email: loginFormData.email } })
+      }
     } finally {
       setLoading(false);
     }

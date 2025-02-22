@@ -1,9 +1,8 @@
 import { BrowserRouter, Route,Routes } from "react-router-dom"
-import Login from "./pages/Auth/Login"
-import Dashboard from "./pages/Dashboard/Dashboard"
-import MvRoutes from "./app/MvRoute"
-import Dashboard from "./pages/Dashboard/Dashboard"
-import MvEmailVerify from "./pages/MvEmailVerify/MvEmailVerify"
+import Login from "./pages/MvAuth/MvLogin"
+import Dashboard from "./pages/MvDashboard/MvDashboard"
+import MvRoutes from "./app/MvRoutes"
+import MvEmailVerify from "./pages/MvAuth/MvEmailVerify"
 
 
 
@@ -15,7 +14,7 @@ function App() {
       <Routes>
         <Route path={MvRoutes.LOGIN} element={<Login />} />
         <Route path={MvRoutes.DASHBOARD} element={<Dashboard />} />
-        <Route path={MvRoutes.EMAILVERIFY} element={<MvEmailVerify />} />
+        <Route path={MvRoutes.EMAIL_VERIFY} element={<MvEmailVerify />} />
       </Routes>
     </BrowserRouter>
     </>
