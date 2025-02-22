@@ -25,7 +25,7 @@ const Login: React.FC = () => {
 
     try {
       setLoading(true);
-      const response = await loginUser(email, password, "student"); // Call the service function
+      const response = await loginUser(email, password, "Student"); // Call the service function
       console.log("Login successful:", response);
       // Handle successful login (e.g., redirect, store token, etc.)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
