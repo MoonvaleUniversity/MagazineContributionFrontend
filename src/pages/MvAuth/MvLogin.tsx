@@ -39,6 +39,8 @@ const Login: React.FC = () => {
     try {
       setLoading(true);
       const response = await loginUser(loginFormData);
+      console.log(response);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       setError(error);
       if (error.message == 'You need to verify your email first.') {

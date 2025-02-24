@@ -14,6 +14,7 @@ const MvEmailVerify: React.FC = () => {
   }
 
   const handleVerifyEmail = async () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const response = await sendVerification(location.state.email);
   }
 

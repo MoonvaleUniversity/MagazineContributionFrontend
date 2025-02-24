@@ -5,7 +5,9 @@ import { MvUrl } from "../app/MvUrl";
 import LoginPostData from "../app/Types/Auth/LoginPostData";
 
 export const loginUser = async (loginPostData: LoginPostData) => {
+  // eslint-disable-next-line no-useless-catch
   try {
+    console.log(MvUrl.LOGIN);
     const response = await postData(MvUrl.LOGIN, loginPostData);
     return response; // Return the response for further handling
   } catch (error) {

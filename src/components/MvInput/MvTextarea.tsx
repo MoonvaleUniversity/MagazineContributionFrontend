@@ -15,7 +15,7 @@ export const MvTextarea: React.FC<TextareaProps> = ({
   const [isFocused, setIsFocused] = useState(false);
   const [isFilled, setIsFilled] = useState(false);
 
-  const baseClasses = 'w-full pt-5 px-3 pb-2 text-sm border-2 border-primary-600 text-primary-600 rounded-lg focus:outline-none resize-y min-h-[100px]';
+  const baseClasses = 'w-full pt-5 px-3 pb-2 text-sm border-2 border-primary-600 text-primary-600 rounded-4xl focus:outline-none resize-y min-h-[100px]';
   const variantClasses = "bg-background-50 border-primary-600 text-primary-600 dark:bg-secondary-dark-500 dark:border-primary-dark-50 dark:text-primary-dark-200";
 
   const combinedClasses = clsx(

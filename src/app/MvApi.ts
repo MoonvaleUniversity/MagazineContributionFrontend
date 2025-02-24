@@ -2,6 +2,7 @@ import axios, { AxiosInstance } from "axios";
 import { UNSAFE_createBrowserHistory } from "react-router-dom";
 
 const history = UNSAFE_createBrowserHistory();
+console.log(history);
 
 const api: AxiosInstance = axios.create({
     baseURL: "http://localhost:8000/api/v1",
@@ -39,6 +40,7 @@ api.interceptors.response.use(
 );
 
 export const getData = async (url: string) => {
+    // eslint-disable-next-line no-useless-catch
     try {
         const response = await api.get(url);
         return response;
@@ -47,6 +49,7 @@ export const getData = async (url: string) => {
     }
 }
 export const postData = async (url: string, data: object) => {
+    // eslint-disable-next-line no-useless-catch
     try {
         const response = await api.post(url, data);
         return response;
