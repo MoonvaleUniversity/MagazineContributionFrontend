@@ -57,12 +57,7 @@ const Login: React.FC = () => {
 
         // Redirect to dashboard or another page after successful login
         navigate(MvRoutes.DASHBOARD);
-      } else {
-        // Handle failure (optional, if there's another type of error response)
-        setError({
-          message: response?.message || "An unknown error occurred.",
-        });
-      }
+      } 
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
@@ -73,6 +68,17 @@ const Login: React.FC = () => {
           state: { email: loginFormData.email },
         });
       }
+      else if (error?.message === "Request failed with status code 500") {
+        setError({message: "Please check your email and try again"});
+      }
+      else if (error?.message === "Request failed with status code 401"){
+        setError({message: "Wrong Password. Please try again"});     
+      }
+      
+      else if (error?.message === "Request failed with status code 422"){
+        setError({message: "Please enter valid credentials"});     
+      }
+      
     } finally {
       setLoading(false);
     }
