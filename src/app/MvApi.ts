@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosInstance, AxiosResponse } from "axios";
 import { UNSAFE_createBrowserHistory } from "react-router-dom";
 
 const history = UNSAFE_createBrowserHistory();
@@ -47,16 +47,13 @@ export const getData = async (url: string) => {
     } catch (error) {
         throw error;
     }
-}
-export const postData = async (url: string, data: object) => {
-    // eslint-disable-next-line no-useless-catch
-    try {
-        const response = await api.post(url, data);
+} 
+export const postData = async <T>(url: string, data: object): Promise<AxiosResponse<T>> => {
+    
+        const response = await axios.post(url, data);
         return response;
-    } catch (error) {
-        throw error;
-    }
-}
+    
+};
 
 export interface ApiError {
     message?: string;

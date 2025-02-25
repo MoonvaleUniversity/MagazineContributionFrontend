@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useState } from "react";
-import { MvInput, MvPasswordInput } from "../../components/MvInput";
+import { MvCheckbox, MvInput, MvPasswordInput } from "../../components/MvInput";
 import { MvButton } from "../../components/MvButton";
 import { MvThemeToggle } from "../../components/MvThemeToggle";
 import { loginUser } from "../../services/AuthService";
@@ -7,24 +7,25 @@ import LoginPostData from "../../app/Types/Auth/LoginPostData";
 import { ApiError } from "../../app/MvApi";
 import { useNavigate } from "react-router-dom";
 import MvRoutes from "../../app/MvRoutes";
-
-
+import { LoginResponse } from "../../app/Types/Auth/loginResponse";
+import { MvLoader } from "../../components/MvLoader";
 
 const Login: React.FC = () => {
   const [error, setError] = useState<ApiError>();
   const [loading, setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [loginFormData, setLoginFormData] = useState<LoginPostData>({
     email: "",
     password: "",
-  })
+  });
   const navigate = useNavigate();
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setLoginFormData((prevData) => ({
       ...prevData,
-      [e.target.name]: e.target.value
-    }))
-  }
+      [e.target.name]: e.target.value,
+    }));
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,13 +39,39 @@ const Login: React.FC = () => {
 
     try {
       setLoading(true);
-      const response = await loginUser(loginFormData);
+      const response: LoginResponse = await loginUser(loginFormData);
       console.log(response);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+      // Check if the response message is "Login success."
+      if (response.message === "Login success.") {
+        if (rememberMe) {
+          localStorage.setItem("userToken", response.data.token);
+          localStorage.setItem("userData", JSON.stringify(response.data.user));
+        } else {
+          sessionStorage.setItem("userToken", response.data.token);
+          sessionStorage.setItem(
+            "userData",
+            JSON.stringify(response.data.user)
+          );
+        }
+
+        // Redirect to dashboard or another page after successful login
+        navigate(MvRoutes.DASHBOARD);
+      } else {
+        // Handle failure (optional, if there's another type of error response)
+        setError({
+          message: response?.message || "An unknown error occurred.",
+        });
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      setError(error);
-      if (error.message == 'You need to verify your email first.') {
-        navigate(MvRoutes.EMAIL_VERIFY, { state: { email: loginFormData.email } })
+      setError({ message: error?.message || "An unknown error occurred." });
+
+      if (error?.message === "You need to verify your email first.") {
+        navigate(MvRoutes.EMAIL_VERIFY, {
+          state: { email: loginFormData.email },
+        });
       }
     } finally {
       setLoading(false);
@@ -52,11 +79,13 @@ const Login: React.FC = () => {
   };
 
   return (
+    <>
+      {loading && <MvLoader />}
     <div className="flex items-center justify-center min-h-screen">
       <form
-        onSubmit={handleLogin} // Use onSubmit to handle form submission
-        className="flex flex-col justify-center w-full max-w-md gap-5 p-4 max-sm:w-11/12"
-      >
+        onSubmit={handleLogin}
+        className="flex flex-col justify-center w-full max-w-md gap-5 p-4 max-sm:w-11/12" >
+          
         <img
           src="/src/assets/images/logo dark.png"
           alt="logo"
@@ -67,34 +96,40 @@ const Login: React.FC = () => {
           alt="logo"
           className="hidden w-3/4 mx-auto dark:block"
         />
-
         <MvInput
           label="Email address"
           name="email"
           value={loginFormData.email}
-          onChange={handleInputChange} // Update email state
+          onChange={handleInputChange}
         />
         <div className="flex flex-col w-full gap-0">
           <MvPasswordInput
             label="Password"
             name="password"
             value={loginFormData.password}
-            onChange={handleInputChange} // Update password state
+            onChange={handleInputChange}
           />
-          <small className="self-end mr-4 dark:text-primary-50">
+          {/* <small className="self-end mr-4 dark:text-primary-50">
             Forget Password? <u>Click Here</u>
-          </small>
+          </small> */}
         </div>
-        {error && <p className="text-center text-red-500">{error.message}</p>} {/* Display error message */}
+        <MvCheckbox
+          id="rememberMe"
+          label="Remember Me"
+          checked={rememberMe}
+          onChange={(e) => setRememberMe(e.target.checked)}
+        />
+        {error && <p className="text-center text-red-500">{error.message}</p>}{" "}
+        {/* Display error message */}
         <div className="flex flex-col w-full gap-0">
           <MvButton className="w-1/2 mx-auto mt-4" disabled={loading}>
             {loading ? "Logging In..." : "Log In"} {/* Show loading state */}
           </MvButton>
-          <p className="text-center dark:text-primary-50">Remember Me</p>
         </div>
       </form>
       <MvThemeToggle />
     </div>
+    </>
   );
 };
 

@@ -13,10 +13,12 @@ function App() {
     <>
       <BrowserRouter>
       <Routes>
+        {/* login */}
         <Route path={MvRoutes.LOGIN} element={<Login />} />
-        <Route path={MvRoutes.DASHBOARD} element={<Dashboard />} />
         <Route path={MvRoutes.EMAIL_VERIFY} element={<MvEmailVerify />} />
         <Route path={MvRoutes.NOTFOUND} element={<MvNotFound />} />
+        {/* user dashboard */}
+        <Route path={MvRoutes.DASHBOARD} element={<Dashboard />} />
       </Routes>
     </BrowserRouter>
     </>
