@@ -1,14 +1,10 @@
-import React from 'react'
-
-import { MvThemeToggle } from '../../components/MvThemeToggle'
-import { MvContributionForm } from '../../components/MvContributionForm'
+import MvHomeLayout from '../../layout/MvHomeLayout'
 
 const Dashboard = () => {
   return (
-    <div>Dashboard
-    <MvContributionForm/>.  
-    <MvThemeToggle/>
-    </div>
+    <MvHomeLayout>
+      <h1> Hello Bebee </h1>
+    </MvHomeLayout>
   )
 }
 
