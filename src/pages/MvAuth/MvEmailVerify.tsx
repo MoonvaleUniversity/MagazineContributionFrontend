@@ -4,6 +4,7 @@ import { MvThemeToggle } from "../../components/MvThemeToggle";
 import { useLocation, useNavigate } from "react-router-dom";
 import { sendVerification } from "../../services/AuthService";
 import { MvLoader } from "../../components/MvLoader";
+import { logo_dark, logo_light } from "../../app/MvConstants";
 
 const MvEmailVerify: React.FC = () => {
   const location = useLocation();
@@ -40,12 +41,12 @@ const MvEmailVerify: React.FC = () => {
       <div className="flex flex-col justify-center w-full max-w-md gap-5 p-4 max-sm:w-11/12">
 
         <img
-          src="/src/assets/images/logo dark.png"
+          src={logo_dark}
           alt="logo"
           className="block w-3/4 mx-auto dark:hidden"
         />
         <img
-          src="/src/assets/images/logo light.png"
+          src={logo_light}
           alt="logo"
           className="hidden w-3/4 mx-auto dark:block"
         />  

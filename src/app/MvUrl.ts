@@ -10,6 +10,5 @@ export const MvUrl = {
   CONFIRM_VERIFICATION_POST: (id: number) => `${API_BASE_URL}/confirmed_email_verification/${id}`,
   GET_LOGGED_IN_USER: `${API_BASE_URL}/login-user`,
 
-
   
 };

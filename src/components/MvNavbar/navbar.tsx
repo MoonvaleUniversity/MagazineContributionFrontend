@@ -3,6 +3,7 @@ import { FaBars, FaTimes, FaUser  } from "react-icons/fa";
 import { MvButton } from "../../components/MvButton"; 
 
 import { Link } from "react-router-dom"; 
+import { logo_dark, logo_light } from "../../app/MvConstants";
 
 export const MvNavbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -34,12 +35,12 @@ export const MvNavbar: React.FC = () => {
       {/* Logo */}
       <div className="flex items-center space-x-4">
         <img
-          src="/src/assets/images/logo dark.png"
+          src={logo_dark}
           alt="Logo"
           className="w-auto h-10 dark:hidden"
         />
         <img
-          src="/src/assets/images/logo light.png"
+          src={logo_light}
           alt="Logo"
           className="hidden w-auto h-10 dark:block"
         />

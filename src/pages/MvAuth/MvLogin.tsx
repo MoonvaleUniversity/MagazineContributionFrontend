@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import MvRoutes from "../../app/MvRoutes";
 import { LoginResponse } from "../../app/Types/Auth/loginResponse";
 import { MvLoader } from "../../components/MvLoader";
+import { logo_dark, logo_light } from "../../app/MvConstants";
 
 const Login: React.FC = () => {
   const [error, setError] = useState<ApiError>();
@@ -93,12 +94,12 @@ const Login: React.FC = () => {
         className="flex flex-col justify-center w-full max-w-md gap-5 p-4 max-sm:w-11/12" >
           
         <img
-          src="/src/assets/images/logo dark.png"
+          src={logo_dark}
           alt="logo"
           className="block w-3/4 mx-auto dark:hidden"
         />
         <img
-          src="/src/assets/images/logo light.png"
+          src={logo_light}
           alt="logo"
           className="hidden w-3/4 mx-auto dark:block"
         />
