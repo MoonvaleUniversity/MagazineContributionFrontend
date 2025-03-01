@@ -1,7 +1,8 @@
 import React, { useState, useRef } from "react";
-import { MvCheckbox, MvFileUpload, MvInput, MvTextarea } from "../MvInput";
-import { MvButton } from "../MvButton";
-import { MvModal } from "../MvModal";
+import { MvButton } from "../../MvButton";
+import { MvInput, MvTextarea, MvFileUpload, MvCheckbox } from "../../MvInput";
+import { MvModal } from "../../MvModal";
+
 
 export const MvContributionForm: React.FC = () => {
   const [title, setTitle] = useState("");
