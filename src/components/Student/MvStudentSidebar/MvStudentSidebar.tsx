@@ -1,5 +1,6 @@
 import { FiHome, FiFile, FiCheckCircle, FiUser, FiSettings, FiChevronDown, FiMenu, FiX } from 'react-icons/fi';
 import { useState } from 'react';
+import { NavLink } from 'react-router-dom';
 import { MvButton } from '../../MvButton';
 
 interface MvStudentSidebarProps {
@@ -11,15 +12,15 @@ export const MvStudentSidebar: React.FC<MvStudentSidebarProps> = ({ isSidebarOpe
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const navItems = [
-    { icon: <FiHome />, label: 'Dashboard', active: true },
-    { icon: <FiFile />, label: 'My Submissions' },
-    { icon: <FiCheckCircle />, label: 'Submission Status' },
-    { icon: <FiUser />, label: 'Profile' },
+    { icon: <FiHome />, label: 'Dashboard',  to: '/students/dashboard' },
+    { icon: <FiFile />, label: 'My Submissions', to: '/students/submissions' },
+    { icon: <FiCheckCircle />, label: 'Submission Status', to: '/students/contribution-form' },
+    { icon: <FiUser />, label: 'Profile', to: '/students/profile-edit' },
   ];
 
-  // Add a random time for last login
+  // Set a random last login time within the last 24 hours
   const lastLogin = new Date();
-  lastLogin.setHours(lastLogin.getHours() - Math.floor(Math.random() * 24)); // Random last login within the last 24 hours
+  lastLogin.setHours(lastLogin.getHours() - Math.floor(Math.random() * 24));
 
   return (
     <div className="relative">
@@ -29,6 +30,7 @@ export const MvStudentSidebar: React.FC<MvStudentSidebarProps> = ({ isSidebarOpe
         className="fixed py-3 z-50 text-white transition-all left-2 rounded-4xl top-2 lg:hidden"
         variant="secondary"
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        aria-label="Toggle sidebar"
       >
         {isSidebarOpen ? <FiX className="w-6 h-6" /> : <FiMenu className="w-6 h-6" />}
       </MvButton>
@@ -36,29 +38,31 @@ export const MvStudentSidebar: React.FC<MvStudentSidebarProps> = ({ isSidebarOpe
       {/* Sidebar */}
       <div
         className={`absolute top-0 left-0 w-64 h-screen p-4 text-white border-r border-gray-300 bg-primary-800 dark:bg-primary-dark-800 dark:border-primary-dark-500 transition-transform duration-300 ease-in-out z-30 ${
-          isSidebarOpen ? 'transform-none' : 'max-lg:hidden '
+          isSidebarOpen ? 'transform-none' : 'max-lg:hidden'
         } lg:block`}
       >
-        {/* Logo */}
-        <div className="flex max-sm:items-end max-sm:justify-end justify-center mb-8 space-x-2">
-          <span className="text-xl text-end font-bold">Student Dashboard</span>
+        {/* Logo / Header */}
+        <div className="flex justify-center mb-8">
+          <span className="text-xl font-bold">Student Dashboard</span>
         </div>
 
         {/* Navigation */}
         <nav className="space-y-2">
           {navItems.map((item, index) => (
-            <a
+            <NavLink
               key={index}
-              href="#"
-              className={`flex items-center space-x-4 p-3 rounded-4xl ${
-                item.active
-                  ? 'bg-primary-700 text-white'
-                  : 'text-gray-600 hover:bg-primary-700 dark:text-primary-dark-200 dark:hover:bg-primary-dark-700'
-              }`}
+              to={item.to}
+              className={({ isActive }) =>
+                `flex items-center space-x-4 p-3 rounded-4xl ${
+                  isActive
+                    ? 'bg-primary-700 text-white'
+                    : 'text-gray-600 hover:bg-primary-700 dark:text-primary-dark-200 dark:hover:bg-primary-dark-700'
+                }`
+              }
             >
               <span className="text-lg">{item.icon}</span>
               <span className="text-sm">{item.label}</span>
-            </a>
+            </NavLink>
           ))}
         </nav>
 
@@ -66,7 +70,7 @@ export const MvStudentSidebar: React.FC<MvStudentSidebarProps> = ({ isSidebarOpe
         <div className="pt-4 mt-8 border-t border-gray-300 dark:border-primary-dark-500">
           <div
             className="flex items-center justify-between p-3 text-gray-600 dark:text-primary-dark-200 cursor-pointer"
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)} // Toggle dropdown
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
           >
             <span>Settings</span>
             <FiChevronDown

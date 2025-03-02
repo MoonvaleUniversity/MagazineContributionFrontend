@@ -14,8 +14,8 @@ export const MvButton: React.FC<ButtonProps> = ({ variant="primary",className, s
     //Define colors according to variants
     const variantClasses = {
         primary: "bg-primary-500 border-background-50 text-white hover:bg-primary-800  dark:text-primary-800 dark:bg-primary-dark-500 dark:border-background-dark-50 dark:hover:bg-primary-dark-300 hover:shadow-xl dark:shadow-primary-500/50",
-        secondary: "bg-secondary-500 border-background-50 text-white hover:bg-secondary-800 dark:bg-secondary-dark-500 dark:border-background-dark-50 dark:hover:bg-secondary-dark-800 hover:shadow-xl dark:shadow-primary-500/50",
-        accent: "bg-accent-500 border-background-50 font-bold text-white hover:bg-accent-800 dark:text-accent-900 dark:border-background-dark-50 dark:bg-accent-dark-500 dark:hover:bg-accent-dark-300 hover:shadow-xl dark:shadow-primary-500/50",  // Accent class
+        secondary: "bg-secondary-700 border-background-50 text-white hover:bg-secondary-800 dark:bg-secondary-dark-500 dark:border-background-dark-50 dark:hover:bg-secondary-dark-800 hover:shadow-xl dark:shadow-primary-500/50",
+        accent: "bg-accent-800 border-background-50 font-bold text-white hover:bg-accent-900 dark:text-accent-900 dark:border-background-dark-50 dark:bg-accent-dark-500 dark:hover:bg-accent-dark-300 hover:shadow-xl dark:shadow-primary-500/50",  // Accent class
      };
   
     // Define size-specific classes

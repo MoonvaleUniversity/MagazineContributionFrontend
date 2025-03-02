@@ -1,4 +1,5 @@
 import React from 'react';
+import { MvButton } from '../MvButton';
 
 interface MvContributionCardProps {
   title: string;
@@ -11,9 +12,9 @@ interface MvContributionCardProps {
 
 const MvContributionCard: React.FC<MvContributionCardProps> = ({ title, description, file, type, onPreview, onDelete }) => {
   return (
-    <div className="bg-white p-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+    <div className="bg-secondary-200 dark:bg-secondary-dark-400   p-4 rounded-2xl dark:shadow-accent-50/10 hover:shadow-xl transition-shadow">
       <h3 className="text-xl font-semibold mb-2">{title}</h3>
-      <p className="text-sm text-gray-700 mb-4">{description}</p>
+      <p className="text-sm  text-primary-700 dark:text-primary-100 mb-4">{description}</p>
       
       {type === 'image' ? (
         <img src={file} alt={title} className="w-full h-auto rounded-md mb-4" />
@@ -24,18 +25,20 @@ const MvContributionCard: React.FC<MvContributionCardProps> = ({ title, descript
       )}
       
       <div className="flex gap-2 mt-4">
-        <button 
+        <MvButton 
           onClick={onPreview} 
-          className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors"
+          className=" transition-colors"
+        variant='accent' size='sm'
         >
           Preview
-        </button>
-        <button 
+        </MvButton>
+        <MvButton 
           onClick={onDelete} 
-          className="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 transition-colors"
+          variant='secondary' size='sm'
+          className=" transition-colors"
         >
           Delete
-        </button>
+        </MvButton>
       </div>
     </div>
   );

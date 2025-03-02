@@ -11,9 +11,9 @@ interface MvContributionTableProps {
 const MvContributionTable: React.FC<MvContributionTableProps> = ({ contributions, onPreview, onDelete }) => {
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full bg-white border border-gray-300">
+      <table className="min-w-full bg-secondary-400 border border-white dark:bg-secondary-dark-600 rounded">
         <thead>
-          <tr className="bg-gray-100">
+          <tr className="bg-secondary-300 text-primary-900">
             <th className="px-4 py-2 text-left">Title</th>
             <th className="px-4 py-2 text-left">Description</th>
             <th className="px-4 py-2 text-left">Type</th>
@@ -29,13 +29,14 @@ const MvContributionTable: React.FC<MvContributionTableProps> = ({ contributions
               <td className="px-4 py-2 flex space-x-2">
                 <MvButton
                   onClick={() => onPreview(contribution.id)}
-              
+                 variant='accent' size='sm'
                 >
                   Preview
                 </MvButton>
                 <MvButton
                   onClick={() => onDelete(contribution.id)}
-                  className="bg-red-500  hover:bg-red-600"
+                  className=" "
+                  variant='secondary' size='sm'
                 >
                   Delete
                 </MvButton>

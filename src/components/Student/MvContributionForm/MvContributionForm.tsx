@@ -49,9 +49,9 @@ export const MvContributionForm: React.FC = () => {
     <>
       <form 
         onSubmit={handleSubmit} 
-        className="max-w-lg p-6 mx-auto space-y-4 shadow-lg bg-background-50 dark:bg-secondary-dark-500 rounded-4xl"
+        className="w-11/12 max-sm:w-11/12 p-6 mx-auto space-y-4 shadow-lg bg-background-100/40 dark:bg-secondary-dark-700 rounded-2xl"
       >
-        <h2 className="text-xl font-semibold text-primary-600 dark:text-primary-dark-200">
+        <h2 className="text-xl text-center font-semibold text-primary-600 dark:text-primary-dark-200">
           Submit Your Magazine Contribution
         </h2>
         {error && <p className="text-sm text-red-500">{error}</p>}
