@@ -49,11 +49,26 @@ export const getData = async (url: string) => {
     }
 } 
 export const postData = async <T>(url: string, data: object): Promise<AxiosResponse<T>> => {
+    const headers = data instanceof FormData ? { "Content-Type": "multipart/form-data" } : {};
     
-        const response = await axios.post(url, data);
-        return response;
-    
+    const response = await axios.post(url, data, { headers }); // Use api instead of axios
+    return response;
 };
+export const putData = async <T>(url: string, data: object): Promise<AxiosResponse<T>> => {
+    const headers = data instanceof FormData ? { "Content-Type": "multipart/form-data" } : {};
+
+    
+        const response = await api.put(url, data, { headers }); // Use the api instance for PUT requests
+        return response;
+
+};
+export const deleteData = async <T>(url: string): Promise<AxiosResponse<T>> => {
+  
+        const response = await api.delete(url);  // Use the api instance for DELETE requests
+        return response;
+ 
+};
+
 
 export interface ApiError {
     message?: string;

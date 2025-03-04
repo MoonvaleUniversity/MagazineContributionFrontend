@@ -2,17 +2,23 @@ export interface IClosureDate {
     id: number;
     closure_date: string;         // Start date (ISO string format)
     final_closure_date: string;   // Final closure date (ISO string format)
-    academic_year_id: number;
+    academic_year_id: number | string;  // Corrected to use union type
     version?: number;
     created_at?: string;
     updated_at?: string;
 }
 
+export type FormDataClosureDate = {
+    closure_date: string;         // Start date (ISO string format)
+    final_closure_date: string;   // Final closure date (ISO string format)
+    academic_year_id: number | string;  // Can be number or string
+};
+
 export class ClosureDate {
     id: number;
     closureDate: Date;
     finalClosureDate: Date;
-    academicYearId: number;
+    academicYearId: number | string;  // Corrected to use union type
     version?: number;
     createdAt?: Date;
     updatedAt?: Date;

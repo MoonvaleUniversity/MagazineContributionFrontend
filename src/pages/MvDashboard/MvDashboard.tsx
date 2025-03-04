@@ -1,11 +1,11 @@
 import { useState } from "react";
 
 import MvContributionTable from "../../components/MvTables/MvContributionTable";
-import { Contribution } from "../../app/Types/objects/contribution";
+import { IContribution } from "../../app/Types/objects/contribution";
 import MvContributionCard from "../../components/MvCard/MvCard";  // Assuming this is the card view component
 import StudentLayout from "../../layout/StudentLayout";
 
-const mockContributions: Contribution[] = [
+const mockContributions: IContribution[] = [
   {
     id: '1',
     title: 'Article on Climate Change',
