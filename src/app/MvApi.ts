@@ -49,16 +49,16 @@ export const getData = async (url: string) => {
     }
 } 
 export const postData = async <T>(url: string, data: object): Promise<AxiosResponse<T>> => {
-    const headers = data instanceof FormData ? { "Content-Type": "multipart/form-data" } : {};
+   
     
-    const response = await axios.post(url, data, { headers }); // Use api instead of axios
+    const response = await axios.post(url, data); // Use api instead of axios
     return response;
 };
 export const putData = async <T>(url: string, data: object): Promise<AxiosResponse<T>> => {
-    const headers = data instanceof FormData ? { "Content-Type": "multipart/form-data" } : {};
-
     
-        const response = await api.put(url, data, { headers }); // Use the api instance for PUT requests
+    
+    
+        const response = await api.put(url, data); // Use the api instance for PUT requests
         return response;
 
 };
@@ -80,3 +80,29 @@ export interface ApiError {
         status: number;
     };
 }
+export const uploadMultimedia = async <T>(url: string, data: object): Promise<AxiosResponse<T>> => {
+  
+
+   
+    // Retrieve the token from localStorage or sessionStorage
+    const token = localStorage.getItem('userToken') || sessionStorage.getItem('userToken');
+    console.log('Bearer Token:', token);
+    try {
+        const response = await axios.post(url, data, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `Bearer ${token}`
+            },
+        });
+        return response;
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            console.error('Error response:', error.response);
+        } else {
+            console.error('Unexpected error:', error);
+        }
+        throw error; // Re-throw the error if you want to handle it later
+    }
+
+ 
+};

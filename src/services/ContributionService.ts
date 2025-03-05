@@ -1,5 +1,6 @@
 
-import { getData, postData } from "../app/MvApi";
+import { getData, 
+   uploadMultimedia } from "../app/MvApi";
 import { MvUrl } from "../app/MvUrl";
 import { Contribution } from "../app/MvObjects/contribution";
 import { IContribution, ApiContributionResponse } from "../app/Types/objects/contribution";
@@ -46,7 +47,7 @@ export const MvContributionServices = {
       for (const [key, value] of formData.entries()) {
         console.log(`${key}:`, value);
       }
-      const response = await postData(MvUrl.UPLOAD_CONTRIBUTION, formData);
+      const response = await uploadMultimedia(MvUrl.UPLOAD_CONTRIBUTION, formData);
   
       if (!response?.data || typeof response.data !== "object") {
         throw new Error("Invalid response: Expected contribution object.");
