@@ -19,5 +19,17 @@ export const MvUrl = {
 
      GET_CONTRIBUTIONS: `${API_BASE_URL}/contributions`, // Fetch all contributions
     UPLOAD_CONTRIBUTION: `${API_BASE_URL}/contributions`, // Upload a new contribution
+
+    GET_ACADEMIC_YEARS: `${API_BASE_URL}/academic-years`,       // Get all academic years
+    SHOW_ACADEMIC_YEAR: (id: number) => `${API_BASE_URL}/academic-years/${id}`, // Get a specific academic year
+    POST_ACADEMIC_YEAR: `${API_BASE_URL}/academic-years`,       // Create a new academic year
+    UPDATE_ACADEMIC_YEAR: (id: number) => `${API_BASE_URL}/academic-years/${id}`, // Update an academic year
+    DELETE_ACADEMIC_YEAR: (id: number) => `${API_BASE_URL}/academic-years/${id}`, // Delete an academic year
+ 
+    GET_FACULTIES: `${API_BASE_URL}/faculties`, // Fetch all faculties
+    SHOW_FACULTY: (id: number) => `${API_BASE_URL}/faculties/${id}`, // Show a specific faculty
+    POST_FACULTY: `${API_BASE_URL}/faculties`, // Create a new faculty
+    UPDATE_FACULTY: (id: number) => `${API_BASE_URL}/faculties/${id}`, // Update a faculty
+    DELETE_FACULTY: (id: number) => `${API_BASE_URL}/faculties/${id}`, // Delete a faculty
   };
   

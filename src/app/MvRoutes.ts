@@ -11,7 +11,8 @@ const MvRoutes = {
   },
   ADMIN: {
     CLOSURE_DATES: "/admin/closure-dates",
-    // Add other admin routes as needed
+    ACADEMIC_YEAR: "/admin/academic-year",
+    FACULTY: "/admin/faculty"
   },
 };
 

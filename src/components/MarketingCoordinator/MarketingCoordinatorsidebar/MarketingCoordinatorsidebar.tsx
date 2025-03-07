@@ -1,30 +1,34 @@
-import { FiHome, FiFile, FiCheckCircle, FiUser, FiSettings, FiChevronDown, FiMenu, FiX, FiLogOut } from 'react-icons/fi';
-import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { MvButton } from '../../MvButton';
+import { FiHome, FiFileText, FiCheckCircle, FiUser, FiUsers, FiSettings, FiChevronDown, FiMenu, FiX, FiLogOut } from "react-icons/fi";
+import { useState } from "react";
+import { NavLink } from "react-router-dom";
+import { MvButton } from "../../MvButton";
 
-interface MvStudentSidebarProps {
+interface MarketingCoordinatorSidebarProps {
   isSidebarOpen: boolean;
   setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const MvStudentSidebar: React.FC<MvStudentSidebarProps> = ({ isSidebarOpen, setIsSidebarOpen }) => {
+export const MvMarketingCoordinatorSidebar: React.FC<MarketingCoordinatorSidebarProps> = ({
+  isSidebarOpen,
+  setIsSidebarOpen,
+}) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+  // Navigation items remain as defined
   const navItems = [
-    { icon: <FiHome />, label: 'Dashboard', to: '/students/dashboard' },
-    { icon: <FiFile />, label: 'My Submissions', to: '/students/submissions' },
-    { icon: <FiCheckCircle />, label: 'Submission Status', to: '/students/contribution-form' },
-    { icon: <FiUser />, label: 'Profile', to: '/students/profile-edit' },
+    { icon: <FiHome />, label: "Dashboard", to: "/marketing-coordinator/dashboard" },
+    { icon: <FiFileText />, label: "Submissions", to: "/marketing-coordinator/submissions" },
+    { icon: <FiCheckCircle />, label: "Review & Feedback", to: "/marketing-coordinator/review" },
+    { icon: <FiUsers />, label: "Guest Approvals", to: "/marketing-coordinator/guest-approvals" },
+    { icon: <FiUser />, label: "Profile", to: "/marketing-coordinator/profile" },
   ];
-  const name = localStorage.getItem("username");
+
+  // Generate a random last login within the last 24 hours (for demo)
   const lastLogin = new Date();
   lastLogin.setHours(lastLogin.getHours() - Math.floor(Math.random() * 24));
 
   const handleLogout = () => {
-    // Perform logout logic here (e.g., clear local storage, redirect to login page)
-    localStorage.removeItem("username");
-    window.location.href = "/login";
+    // Add logout logic if needed (e.g. clear storage, redirect, etc.)
   };
 
   return (
@@ -41,11 +45,11 @@ export const MvStudentSidebar: React.FC<MvStudentSidebarProps> = ({ isSidebarOpe
 
       <div
         className={`absolute top-0 left-0 w-64 h-screen p-4 text-black dark:text-white border-r border-primary-500 bg-secondary-400 dark:bg-secondary-dark-600 dark:border-primary-dark-500 transition-transform duration-300 ease-in-out z-30 ${
-          isSidebarOpen ? 'transform-none' : 'max-lg:hidden'
+          isSidebarOpen ? "transform-none" : "max-lg:hidden"
         } lg:block`}
       >
         <div className="flex justify-center mb-8">
-          <span className="text-xl font-bold">Moonvale University</span>
+          <span className="text-xl font-bold">Marketing Coordinator</span>
         </div>
 
         <nav className="space-y-2">
@@ -56,8 +60,8 @@ export const MvStudentSidebar: React.FC<MvStudentSidebarProps> = ({ isSidebarOpe
               className={({ isActive }) =>
                 `flex items-center space-x-4 p-2 rounded-4xl ${
                   isActive
-                    ? 'bg-secondary-600 text-black font-bold'
-                    : 'text-primary-800 hover:bg-secondary-600 dark:text-secondary-dark-200 dark:hover:bg-secondary-dark-700'
+                    ? "bg-secondary-600 text-black font-bold"
+                    : "text-primary-800 hover:bg-secondary-600 dark:text-secondary-dark-200 dark:hover:bg-secondary-dark-700"
                 }`
               }
             >
@@ -75,7 +79,7 @@ export const MvStudentSidebar: React.FC<MvStudentSidebarProps> = ({ isSidebarOpe
             <span>Settings</span>
             <FiChevronDown
               className={`text-primary-800 font-bold dark:text-primary-dark-500 transition-transform ${
-                isDropdownOpen ? 'rotate-180' : ''
+                isDropdownOpen ? "rotate-180" : ""
               }`}
             />
           </div>
@@ -98,12 +102,12 @@ export const MvStudentSidebar: React.FC<MvStudentSidebarProps> = ({ isSidebarOpe
           <div className="flex items-center space-x-3">
             <img
               src="https://via.placeholder.com/40"
-              alt="Student avatar"
+              alt="Coordinator avatar"
               className="w-10 h-10 rounded-full"
             />
             <div>
-              <p className="text-sm font-medium">{name}</p>
-              <p className="text-xs dark:text-primary-dark-200">student@example.com</p>
+              <p className="text-sm font-medium">Marketing Coordinator</p>
+              <p className="text-xs text-primary-900 dark:text-primary-50">coordinator@example.com</p>
               <p className="text-xs text-primary-400 dark:text-primary-dark-200">
                 Last Login: {lastLogin.toLocaleString()}
               </p>

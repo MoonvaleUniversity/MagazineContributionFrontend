@@ -8,16 +8,15 @@ export const MvStudentHeader: React.FC = () => {
 
   return (
     <header
-      className={`flex items-center justify-between px-6 py-4 bg-primary-800 dark:bg-primary-dark-800 border-b border-gray-300 dark:border-primary-dark-500 
-      transition-all duration-300 w-full z-20`}
+      className={`flex items-center justify-between px-6 py-4 text-black dark:text-white  border-primary-500 bg-secondary-400 dark:bg-secondary-dark-600 dark:border-primary-dark-500  border-b transition-all duration-300 w-full z-20`}
     >
       {/* Search Bar (optional for student, can be removed if not needed) */}
       <div className="relative ml-12 flex items-center w-full max-w-md max-sm:max-w-sm">
-        <FiSearch className="absolute left-3 text-gray-400" />
+        <FiSearch className="absolute left-3 text-primary-900 font-bold" />
         <input
           type="text"
-          className="w-full py-2 pl-10 pr-4 bg-primary-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-primary-600 dark:focus:ring-primary-dark-600"
-          placeholder="Search..."
+          className="font-semibold w-full py-2 pl-10 pr-4 bg-secondary-500 dark:bg-secondary-dark-400 dark:text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-600 dark:focus:ring-primary-dark-600"
+          placeholder="Search Contribution.."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
@@ -26,7 +25,7 @@ export const MvStudentHeader: React.FC = () => {
       {/* Icons */}
       <div className="flex items-center space-x-6">
         {/* Notification icon (if you want to keep it for students, you can adjust the badge) */}
-        <button className="relative text-white">
+        <button className="relative ">
           <FiBell className="w-6 h-6" />
         </button>
 
@@ -37,8 +36,8 @@ export const MvStudentHeader: React.FC = () => {
             className="w-10 h-10 rounded-full"
           />
           <div className="max-md:hidden">
-            <p className="text-sm font-medium text-white">Student Name</p>
-            <p className="text-xs text-gray-400">student@example.com</p>
+            <p className="text-sm font-medium ">Student Name</p>
+            <p className="text-xs text-primary-900 dark:text-primary-50">student@example.com</p>
           </div>
         </div>
       </div>

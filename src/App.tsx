@@ -1,11 +1,14 @@
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import Login from "./pages/MvAuth/MvLogin";
-import Dashboard from "./pages/MvDashboard/MvDashboard";
+// import Dashboard from "./pages/MvDashboard/MvDashboard";
 import MvRoutes from "./app/MvRoutes";
 import MvEmailVerify from "./pages/MvAuth/MvEmailVerify";
 import { MvStudentDashboard, MvStudentSubmissionsView, MvStudentContributionForm, MvStudentProfileEdit } from "./pages/Student";
 import MvNotFound from "./pages/Not Found/MvNotFound";
 import { AdminClosureDates } from "./pages/Admin/AdminClosureDate";
+import { AdminAcademicYears } from "./pages/Admin/AdminAcademicYear";
+import { AdminFaculties } from "./pages/Admin/AdminFaculty";
+import MvContributionDetails from "./pages/Card Details/MvContributionDetails";
 
 
 // Example auth check; update based on your actual authentication logic.
@@ -27,7 +30,7 @@ function App() {
         <Route
           path={MvRoutes.DASHBOARD}
           element={
-            isAuthenticated ? <Dashboard /> : <Navigate to={MvRoutes.LOGIN} replace />
+            isAuthenticated ? <MvContributionDetails /> : <Navigate to={MvRoutes.LOGIN} replace />
           }
         />
 
@@ -62,6 +65,18 @@ function App() {
           path={MvRoutes.ADMIN.CLOSURE_DATES}
           element={
             isAuthenticated ? <AdminClosureDates /> : <Navigate to={MvRoutes.LOGIN} replace />
+          }
+        />
+        <Route
+          path={MvRoutes.ADMIN.ACADEMIC_YEAR}
+          element={
+            isAuthenticated ? <AdminAcademicYears /> : <Navigate to={MvRoutes.LOGIN} replace />
+          }
+        />
+        <Route
+          path={MvRoutes.ADMIN.FACULTY}
+          element={
+            isAuthenticated ? <AdminFaculties /> : <Navigate to={MvRoutes.LOGIN} replace />
           }
         />
 

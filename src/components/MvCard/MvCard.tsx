@@ -1,47 +1,46 @@
-import React from 'react';
-import { MvButton } from '../MvButton';
+import React from "react";
+import { AiOutlineLike, AiOutlineDislike, AiOutlineMessage } from "react-icons/ai";
+import { FaBookmark } from "react-icons/fa";
 
-interface MvContributionCardProps {
-  title: string;
-  description: string;
-  file: string; // This could be a URL or path to the uploaded file
-  type: 'article' | 'image';
-  onPreview: () => void;
-  onDelete: () => void;
-}
 
-const MvContributionCard: React.FC<MvContributionCardProps> = ({ title, description, file, type, onPreview, onDelete }) => {
+export const MvCard: React.FC = () => {
   return (
-    <div className="bg-secondary-200 dark:bg-secondary-dark-400   p-4 rounded-2xl dark:shadow-accent-50/10 hover:shadow-xl transition-shadow">
-      <h3 className="text-xl font-semibold mb-2">{title}</h3>
-      <p className="text-sm  text-primary-700 dark:text-primary-100 mb-4">{description}</p>
+    <div className="max-w-2xs p-4 bg-secondary-400 dark:bg-secondary-dark-500 rounded-2xl shadow-lg">
+      {/* Image */}
+      <div className="flex justify-center rounded-xl">
+        <img
+          src="/src/Assets/images/404.jpeg"
+          alt="Book Illustration"
+          className="w-full aspect-4/3 -mt-1 rounded-xl transition-transform duration-300 hover:scale-110"
+        />
+      </div>
       
-      {type === 'image' ? (
-        <img src={file} alt={title} className="w-full h-auto rounded-md mb-4" />
-      ) : (
-        <a href={file} download className="text-blue-500 hover:underline">
-          Download Article
-        </a>
-      )}
+      {/* Title */}
+      <h3 className="mt-4 text-lg font-bold  text-gray-800 dark:text-background-200">Lorem ipsum dolar blah blah blahsgh</h3>
       
-      <div className="flex gap-2 mt-4">
-        <MvButton 
-          onClick={onPreview} 
-          className=" transition-colors"
-        variant='accent' size='sm'
-        >
-          Preview
-        </MvButton>
-        <MvButton 
-          onClick={onDelete} 
-          variant='secondary' size='sm'
-          className=" transition-colors"
-        >
-          Delete
-        </MvButton>
+      {/* Description */}
+      <p className="text-sm text-justify text-gray-600  mt-1 dark:text-background-600">
+        this is a paragraph. i was supposed to be a paragraph but i am so bored so i started yapping
+      </p>
+      
+      {/* Icons Section */}
+      <div className="mt-4 flex justify-between  items-center text-gray-500 dark:text-background-400 text-sm">
+        <div className="flex items-center gap-1">
+          <AiOutlineLike className="w-5 h-5" />
+          <span>100</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <AiOutlineDislike className="w-5 h-5" />
+          <span>100</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <AiOutlineMessage className="w-5 h-5" />
+          <span>100</span>
+        </div>
+        <div>
+          <FaBookmark className="w-5 h-5" />
+        </div>
       </div>
     </div>
   );
 };
-
-export default MvContributionCard;
