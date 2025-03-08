@@ -56,8 +56,14 @@ const Login: React.FC = () => {
           );
         }
 
-        // Redirect to dashboard or another page after successful login
-        navigate(MvRoutes.DASHBOARD);
+        const userRole = response.data.user.role;  // Assuming role is in response data
+        if (userRole === "Admin") {
+          navigate(MvRoutes.ADMIN.FACULTY); // Example route for Admin
+        } else if (userRole === "Student") {
+          navigate(MvRoutes.STUDENTS.DASHBOARD); // Example route for Student
+        } else {
+          navigate(MvRoutes.DASHBOARD); // Default route
+        }
       } 
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

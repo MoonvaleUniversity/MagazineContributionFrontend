@@ -74,7 +74,7 @@ export const MvContributionForm: React.FC = () => {
 
     try {
       // Assume closureDateId is fetched from somewhere; using a dummy value here
-      const closureDateId = 3;
+      const closureDateId = 1;
       const userId = 1;
 
       // Submit contribution: Pass title as 'name', document as 'doc', and images as 'images'

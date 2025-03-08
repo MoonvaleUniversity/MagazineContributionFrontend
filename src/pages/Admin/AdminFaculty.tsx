@@ -19,6 +19,7 @@ export const AdminFaculties: React.FC = () => {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false); // Loading state for delete
+  const [createLoading, setCreateLoading] = useState<boolean>(false); // Loading state for create
 
   // Fetch faculties from API on component mount
   useEffect(() => {
@@ -45,6 +46,7 @@ export const AdminFaculties: React.FC = () => {
       return;
     }
 
+    setCreateLoading(true); // Start loading for create faculty
     try {
       if (editingId) {
         // Update faculty
@@ -55,14 +57,15 @@ export const AdminFaculties: React.FC = () => {
       }
       setModalOpen(false); // Close the modal
       fetchFaculties(); // Refresh faculty list
+      setFormData({});
+      setEditingId(null);
+      setError(null);
     } catch (err) {
       setError("Failed to save faculty.");
       console.error(err);
+    } finally {
+      setCreateLoading(false); // End loading for create faculty
     }
-
-    setFormData({});
-    setEditingId(null);
-    setError(null);
   };
 
   const handleEdit = async (id: number) => {
@@ -106,6 +109,7 @@ export const AdminFaculties: React.FC = () => {
             setModalOpen(true);
             setEditingId(null);
             setFormData({});
+            setError(null); // Reset error when opening form
           }}
         >
           Add Faculty
@@ -137,7 +141,7 @@ export const AdminFaculties: React.FC = () => {
                 <td className="border p-2 flex gap-2">
                   <MvButton onClick={() => handleEdit(faculty.id)}>Edit</MvButton>
                   <MvButton onClick={() => handleDelete(faculty.id)} className="bg-red-500" disabled={loading}>
-                    {loading ? <MvLoader /> : ""} {/* Show MvLoader while deleting */}Delete
+                    {loading ? <MvLoader /> : ""} Delete
                   </MvButton>
                 </td>
               </tr>
@@ -159,6 +163,9 @@ export const AdminFaculties: React.FC = () => {
         title={editingId ? "Edit Faculty" : "Add Faculty"}
       >
         <div className="space-y-4">
+          {/* Display error message above the form */}
+          {error && <div className="text-red-500">{error}</div>}
+
           <MvInput
             type="text"
             name="name"
@@ -174,7 +181,9 @@ export const AdminFaculties: React.FC = () => {
             onChange={handleInputChange}
           />
           <div className="flex justify-end">
-            <MvButton onClick={handleSubmit}>{editingId ? "Update" : "Create"}</MvButton>
+            <MvButton onClick={handleSubmit} disabled={createLoading}>
+              {createLoading ? <MvLoader /> : editingId ? "Update" : "Create"}
+            </MvButton>
           </div>
         </div>
       </MvModal>

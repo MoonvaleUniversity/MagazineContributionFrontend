@@ -13,7 +13,7 @@ export type ApiContributionResponse = {
   id: string;
   name: string;
   doc_url: string;
-  images: Array<{ image_url: string }>;
+  images: string;
   closure_date_id: string;
   user_id: string;
   created_by: string;

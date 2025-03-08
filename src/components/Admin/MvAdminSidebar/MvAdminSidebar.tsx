@@ -1,6 +1,9 @@
-import { FiHome, FiUsers, FiSettings, FiDatabase, FiBarChart2, FiChevronDown, FiMenu, FiX, FiLogOut } from 'react-icons/fi';
-import { useState } from 'react';
+import { FiHome, FiUsers, FiSettings,   FiChevronDown, FiMenu, FiX, FiLogOut } from 'react-icons/fi';
+import { useEffect, useState } from 'react';
 import { MvButton } from '../../MvButton';
+import { NavLink } from 'react-router-dom';
+import MvRoutes from '../../../app/MvRoutes';
+import { FaCalendarCheck, FaPaintRoller } from 'react-icons/fa';
 
 interface MvAdminSidebarProps {
   isSidebarOpen: boolean;
@@ -9,12 +12,19 @@ interface MvAdminSidebarProps {
 
 export const MvAdminSidebar: React.FC<MvAdminSidebarProps> = ({ isSidebarOpen, setIsSidebarOpen }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+const [userData, setUserData] = useState<{ name?: string; email?: string } | null>(null);
 
+  useEffect(() => {
+    const storedUserData = localStorage.getItem('userData')|| sessionStorage.getItem('userData');
+    if (storedUserData) {
+      setUserData(JSON.parse(storedUserData));
+    }
+  }, []);
   const navItems = [
-    { icon: <FiHome />, label: 'Dashboard', active: true },
-    { icon: <FiUsers />, label: 'User Management' },
-    { icon: <FiDatabase />, label: 'Data Backup' },
-    { icon: <FiBarChart2 />, label: 'Reports & Analytics' },
+    { icon: <FiHome />, label: 'Dashboard', to: MvRoutes.ADMIN.DASHBOARD},
+    { icon: <FiUsers />, label: 'User Management', to: MvRoutes.ADMIN.CREATE_ACCOUNT},
+    { icon: <FaPaintRoller />, label: 'Faculty' , to:MvRoutes.ADMIN.FACULTY},
+    { icon: <FaCalendarCheck />, label: 'Academic Year', to:MvRoutes.ADMIN.ACADEMIC_YEAR },
   ];
 
   const handleLogout = () => {
@@ -43,24 +53,26 @@ export const MvAdminSidebar: React.FC<MvAdminSidebarProps> = ({ isSidebarOpen, s
       >
         {/* Logo */}
         <div className="flex max-sm:items-end max-sm:justify-end justify-center mb-8 space-x-2">
-          <span className="text-xl text-end font-bold">Admin Panel</span>
+          <span className="text-xl text-end font-bold">Moonvale University</span>
         </div>
 
-        {/* Navigation */}
-        <nav className="space-y-2">
+       {/* Navigation Links */}
+       <nav className="space-y-2">
           {navItems.map((item, index) => (
-            <a
+            <NavLink
               key={index}
-              href="#"
-              className={`flex items-center space-x-4 p-2 rounded-4xl ${
-                item.active
-                  ? 'bg-secondary-600 text-black font-bold'
-                  : 'text-primary-800 hover:bg-secondary-600 dark:text-secondary-dark-200 dark:hover:bg-secondary-dark-700'
-              }`}
+              to={item.to}
+              className={({ isActive }) =>
+                `flex items-center space-x-4 p-2 rounded-4xl ${
+                  isActive
+                    ? "bg-secondary-600 text-black font-bold"
+                    : "text-primary-800 hover:bg-secondary-600 dark:text-secondary-dark-200 dark:hover:bg-secondary-dark-700"
+                }`
+              }
             >
               <span className="text-lg">{item.icon}</span>
-              <span className="text-sm">{item.label}</span>
-            </a>
+              <span className="text-md">{item.label}</span>
+            </NavLink>
           ))}
         </nav>
 
@@ -90,15 +102,15 @@ export const MvAdminSidebar: React.FC<MvAdminSidebarProps> = ({ isSidebarOpen, s
 
         {/* User Profile */}
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-primary-500 dark:border-primary-dark-500">
-          <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-3">
             <img
-              src="https://via.placeholder.com/40"
-              alt="Admin avatar"
+              src="/src/Assets/images/404.jpeg"
+              alt="Student avatar"
               className="w-10 h-10 rounded-full"
             />
             <div>
-              <p className="text-sm font-medium">Admin Name</p>
-              <p className="text-xs text-primary-900 dark:text-primary-50">admin@example.com</p>
+              <p className="text-sm font-medium">{userData?.name || 'Unknown User'}</p>
+              <p className="text-xs dark:text-primary-dark-200">{userData?.email || 'student@example.com'}</p>
             </div>
             <FiSettings className="ml-auto text-primary-700 dark:text-primary-dark-500" />
           </div>

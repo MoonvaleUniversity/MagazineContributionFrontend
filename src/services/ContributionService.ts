@@ -2,27 +2,39 @@
 import { getData, 
    uploadMultimedia } from "../app/MvApi";
 import { MvUrl } from "../app/MvUrl";
-import { Contribution } from "../app/MvObjects/contribution";
-import { IContribution, ApiContributionResponse } from "../app/Types/objects/contribution";
+
+import { ApiContributionResponse } from "../app/Types/objects/contribution";
 
 export const MvContributionServices = {
   // Fetch contributions
-  getContributions: async (): Promise<IContribution[]> => {
-    try {
-      const response = await getData(MvUrl.GET_CONTRIBUTIONS);
+ // Fetch contributions
+ getContributions: async (): Promise<ApiContributionResponse[]> => {
+  try {
+    const response = await getData(MvUrl.GET_CONTRIBUTIONS);
+    console.log(response);
 
-      // Ensure response.data exists and is an array
-      if (!response?.data || !Array.isArray(response.data)) {
-        throw new Error("Invalid response format");
-      }
-
-      // Map raw data to Contribution objects
-      return response.data.map((item: ApiContributionResponse) => Contribution.fromMap(item));
-    } catch (error) {
-      console.error("Error fetching contributions:", error);
-      throw error;
+    // Ensure response.data and response.data.contributions.data exist
+    if (!response?.data?.contributions?.data || !Array.isArray(response.data.contributions.data)) {
+      throw new Error("Invalid response format");
     }
-  },
+
+    // Return data mapped to ApiContributionResponse
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return response.data.contributions.data.map((item:any) => ({
+      id: item.id.toString(),
+      name: item.name,
+      doc_url: item.doc_url,
+      images: item.images ?? "", // Ensure 'images' is handled correctly
+      closure_date_id: item.closure_date_id.toString(),
+      user_id: item.user_id.toString(),
+      created_by: item.created_by ? item.created_by.toString() : "",
+    }));
+  } catch (error) {
+    console.error("Error fetching contributions:", error);
+    throw error;
+  }
+},
+
 
   createContribution: async (
     userId: number,
@@ -30,7 +42,7 @@ export const MvContributionServices = {
     name: string,
     docFile: File,
     imageFiles: File[]
-  ): Promise<IContribution> => {
+  ): Promise<ApiContributionResponse> => {
     try {
       if (!userId) throw new Error("User ID is required");
       if (!closureDateId) throw new Error("Closure Date ID is required");
@@ -53,7 +65,7 @@ export const MvContributionServices = {
         throw new Error("Invalid response: Expected contribution object.");
       }
   
-      return Contribution.fromMap(response.data as ApiContributionResponse);
+      return response.data as ApiContributionResponse;
     } catch (error) {
       console.error("Error creating contribution:", error);
       throw error;

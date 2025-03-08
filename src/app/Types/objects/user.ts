@@ -4,6 +4,7 @@ export interface User {
     academic_year_id: number | null;
     faculty_id: number | null;
     email: string;
+    role: string;
     email_verified_at: string;
     is_suspended: number;
     version: number;

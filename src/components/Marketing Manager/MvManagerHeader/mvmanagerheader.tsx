@@ -1,11 +1,24 @@
 import { useState } from "react";
 import { FiBell, FiSearch } from "react-icons/fi";
-import { logo_dark } from "../../../app/MvConstants";
+
+import { MvButton } from "../../MvButton";
 
 // Header Component for Marketing Manager (styled like Student)
 export const MvMarketingManagerHeader: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
-
+  const handleLogout = () => {
+    // Remove user-related data
+    localStorage.removeItem('userData');
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
+  
+    sessionStorage.removeItem('userData');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('username');
+  
+    // Redirect to login page
+    window.location.href = '/';
+  };
   return (
     <header className="flex items-center justify-between px-6 py-4 text-black dark:text-white border-primary-500 bg-secondary-400 dark:bg-secondary-dark-600 border-b transition-all duration-300 w-full z-20">
       <div className="relative ml-12 flex items-center w-full max-w-md max-sm:max-w-sm">
@@ -24,13 +37,10 @@ export const MvMarketingManagerHeader: React.FC = () => {
           <FiBell className="w-6 h-6" />
         </button>
 
-        <div className="flex items-center space-x-3">
-          <img src={logo_dark} alt="User Avatar" className="w-10 h-10 rounded-full" />
-          <div className="max-md:hidden">
-            <p className="text-sm font-medium">Marketing Manager</p>
-            <p className="text-xs text-primary-900 dark:text-primary-50">manager@example.com</p>
-          </div>
-        </div>
+       <div className="flex items-center space-x-3">
+                <MvButton variant="primary" onClick={()=> {handleLogout()}} ><span className="">Logout</span></MvButton>
+              
+              </div>
       </div>
     </header>
   );
