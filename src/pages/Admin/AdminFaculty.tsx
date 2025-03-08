@@ -3,14 +3,13 @@ import { MvButton } from "../../components/MvButton";
 import { MvInput } from "../../components/MvInput";
 import AdminLayout from "../../layout/AdminLayout";
 import { MvModal } from "../../components/MvModal";
+import { getAllFaculties, updateFaculty, createFaculty, getFacultyById, deleteFaculty } from "../../services/FacultyService";
+import { MvLoader } from "../../components/MvLoader";
 
-// Define the Faculty interface based on your PHP model.
 export interface IFaculty {
   id: number;
   name: string;
   image_url: string;
-  version: string;
-  // Additional fields (e.g., created_by) can be added if needed.
 }
 
 export const AdminFaculties: React.FC = () => {
@@ -19,73 +18,83 @@ export const AdminFaculties: React.FC = () => {
   const [formData, setFormData] = useState<Partial<IFaculty>>({});
   const [editingId, setEditingId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false); // Loading state for delete
 
-  // Dummy data for demonstration. Replace with actual API calls later.
+  // Fetch faculties from API on component mount
   useEffect(() => {
-    const dummyData: IFaculty[] = [
-      {
-        id: 1,
-        name: "Faculty of Science",
-        image_url: "https://via.placeholder.com/50",
-        version: "1.0",
-      },
-      {
-        id: 2,
-        name: "Faculty of Arts",
-        image_url: "https://via.placeholder.com/50",
-        version: "1.0",
-      },
-    ];
-    setFaculties(dummyData);
+    fetchFaculties();
   }, []);
+
+  const fetchFaculties = async () => {
+    try {
+      const data = await getAllFaculties();
+      setFaculties(data);
+    } catch (err) {
+      setError("Failed to load faculties.");
+      console.error(err);
+    }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = () => {
-    // Basic validation: ensure required fields are provided.
-    if (!formData.name || !formData.version) {
-      setError("Faculty Name and Version are required.");
+  const handleSubmit = async () => {
+    if (!formData.name) {
+      setError("Faculty Name is required.");
       return;
     }
 
-    if (editingId) {
-      // Update existing faculty
-      setFaculties((prev) =>
-        prev.map((faculty) =>
-          faculty.id === editingId
-            ? { ...faculty, ...formData, id: editingId } as IFaculty
-            : faculty
-        )
-      );
-    } else {
-      // Create new faculty
-      const newId = faculties.length > 0 ? Math.max(...faculties.map((f) => f.id)) + 1 : 1;
-      const newFaculty: IFaculty = {
-        id: newId,
-        name: formData.name as string,
-        image_url: (formData.image_url as string) || "https://via.placeholder.com/50",
-        version: formData.version as string,
-      };
-      setFaculties((prev) => [...prev, newFaculty]);
+    try {
+      if (editingId) {
+        // Update faculty
+        await updateFaculty(editingId, formData);
+      } else {
+        // Create new faculty
+        await createFaculty(formData);
+      }
+      setModalOpen(false); // Close the modal
+      fetchFaculties(); // Refresh faculty list
+    } catch (err) {
+      setError("Failed to save faculty.");
+      console.error(err);
     }
 
-    // Reset form state and close modal
     setFormData({});
     setEditingId(null);
     setError(null);
-    setModalOpen(false);
   };
 
-  const handleEdit = (faculty: IFaculty) => {
-    setEditingId(faculty.id);
-    setFormData(faculty);
-    setModalOpen(true);
+  const handleEdit = async (id: number) => {
+    try {
+      const faculty = await getFacultyById(id);
+      setEditingId(id);
+      setFormData(faculty);
+      setModalOpen(true);
+    } catch (err) {
+      setError("Failed to fetch faculty details.");
+      console.error(err);
+    }
   };
 
-  const handleDelete = (id: number) => {
-    setFaculties((prev) => prev.filter((faculty) => faculty.id !== id));
+  const handleDelete = async (id: number) => {
+    setLoading(true); // Start loading state
+    try {
+      const success = await deleteFaculty(id);
+      
+      if (success) {
+        fetchFaculties();
+        setError(null); // Clear any previous error
+        alert("Faculty deleted successfully!");
+      } else {
+        throw new Error("Failed to delete faculty.");
+      }
+    } catch (err) {
+      console.error("Delete failed:", err);
+      setError(err + "Failed to delete faculty.");
+    } finally {
+      setLoading(false); // End loading state
+    }
   };
 
   return (
@@ -102,15 +111,14 @@ export const AdminFaculties: React.FC = () => {
           Add Faculty
         </MvButton>
       </div>
-      
+
       {error && <div className="text-red-500 mb-4">{error}</div>}
-      
+
       <table className="w-full border-collapse border border-gray-300">
         <thead>
           <tr className="bg-gray-200">
             <th className="border p-2">Image</th>
             <th className="border p-2">Name</th>
-            <th className="border p-2">Version</th>
             <th className="border p-2">Actions</th>
           </tr>
         </thead>
@@ -126,18 +134,17 @@ export const AdminFaculties: React.FC = () => {
                   />
                 </td>
                 <td className="border p-2">{faculty.name}</td>
-                <td className="border p-2">{faculty.version}</td>
                 <td className="border p-2 flex gap-2">
-                  <MvButton onClick={() => handleEdit(faculty)}>Edit</MvButton>
-                  <MvButton onClick={() => handleDelete(faculty.id)} className="bg-red-500">
-                    Delete
+                  <MvButton onClick={() => handleEdit(faculty.id)}>Edit</MvButton>
+                  <MvButton onClick={() => handleDelete(faculty.id)} className="bg-red-500" disabled={loading}>
+                    {loading ? <MvLoader /> : ""} {/* Show MvLoader while deleting */}Delete
                   </MvButton>
                 </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan={4} className="text-center p-4">
+              <td colSpan={3} className="text-center p-4">
                 No faculties available
               </td>
             </tr>
@@ -164,13 +171,6 @@ export const AdminFaculties: React.FC = () => {
             name="image_url"
             label="Image URL"
             value={formData.image_url || ""}
-            onChange={handleInputChange}
-          />
-          <MvInput
-            type="text"
-            name="version"
-            label="Version"
-            value={formData.version || ""}
             onChange={handleInputChange}
           />
           <div className="flex justify-end">
