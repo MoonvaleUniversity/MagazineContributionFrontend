@@ -41,10 +41,9 @@ const Login: React.FC = () => {
     try {
       setLoading(true);
       const response: LoginResponse = await loginUser(loginFormData);
-      console.log(response);
 
       // Check if the response message is "Login success."
-      if (response.message === "Login success.") {
+      if (response.success) {
         if (rememberMe) {
           localStorage.setItem("userToken", response.data.token);
           localStorage.setItem("userData", JSON.stringify(response.data.user));

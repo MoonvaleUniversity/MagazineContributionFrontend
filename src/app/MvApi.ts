@@ -13,7 +13,7 @@ const api: AxiosInstance = axios.create({
 })
 
 api.interceptors.request.use((config) => {
-    const AccessToken = localStorage.getItem("userToken");
+    const AccessToken = localStorage.getItem("userToken") ?? sessionStorage.getItem("userToken");
     if (AccessToken) {
         config.headers.Authorization = `Bearer ${AccessToken}`;
     }
@@ -21,7 +21,7 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use(
-    (response) => response.data,
+    (response) => response,
     (error) => {
         if (!error.response) throw error; // Handle cases where there's no response (e.g., network error)
 
