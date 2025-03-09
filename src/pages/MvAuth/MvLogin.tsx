@@ -67,7 +67,7 @@ const Login: React.FC = () => {
       } 
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
+    } catch (error: any) {  
       setError({ message: error?.message || "An unknown error occurred." });
 
       if (error?.message === "You need to verify your email first.") {

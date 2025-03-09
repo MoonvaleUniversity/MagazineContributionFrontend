@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react';
 import { MvButton } from '../../MvButton';
 import { NavLink } from 'react-router-dom';
 import MvRoutes from '../../../app/MvRoutes';
-import { FaCalendarCheck, FaPaintRoller } from 'react-icons/fa';
+import {  FaCalendarWeek, FaPaintRoller } from 'react-icons/fa';
+import { AiFillWarning } from 'react-icons/ai';
 
 interface MvAdminSidebarProps {
   isSidebarOpen: boolean;
@@ -24,7 +25,8 @@ const [userData, setUserData] = useState<{ name?: string; email?: string } | nul
     { icon: <FiHome />, label: 'Dashboard', to: MvRoutes.ADMIN.DASHBOARD},
     { icon: <FiUsers />, label: 'User Management', to: MvRoutes.ADMIN.CREATE_ACCOUNT},
     { icon: <FaPaintRoller />, label: 'Faculty' , to:MvRoutes.ADMIN.FACULTY},
-    { icon: <FaCalendarCheck />, label: 'Academic Year', to:MvRoutes.ADMIN.ACADEMIC_YEAR },
+    { icon: <FaCalendarWeek />, label: 'Academic Year', to:MvRoutes.ADMIN.ACADEMIC_YEAR },
+    { icon: <AiFillWarning />, label: 'Closure Dates', to:MvRoutes.ADMIN.CLOSURE_DATES },
   ];
 
   const handleLogout = () => {

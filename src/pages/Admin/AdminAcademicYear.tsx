@@ -1,75 +1,86 @@
-import React, { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { MvButton } from "../../components/MvButton";
 import { MvInput } from "../../components/MvInput";
-import AdminLayout from "../../layout/AdminLayout";
 import { MvModal } from "../../components/MvModal";
+import SearchFilter from "../../components/MvSearchFilter/MvSearchFIlter";
+import AdminLayout from "../../layout/AdminLayout";
+import { getAllAcademicYears, updateAcademicYear, createAcademicYear, deleteAcademicYear } from "../../services/AcademicYearService";
 
-// Define the Academic Year interface based on your PHP model.
 export interface IAcademicYear {
   id: number;
   year_name: string;
-  version: string;
-  // Additional fields (created_by, updated_by, etc.) can be added as needed.
 }
 
 export const AdminAcademicYears: React.FC = () => {
   const [academicYears, setAcademicYears] = useState<IAcademicYear[]>([]);
+  const [filteredYears, setFilteredYears] = useState<IAcademicYear[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [formData, setFormData] = useState<Partial<IAcademicYear>>({});
   const [editingId, setEditingId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Dummy fetch function to simulate loading academic years.
-  const fetchAcademicYears = () => {
-    const dummyData: IAcademicYear[] = [
-      { id: 1, year_name: "2022-2023", version: "1.0" },
-      { id: 2, year_name: "2023-2024", version: "1.0" },
-    ];
-    setAcademicYears(dummyData);
+  const fetchAcademicYears = async () => {
+    try {
+      const data = await getAllAcademicYears();
+      setAcademicYears(data);
+      setFilteredYears(data);
+    } catch (error) {
+      console.log(error);
+      setError("Failed to fetch academic years.");
+    }
   };
 
   useEffect(() => {
     fetchAcademicYears();
   }, []);
 
+  useEffect(() => {
+    console.log("Fetched academic years:", academicYears);
+  
+    if (!Array.isArray(academicYears)) {
+      console.error("academicYears is not an array!", academicYears);
+      return;
+    }
+  
+    const filtered = academicYears.filter((ay) =>
+      ay.year_name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  
+    setFilteredYears(filtered);
+  }, [searchQuery, academicYears]);
+  
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = () => {
-    // Validate form data.
-    if (!formData.year_name || !formData.version) {
+  const handleSubmit = async () => {
+    if (!formData.year_name) {
       setError("All fields are required.");
       return;
     }
-
-    if (editingId) {
-      // Update the academic year in local state.
-      setAcademicYears((prev) =>
-        prev.map((ay) =>
-          ay.id === editingId ? { ...ay, ...formData, id: editingId } : ay
-        )
-      );
-    } else {
-      // Create a new academic year (dummy).
-      const newId =
-        academicYears.length > 0
-          ? Math.max(...academicYears.map((ay) => ay.id)) + 1
-          : 1;
-      const newAcademicYear: IAcademicYear = {
-        id: newId,
-        year_name: formData.year_name as string,
-        version: formData.version as string,
-      };
-      setAcademicYears((prev) => [...prev, newAcademicYear]);
+  
+    try {
+      if (editingId) {
+        // Update academic year
+        await updateAcademicYear(editingId, formData);
+      } else {
+        // Create new academic year
+        await createAcademicYear(formData);
+      }
+  
+      await fetchAcademicYears(); // Refresh the data after submit
+  
+      setFormData({});
+      setEditingId(null);
+      setError(null);
+      setModalOpen(false);
+    } catch (error) {
+      console.log(error);
+      setError("Failed to save academic year.");
     }
-
-    // Reset form and error state, then close the modal.
-    setFormData({});
-    setEditingId(null);
-    setError(null);
-    setModalOpen(false);
   };
+  
 
   const handleEdit = (academicYear: IAcademicYear) => {
     setEditingId(academicYear.id);
@@ -77,42 +88,51 @@ export const AdminAcademicYears: React.FC = () => {
     setModalOpen(true);
   };
 
-  const handleDelete = (id: number) => {
-    setAcademicYears((prev) => prev.filter((ay) => ay.id !== id));
+  const handleDelete = async (id: number) => {
+    try {
+      const isDeleted = await deleteAcademicYear(id);
+      if (isDeleted) {
+        await fetchAcademicYears(); // Refresh the data after delete
+      }
+    } catch (error) {
+      console.log(error);
+      setError("Failed to delete academic year.");
+    }
   };
+  
 
   return (
     <AdminLayout>
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-xl font-bold">Manage Academic Years</h1>
-        <MvButton
-          onClick={() => {
-            setModalOpen(true);
-            setEditingId(null);
-            setFormData({});
-          }}
-        >
+        <MvButton onClick={() => {
+          setModalOpen(true);
+          setEditingId(null);
+          setFormData({});
+        }}>
           Add Academic Year
         </MvButton>
       </div>
 
+      <SearchFilter
+        placeholder="Search by year..."
+        onSearch={setSearchQuery} 
+      />
+
       {error && <div className="text-red-500 mb-4">{error}</div>}
 
-      {/* Table displaying all academic years */}
-      <table className="w-full border-collapse border border-gray-300">
+      <table className="w-full border-collapse border border-gray-300 mt-4">
         <thead>
           <tr className="bg-gray-200">
             <th className="border p-2">Year Name</th>
-            <th className="border p-2">Version</th>
             <th className="border p-2">Actions</th>
           </tr>
         </thead>
         <tbody>
-          {academicYears.length > 0 ? (
-            academicYears.map((ay) => (
+          {filteredYears.length > 0 ? (
+            filteredYears.map((ay) => (
               <tr key={ay.id} className="border">
                 <td className="border p-2">{ay.year_name}</td>
-                <td className="border p-2">{ay.version}</td>
                 <td className="border p-2 flex gap-2">
                   <MvButton onClick={() => handleEdit(ay)}>Edit</MvButton>
                   <MvButton
@@ -127,14 +147,13 @@ export const AdminAcademicYears: React.FC = () => {
           ) : (
             <tr>
               <td colSpan={3} className="text-center p-4">
-                No academic years available
+                No academic years found
               </td>
             </tr>
           )}
         </tbody>
       </table>
 
-      {/* Modal for adding or editing an academic year */}
       <MvModal
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
@@ -146,13 +165,6 @@ export const AdminAcademicYears: React.FC = () => {
             name="year_name"
             label="Year Name"
             value={formData.year_name || ""}
-            onChange={handleInputChange}
-          />
-          <MvInput
-            type="text"
-            name="version"
-            label="Version"
-            value={formData.version || ""}
             onChange={handleInputChange}
           />
           <div className="flex justify-end">

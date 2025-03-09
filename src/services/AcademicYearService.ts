@@ -8,9 +8,23 @@ import { IAcademicYear } from "../app/MvObjects/academicyear";
  * Fetch all academic years.
  */
 export const getAllAcademicYears = async (): Promise<IAcademicYear[]> => {
-  const response: AxiosResponse<{ academic_years: IAcademicYear[] }> = await getData(MvUrl.GET_ACADEMIC_YEARS);
-  return response.data.academic_years;
+  try {
+    const response: AxiosResponse<{ academic_years: { data: IAcademicYear[] } }> = await getData(MvUrl.GET_ACADEMIC_YEARS);
+
+    // Ensure response contains academic_years and it's properly formatted
+    if (!response.data || !Array.isArray(response.data.academic_years.data)) {
+      console.error("Invalid API response format", response.data);
+      return []; // Return an empty array to prevent errors
+    }
+
+    return response.data.academic_years.data;
+  } catch (error) {
+    console.error("Error fetching academic years:", error);
+    return []; // Return an empty array in case of an error
+  }
 };
+
+
 
 /**
  * Fetch a single academic year by its ID.
@@ -42,7 +56,8 @@ export const updateAcademicYear = async (id: number, data: Partial<IAcademicYear
 export const deleteAcademicYear = async (id: number): Promise<boolean> => {
   try {
     const response: AxiosResponse<{ success: boolean }> = await deleteData(MvUrl.DELETE_ACADEMIC_YEAR(id));
-    return response.data.success;
+   console.log(response);
+    return true;
   } catch (error) {
     console.error("Failed to delete academic year:", error);
     throw error;

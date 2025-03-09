@@ -13,7 +13,7 @@ const api: AxiosInstance = axios.create({
 })
 
 api.interceptors.request.use((config) => {
-    const AccessToken = localStorage.getItem("Access Token");
+    const AccessToken = localStorage.getItem("userToken");
     if (AccessToken) {
         config.headers.Authorization = `Bearer ${AccessToken}`;
     }
@@ -28,7 +28,7 @@ api.interceptors.response.use(
         const { status, data } = error.response as { status: number; data: ApiError };
 
         if (status === 401) {
-            localStorage.removeItem('Access_Token');
+            localStorage.removeItem('userToken');
         }
 
         if (status === 404) {
@@ -51,7 +51,7 @@ export const getData = async (url: string) => {
 export const postData = async <T>(url: string, data: object): Promise<AxiosResponse<T>> => {
    
     
-    const response = await axios.post(url, data); // Use api instead of axios
+    const response = await api.post(url, data); // Use api instead of axios
     return response;
 };
 export const putData = async <T>(url: string, data: object): Promise<AxiosResponse<T>> => {

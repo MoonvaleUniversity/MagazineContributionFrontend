@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { MvButton } from "../../components/MvButton";
 import { MvInput } from "../../components/MvInput";
-import AdminLayout from "../../layout/AdminLayout";
-import { MvModal } from "../../components/MvModal";
-import { getAllFaculties, updateFaculty, createFaculty, getFacultyById, deleteFaculty } from "../../services/FacultyService";
 import { MvLoader } from "../../components/MvLoader";
+import { MvModal } from "../../components/MvModal";
+import SearchFilter from "../../components/MvSearchFilter/MvSearchFIlter";
+import AdminLayout from "../../layout/AdminLayout";
+import { getAllFaculties, updateFaculty, createFaculty, getFacultyById, deleteFaculty } from "../../services/FacultyService";
+
 
 export interface IFaculty {
   id: number;
@@ -14,22 +16,33 @@ export interface IFaculty {
 
 export const AdminFaculties: React.FC = () => {
   const [faculties, setFaculties] = useState<IFaculty[]>([]);
+  const [filteredFaculties, setFilteredFaculties] = useState<IFaculty[]>([]); // For filtered faculties
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [formData, setFormData] = useState<Partial<IFaculty>>({});
   const [editingId, setEditingId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false); // Loading state for delete
   const [createLoading, setCreateLoading] = useState<boolean>(false); // Loading state for create
+  const [searchQuery, setSearchQuery] = useState<string>(""); // For search query
 
   // Fetch faculties from API on component mount
   useEffect(() => {
     fetchFaculties();
   }, []);
 
+  useEffect(() => {
+    const filtered = faculties.filter((faculty) =>
+      faculty.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      faculty.image_url.toLowerCase().includes(searchQuery.toLowerCase()) // Filter based on name or image URL
+    );
+    setFilteredFaculties(filtered);
+  }, [searchQuery, faculties]);
+
   const fetchFaculties = async () => {
     try {
       const data = await getAllFaculties();
       setFaculties(data);
+      setFilteredFaculties(data); // Set initial filtered faculties list
     } catch (err) {
       setError("Failed to load faculties.");
       console.error(err);
@@ -94,7 +107,7 @@ export const AdminFaculties: React.FC = () => {
       }
     } catch (err) {
       console.error("Delete failed:", err);
-      setError(err + "Failed to delete faculty.");
+      setError("Failed to delete faculty.");
     } finally {
       setLoading(false); // End loading state
     }
@@ -116,6 +129,11 @@ export const AdminFaculties: React.FC = () => {
         </MvButton>
       </div>
 
+      <SearchFilter
+  placeholder="Search by year or version..."
+  onSearch={setSearchQuery} // Correct prop usage
+/>
+
       {error && <div className="text-red-500 mb-4">{error}</div>}
 
       <table className="w-full border-collapse border border-gray-300">
@@ -127,8 +145,8 @@ export const AdminFaculties: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {faculties.length > 0 ? (
-            faculties.map((faculty) => (
+          {filteredFaculties.length > 0 ? (
+            filteredFaculties.map((faculty) => (
               <tr key={faculty.id}>
                 <td className="border p-2">
                   <img
