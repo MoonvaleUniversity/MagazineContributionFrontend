@@ -1,6 +1,6 @@
 // services/authService.ts
 
-import { getData, postData } from "../app/MvApi";
+import { getData, postLogin } from "../app/MvApi";
 import { MvUrl } from "../app/MvUrl";
 import LoginPostData from "../app/Types/Auth/LoginPostData";
 import { LoginResponse } from "../app/Types/Auth/loginResponse";
@@ -9,7 +9,7 @@ export const loginUser = async (loginPostData: LoginPostData):Promise<LoginRespo
   // eslint-disable-next-line no-useless-catch
   try {
     console.log(MvUrl.LOGIN);
-    const response = await postData<LoginResponse>(MvUrl.LOGIN, loginPostData);
+    const response = await postLogin<LoginResponse>(MvUrl.LOGIN, loginPostData);
     return response.data; // Return the response for further handling
   } catch (error) {
     throw error;
@@ -21,7 +21,7 @@ export const verifyEmail = async (id: number) => {
 };
 
 export const sendVerification = async (email: string) => {
-  return await postData(MvUrl.SEND_VERIFICATION(email), {});
+  return await postLogin(MvUrl.SEND_VERIFICATION(email), {});
 };
 
 export const confirmVerificationPage = async (id: number) => {
@@ -29,7 +29,7 @@ export const confirmVerificationPage = async (id: number) => {
 };
 
 export const confirmVerificationPost = async (id: number) => {
-  return await postData(MvUrl.CONFIRM_VERIFICATION_POST(id), {});
+  return await postLogin(MvUrl.CONFIRM_VERIFICATION_POST(id), {});
 };
 
 export const getLoggedInUser = async () => {

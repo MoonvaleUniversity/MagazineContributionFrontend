@@ -3,15 +3,14 @@ import { MvButton } from "../../components/MvButton";
 import { MvInput } from "../../components/MvInput";
 import { MvLoader } from "../../components/MvLoader";
 import { MvModal } from "../../components/MvModal";
-
-import AdminLayout from "../../layout/AdminLayout";
 import { getAllFaculties, updateFaculty, createFaculty, getFacultyById, deleteFaculty } from "../../services/FacultyService";
 import { MvImageUpload } from "../../components/MvInput/MvImageUpload";
 import { ResponseFaculty, IFaculty } from "../../app/MvObjects/faculty";
 import SearchFilter from "../../components/MvSearchFilter/MvSearchFIlter";
+import MarketingManagerLayout from "../../layout/MarketingManagerLayout";
 
 
-export const AdminFaculties: React.FC = () => {
+export const MMFaculty : React.FC = () => {
   const [faculties, setFaculties] = useState<ResponseFaculty[]>([]);
   const [filteredFaculties, setFilteredFaculties] = useState<ResponseFaculty[]>([]);
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
@@ -56,45 +55,37 @@ export const AdminFaculties: React.FC = () => {
     }
   };
 
-  const prepareFormData = (): FormData =>
- {
+  const prepareFormData = (): FormData => {
     const data = new FormData();
-    
-    // Append the name if it exists
-    if (formData.name) {
-      data.append("name", formData.name);
+  
+    // Append the name field with the correct backend field name
+    data.append("name", formData.name || "");
+  
+    // Append the image file if it exists
+    if (formData.image_url && formData.image_url instanceof File) {
+      data.append("image", formData.image_url);
     }
-
-    // Append the image if it exists (handles both string and Blob types)
-    if (formData.image_url) {
-      if (formData.image_url instanceof Blob) {
-        data.append("image_url", formData.image_url);
-      } else if (typeof formData.image_url === "string") {
-        data.append("image_url", formData.image_url);
-      }
-    }
-
+  
     return data;
   };
-
+  
   const handleSubmit = async () => {
-    if (!formData.name) {
+    if (!formData.name?.trim()) {
       setError("Faculty Name is required.");
       return;
     }
-
+  
     setCreateLoading(true);
     try {
-      const submitData = prepareFormData(); // Create FormData from the formData
-      console.log(submitData);
+      const submitData = prepareFormData();
+      console.log("FormData contents:", Array.from(submitData.entries()));
+  
       if (editingId) {
-        // Update an existing faculty
         await updateFaculty(editingId, submitData);
       } else {
-        // Create a new faculty
         await createFaculty(submitData);
       }
-
+  
       setModalOpen(false);
       fetchFaculties();
       setFormData({});
@@ -102,24 +93,31 @@ export const AdminFaculties: React.FC = () => {
       setError(null);
     } catch (err) {
       setError("Failed to save faculty.");
-      console.error(err);
+      
+        console.error("Server error details:", err);
+     
     } finally {
       setCreateLoading(false);
     }
   };
-
   const handleEdit = async (id: number) => {
     try {
       const faculty = await getFacultyById(id);
+      console.log("Fetched faculty:", faculty); // Debugging
+      if (!faculty || !faculty.name) {
+        setError("Faculty data is incomplete.");
+        return;
+      }
       setEditingId(id);
       setFormData(faculty);
+    
       setModalOpen(true);
     } catch (err) {
       setError("Failed to fetch faculty details.");
       console.error(err);
     }
   };
-
+  
   const handleDelete = async (id: number) => {
     setLoading(true);
     try {
@@ -140,7 +138,7 @@ export const AdminFaculties: React.FC = () => {
   };
 
   return (
-    <AdminLayout>
+    <MarketingManagerLayout>
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-xl font-bold">Manage Faculties</h1>
         <MvButton
@@ -216,8 +214,8 @@ export const AdminFaculties: React.FC = () => {
           </div>
         </div>
       </MvModal>
-    </AdminLayout>
+    </MarketingManagerLayout>
   );
 };
 
-export default AdminFaculties;
+export default MMFaculty ;

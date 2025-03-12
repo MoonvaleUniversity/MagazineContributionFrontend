@@ -21,7 +21,7 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use(
-    (response) => response,
+    (response) => response.data,
     (error) => {
         if (!error.response) throw error; // Handle cases where there's no response (e.g., network error)
 
@@ -52,6 +52,12 @@ export const postData = async <T>(url: string, data: object): Promise<AxiosRespo
    
     
     const response = await api.post(url, data); // Use api instead of axios
+    return response;
+};
+export const postLogin = async <T>(url: string, data: object): Promise<AxiosResponse<T>> => {
+   
+    
+    const response = await axios.post(url, data); // Use api instead of axios
     return response;
 };
 export const putData = async <T>(url: string, data: object): Promise<AxiosResponse<T>> => {
@@ -106,3 +112,30 @@ export const uploadMultimedia = async <T>(url: string, data: object): Promise<Ax
 
  
 };
+export const updateMultimedia = async <T>(url: string, data: FormData): Promise<AxiosResponse<T>> => {
+    // Retrieve the token from localStorage or sessionStorage
+    const token = localStorage.getItem('userToken') || sessionStorage.getItem('userToken');
+    if (!token) {
+      throw new Error("Authentication token not found. Please log in.");
+    }
+    console.log('Bearer Token:', token);
+  
+    try {
+      const response = await axios.put(url, data, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+      });
+      return response;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('Error response:', {
+          status: error.response?.status,
+          data: error.response?.data,
+        });
+      } else {
+        console.error('Unexpected error:', error);
+      }
+      throw error; // Re-throw the error if you want to handle it later
+    }
+  };

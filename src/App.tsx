@@ -10,6 +10,8 @@ import { AdminFaculties } from "./pages/Admin/AdminFaculty";
 import MvContributionDetails from "./pages/Card Details/MvContributionDetails";
 import AdminAccountCreation from "./pages/Admin/AdminAccountCreation";
 import ProtectedRoute from "./middleware/ProtectedRoute";
+import MvNotAuthorized from "./pages/Not Found/MvNotAuthorized";
+import MMFaculty from "./pages/Marketing Manager/MvMMfaculty";
 
 
 function App() {
@@ -20,6 +22,7 @@ function App() {
         <Route path={MvRoutes.LOGIN} element={<Login />} />
         <Route path={MvRoutes.EMAIL_VERIFY} element={<MvEmailVerify />} />
         <Route path={MvRoutes.NOTFOUND} element={<MvNotFound />} />
+        <Route path={MvRoutes.NOTFOUND} element={<MvNotAuthorized />} />
         
         {/* Global dashboard route */}
         <Route path={MvRoutes.DASHBOARD} element={
@@ -69,6 +72,11 @@ function App() {
         <Route path={MvRoutes.ADMIN.CREATE_ACCOUNT} element={
           <ProtectedRoute roles={['Admin']}>
             <AdminAccountCreation />
+          </ProtectedRoute>
+        } />
+        <Route path={MvRoutes.MARKET_MANAGER.FACULTY} element={
+          <ProtectedRoute roles={['Marketing Manager']}>
+           <MMFaculty></MMFaculty>
           </ProtectedRoute>
         } />
 

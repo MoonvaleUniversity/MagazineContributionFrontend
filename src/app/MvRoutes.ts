@@ -2,6 +2,7 @@ const MvRoutes = {
   LOGIN: "/" ,
   DASHBOARD: "/dashboard",
   NOTFOUND: "/404",
+  NOTAUTHORIZED: "/404",
   EMAIL_VERIFY: "/email-verification",
   STUDENTS: {
     DASHBOARD: "/students/dashboard",
@@ -16,6 +17,14 @@ const MvRoutes = {
     ACADEMIC_YEAR: "/admin/academic-year",
     FACULTY: "/admin/faculty"
   },
+  MARKET_MANAGER: {
+    DASHBOARD: "",
+    FACULTY:"mm/faculty"
+  },
+  MARKET_COORDINATORR: {
+    DASHBOARD: "",
+  },
+
 };
 
 export default MvRoutes;

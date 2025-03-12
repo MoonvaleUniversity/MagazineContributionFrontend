@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
-import { getData, postData, deleteData, putData } from "../app/MvApi";
+import { getData, deleteData,  uploadMultimedia, updateMultimedia } from "../app/MvApi";
 import { MvUrl } from "../app/MvUrl";
-import { IFaculty } from "../app/MvObjects/faculty";
+import { IFaculty, ResponseFaculty } from "../app/MvObjects/faculty";
 
 /**
  * Helper function to ensure ID is a number
@@ -11,35 +11,37 @@ const parseId = (id: string | number): number => (typeof id === "string" ? parse
 /**
  * Fetch all faculties.
  */
-export const getAllFaculties = async (): Promise<IFaculty[]> => {
-  const response: AxiosResponse<{ success: boolean; faculty: IFaculty[] } > = await getData(MvUrl.GET_FACULTIES);
-  return response.data.faculty;
+export const getAllFaculties = async (): Promise<ResponseFaculty[]> => {
+  const response: AxiosResponse<{ success: boolean; faculties: { data: ResponseFaculty[] } }> = await getData(MvUrl.GET_FACULTIES);
+  console.log(response);
+  return response.data.faculties.data;
 };
 
 /**
  * Fetch a specific faculty by its ID.
  */
-export const getFacultyById = async (id: string | number): Promise<IFaculty> => {
+export const getFacultyById = async (id: string | number): Promise<ResponseFaculty> => {
   const numericId = parseId(id);
-  const response: AxiosResponse<{ success: boolean;  faculty: IFaculty  }> = await getData(MvUrl.SHOW_FACULTY(numericId));
-  return response.data.faculty;
+  const response: AxiosResponse<{ success: boolean; faculties: ResponseFaculty }> = await getData(MvUrl.SHOW_FACULTY(numericId));
+  console.log(response);
+  return response.data.faculties;
 };
 
 /**
  * Create a new faculty.
  */
-export const createFaculty = async (data: Partial<IFaculty>): Promise<IFaculty> => {
-  const response: AxiosResponse<{ success: boolean; faculty: IFaculty}> = await postData(MvUrl.POST_FACULTY, data);
-  return response.data.faculty;
+export const createFaculty = async (data: FormData): Promise<IFaculty> => {
+  const response: AxiosResponse<{ success: boolean; faculties:  ResponseFaculty }> =
+    await uploadMultimedia(MvUrl.POST_FACULTY, data);
+    console.log(response);
+  return response.data.faculties;
 };
 
-/**
- * Update an existing faculty.
- */
-export const updateFaculty = async (id: string | number, data: Partial<IFaculty>): Promise<IFaculty> => {
+export const updateFaculty = async (id: string | number, data: FormData): Promise<IFaculty> => {
   const numericId = parseId(id);
-  const response: AxiosResponse<{ success: boolean; faculty: IFaculty }> = await putData(MvUrl.UPDATE_FACULTY(numericId), data);
-  return response.data.faculty;
+  const response: AxiosResponse<{ success: boolean; faculties: ResponseFaculty  }> =
+    await updateMultimedia(MvUrl.UPDATE_FACULTY(numericId), data);
+  return response.data.faculties;
 };
 
 /**
@@ -58,8 +60,7 @@ export const deleteFaculty = async (id: string | number): Promise<boolean> => {
       throw new Error('Unexpected response from server.');
     }
   } catch (err) {
-    console.error("Error deleting faculty:", err);
+    console.error("Error deleting faculties:", err);
     return false; // Return false in case of any error
   }
 };
-

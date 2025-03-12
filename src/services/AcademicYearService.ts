@@ -47,6 +47,7 @@ export const createAcademicYear = async (data: Partial<IAcademicYear>): Promise<
  */
 export const updateAcademicYear = async (id: number, data: Partial<IAcademicYear>): Promise<IAcademicYear> => {
   const response: AxiosResponse<{ academic_year: IAcademicYear }> = await putData(MvUrl.UPDATE_ACADEMIC_YEAR(id), data);
+  console.log(response);
   return response.data.academic_year;
 };
 
