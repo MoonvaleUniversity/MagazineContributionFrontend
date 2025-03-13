@@ -2,9 +2,11 @@ import { useState, useEffect } from "react";
 import { MvButton } from "../../components/MvButton";
 import { MvInput } from "../../components/MvInput";
 import { MvModal } from "../../components/MvModal";
-import SearchFilter from "../../components/MvSearchFilter/MvSearchFIlter";
+
 import AdminLayout from "../../layout/AdminLayout";
 import { getAllAcademicYears, updateAcademicYear, createAcademicYear, deleteAcademicYear } from "../../services/AcademicYearService";
+import { MvLoader } from "../../components/MvLoader";
+import SearchFilter  from "../../components/MvSearchFilter/MvSearchFIlter";
 
 export interface IAcademicYear {
   id: number;
@@ -19,12 +21,14 @@ export const AdminAcademicYears: React.FC = () => {
   const [formData, setFormData] = useState<Partial<IAcademicYear>>({});
   const [editingId, setEditingId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
-
+  const [loading, setLoading] = useState<boolean>(false);
   const fetchAcademicYears = async () => {
     try {
+      setLoading(true);
       const data = await getAllAcademicYears();
       setAcademicYears(data);
       setFilteredYears(data);
+      setLoading(false);
     } catch (error) {
       console.log(error);
       setError("Failed to fetch academic years.");
@@ -103,6 +107,8 @@ export const AdminAcademicYears: React.FC = () => {
 
   return (
     <AdminLayout>
+       {loading ? <MvLoader /> : ""}
+            
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-xl font-bold">Manage Academic Years</h1>
         <MvButton onClick={() => {
@@ -115,15 +121,17 @@ export const AdminAcademicYears: React.FC = () => {
       </div>
 
       <SearchFilter
-        placeholder="Search by year..."
-        onSearch={setSearchQuery} 
+        placeholder="Search users..."
+        onSearch={setSearchQuery}
+        className="px-4"
       />
+
 
       {error && <div className="text-red-500 mb-4">{error}</div>}
 
       <table className="w-full border-collapse border border-gray-300 mt-4">
         <thead>
-          <tr className="bg-gray-200">
+          <tr className="bg-secondary-400 dark:bg-secondary-dark-400">
             <th className="border p-2">Year Name</th>
             <th className="border p-2">Actions</th>
           </tr>
@@ -137,7 +145,7 @@ export const AdminAcademicYears: React.FC = () => {
                   <MvButton onClick={() => handleEdit(ay)}>Edit</MvButton>
                   <MvButton
                     onClick={() => handleDelete(ay.id)}
-                    className="bg-red-500"
+                  className="bg-red-500 dark:bg-red-300"
                   >
                     Delete
                   </MvButton>
@@ -159,6 +167,7 @@ export const AdminAcademicYears: React.FC = () => {
         onClose={() => setModalOpen(false)}
         title={editingId ? "Edit Academic Year" : "Add Academic Year"}
       >
+        {error && <div className="text-red-500">{error}</div>}
         <div className="space-y-4">
           <MvInput
             type="text"

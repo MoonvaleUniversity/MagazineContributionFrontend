@@ -5,7 +5,7 @@ import { MvLoader } from "../../components/MvLoader";
 import { MvModal } from "../../components/MvModal";
 
 import AdminLayout from "../../layout/AdminLayout";
-import { getAllFaculties, updateFaculty, createFaculty, getFacultyById, deleteFaculty } from "../../services/FacultyService";
+import { getAllFaculties, updateFaculty, createFaculty } from "../../services/FacultyService";
 import { MvImageUpload } from "../../components/MvInput/MvImageUpload";
 import { ResponseFaculty, IFaculty } from "../../app/MvObjects/faculty";
 import SearchFilter from "../../components/MvSearchFilter/MvSearchFIlter";
@@ -35,9 +35,12 @@ export const AdminFaculties: React.FC = () => {
 
   const fetchFaculties = async () => {
     try {
+      setLoading(true);
       const data = await getAllFaculties();
+
       setFaculties(data || []);
       setFilteredFaculties(data || []);
+      setLoading(false);
     } catch (err) {
       setError("Failed to load faculties.");
       console.error(err);
@@ -108,39 +111,13 @@ export const AdminFaculties: React.FC = () => {
     }
   };
 
-  const handleEdit = async (id: number) => {
-    try {
-      const faculty = await getFacultyById(id);
-      setEditingId(id);
-      setFormData(faculty);
-      setModalOpen(true);
-    } catch (err) {
-      setError("Failed to fetch faculty details.");
-      console.error(err);
-    }
-  };
-
-  const handleDelete = async (id: number) => {
-    setLoading(true);
-    try {
-      const success = await deleteFaculty(id);
-      if (success) {
-        fetchFaculties();
-        setError(null);
-        alert("Faculty deleted successfully!");
-      } else {
-        throw new Error("Failed to delete faculty.");
-      }
-    } catch (err) {
-      console.error("Delete failed:", err);
-      setError("Failed to delete faculty.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  
 
   return (
     <AdminLayout>
+      
+      {loading ? <MvLoader /> : ""}
+      
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-xl font-bold">Manage Faculties</h1>
         <MvButton
@@ -161,16 +138,18 @@ export const AdminFaculties: React.FC = () => {
 
       <table className="w-full border-collapse border border-gray-300">
         <thead>
-          <tr className="bg-gray-200">
+        <tr className="bg-secondary-400 dark:bg-secondary-dark-400">
+          <th>Id</th>
             <th className="border p-2">Image</th>
             <th className="border p-2">Name</th>
-            <th className="border p-2">Actions</th>
+          
           </tr>
         </thead>
         <tbody>
           {filteredFaculties?.length > 0 ? (
             filteredFaculties.map((faculty) => (
               <tr key={faculty.id}>
+                <td className="border p-2">{faculty.id}</td>
                 <td className="border p-2">
                   <img
                     src={faculty.image_url}
@@ -179,12 +158,7 @@ export const AdminFaculties: React.FC = () => {
                   />
                 </td>
                 <td className="border p-2">{faculty.name}</td>
-                <td className="border p-2 flex gap-2">
-                  <MvButton onClick={() => handleEdit(faculty.id)}>Edit</MvButton>
-                  <MvButton onClick={() => handleDelete(faculty.id)} className="bg-red-500" disabled={loading}>
-                    {loading ? <MvLoader /> : "Delete"}
-                  </MvButton>
-                </td>
+               
               </tr>
             ))
           ) : (

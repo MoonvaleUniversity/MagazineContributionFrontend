@@ -8,10 +8,12 @@ import { AdminClosureDates } from "./pages/Admin/AdminClosureDate";
 import { AdminAcademicYears } from "./pages/Admin/AdminAcademicYear";
 import { AdminFaculties } from "./pages/Admin/AdminFaculty";
 import MvContributionDetails from "./pages/Card Details/MvContributionDetails";
-import AdminAccountCreation from "./pages/Admin/AdminAccountCreation";
+
 import ProtectedRoute from "./middleware/ProtectedRoute";
 import MvNotAuthorized from "./pages/Not Found/MvNotAuthorized";
 import MMFaculty from "./pages/Marketing Manager/MvMMfaculty";
+import { AdminUsers } from "./pages/Admin/AdminUser";
+
 
 
 function App() {
@@ -71,7 +73,7 @@ function App() {
         } />
         <Route path={MvRoutes.ADMIN.CREATE_ACCOUNT} element={
           <ProtectedRoute roles={['Admin']}>
-            <AdminAccountCreation />
+            <AdminUsers></AdminUsers>
           </ProtectedRoute>
         } />
         <Route path={MvRoutes.MARKET_MANAGER.FACULTY} element={

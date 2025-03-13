@@ -1,4 +1,4 @@
-export interface User {
+export interface IUser {
     id: number;
     name: string;
     academic_year_id: number | null;
