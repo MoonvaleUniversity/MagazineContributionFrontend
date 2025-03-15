@@ -12,17 +12,19 @@ const MvRoutes = {
   },
   ADMIN: {
     DASHBOARD: "/admin/dashboard",
-    CREATE_ACCOUNT: "/admin/create-mm-account",
+    USERS: "/admin/users",
     CLOSURE_DATES: "/admin/closure-dates",
     ACADEMIC_YEAR: "/admin/academic-year",
     FACULTY: "/admin/faculty"
   },
   MARKET_MANAGER: {
     DASHBOARD: "",
-    FACULTY:"mm/faculty"
+    FACULTY:"mm/faculty",
+    USERS:"mm/users"
   },
-  MARKET_COORDINATORR: {
+  MARKET_COORDINATOR: {
     DASHBOARD: "",
+    USERS: "mc/users"
   },
 
 };

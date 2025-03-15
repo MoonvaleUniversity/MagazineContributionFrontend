@@ -13,6 +13,8 @@ import ProtectedRoute from "./middleware/ProtectedRoute";
 import MvNotAuthorized from "./pages/Not Found/MvNotAuthorized";
 import MMFaculty from "./pages/Marketing Manager/MvMMfaculty";
 import { AdminUsers } from "./pages/Admin/AdminUser";
+import { MMUsers } from "./pages/Marketing Manager/MMUser";
+import { McUsers } from "./pages/Marketing Coordinator/McUser";
 
 
 
@@ -28,7 +30,7 @@ function App() {
         
         {/* Global dashboard route */}
         <Route path={MvRoutes.DASHBOARD} element={
-          <ProtectedRoute roles={['Admin', 'Student']}>
+          <ProtectedRoute roles={['Admin', 'Student', 'Marketing Coordinator']}>
             <MvContributionDetails />
           </ProtectedRoute>
         } />
@@ -71,14 +73,27 @@ function App() {
             <AdminFaculties />
           </ProtectedRoute>
         } />
-        <Route path={MvRoutes.ADMIN.CREATE_ACCOUNT} element={
+        <Route path={MvRoutes.ADMIN.USERS} element={
           <ProtectedRoute roles={['Admin']}>
-            <AdminUsers></AdminUsers>
+            <AdminUsers/>
           </ProtectedRoute>
         } />
+          {/* Marketing Manager-specific routes */}
         <Route path={MvRoutes.MARKET_MANAGER.FACULTY} element={
           <ProtectedRoute roles={['Marketing Manager']}>
-           <MMFaculty></MMFaculty>
+           <MMFaculty/>
+          </ProtectedRoute>
+        } />
+        <Route path={MvRoutes.MARKET_MANAGER.USERS} element={
+          <ProtectedRoute roles={['Marketing Manager']}>
+           <MMUsers/>
+          </ProtectedRoute>
+        } />
+          {/* Marketing Coordinator-specific routes */}
+       
+        <Route path={MvRoutes.MARKET_COORDINATOR.USERS} element={
+          <ProtectedRoute roles={['Marketing Coordinator']}>
+           <McUsers/>
           </ProtectedRoute>
         } />
 

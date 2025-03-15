@@ -22,7 +22,7 @@ const [userData, setUserData] = useState<{ name?: string; email?: string } | nul
     { icon: <FiHome />, label: "Dashboard", to: "/marketing-manager/dashboard" },
     { icon: <FiUsers />, label: "Faculties", to: "/marketing-manager/faculties" },
     { icon: <FiFile />, label: "Selected Contributions", to: "/marketing-manager/contributions" },
-    { icon: <FiBarChart />, label: "Reports", to: "/marketing-manager/reports" },
+    { icon: <FiBarChart />, label: "Reports", to: "/mm/users" },
     { icon: <FiUser />, label: "Profile", to: "/marketing-manager/profile" },
   ];
 

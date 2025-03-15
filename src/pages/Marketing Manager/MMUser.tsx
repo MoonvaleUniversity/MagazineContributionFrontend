@@ -1,4 +1,4 @@
-// pages/AdminUsers.tsx
+// pages/MMUsers.tsx
 import { useState, useEffect } from "react";
 import { User } from "../../app/MvObjects/user";
 import AccountCreationForm from "../../components/MvAccountCreation/MvAccountCreation";
@@ -6,15 +6,13 @@ import { MvButton } from "../../components/MvButton";
 import { MvLoader } from "../../components/MvLoader";
 import { MvModal } from "../../components/MvModal";
 import { MvPagination } from "../../components/MvPlagination/MvPlagination";
-
-import AdminLayout from "../../layout/AdminLayout";
+import MarketingManagerLayout from "../../layout/MarketingManagerLayout";
 import { getAllUsers, updateUser, createUser, deleteUser } from "../../services/userService";
-import SearchFilter, { Filter } from "../../components/MvSearchFilter/MvSearchFIlter";
+import SearchFilter from "../../components/MvSearchFilter/MvSearchFIlter";
 
-export const AdminUsers = () => {
+export const MMUsers = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
-  const [filters, setFilters] = useState<Record<string, string>>({});
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
@@ -24,39 +22,34 @@ export const AdminUsers = () => {
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Fetch users
-  useEffect(() => { fetchUsers(); }, []);
+  // Fetch users with role filter
+  useEffect(() => { 
+    fetchUsers();
+  }, []);
 
   // Filter users
   useEffect(() => {
     const filtered = users.filter(user => {
       const searchMatch = [user.name, user.email].some(field => 
-        field.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      const filterMatch = Object.entries(filters).every(([key, value]) => 
-        !value || user[key as keyof User]?.toString().toLowerCase() === value.toLowerCase()
-      );
-      return searchMatch && filterMatch;
+        field.toLowerCase().includes(searchQuery.toLowerCase()))
+      return searchMatch && user.role === "Marketing Coordinator";
     });
     setFilteredUsers(filtered);
     setCurrentPage(1);
-  }, [searchQuery, filters, users]);
+  }, [searchQuery, users]);
 
   const fetchUsers = async () => {
     try {
       setLoading(true);
       const data = await getAllUsers();
-      
-      setUsers(data);
+      // Filter to only show Marketing Coordinators
+      const coordinators = data.filter(user => user.role === "Marketing Coordinator");
+      setUsers(coordinators);
     } catch (error) {
       setError(error instanceof Error ? error.message : "Failed to fetch users");
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleFilterChange = (filterName: string, value: string) => {
-    setFilters(prev => ({ ...prev, [filterName]: value }));
   };
 
   const handleUserAction = async (formData: {
@@ -68,9 +61,15 @@ export const AdminUsers = () => {
     setIsSubmitting(true);
     try {
       if (editingUser) {
-        await updateUser(editingUser.id, { name: formData.name, email: formData.email });
+        await updateUser(editingUser.id, { 
+          name: formData.name, 
+          email: formData.email 
+        });
       } else {
-        await createUser({ ...formData, role: 'Marketing Manager' });
+        await createUser({ 
+          ...formData, 
+          role: 'Marketing Coordinator' // Force role
+        });
       }
       closeModal();
       await fetchUsers();
@@ -82,7 +81,7 @@ export const AdminUsers = () => {
   };
 
   const handleDelete = async (id: number) => {
-    if (window.confirm("Are you sure you want to delete this user?")) {
+    if (window.confirm("Delete this Marketing Coordinator?")) {
       try {
         await deleteUser(id);
         await fetchUsers();
@@ -104,44 +103,33 @@ export const AdminUsers = () => {
     setError(null);
   };
 
-  // Role filter options
-  const roleOptions = Array.from(new Set(users.map(u => u.role)))
-    .filter(Boolean)
-    .map(role => ({ value: role!, label: role! }));
-
-  const roleFilter: Filter = {
-    name: "role",
-    label: "Role",
-    options: [{ value: "", label: "All Roles" }, ...roleOptions]
-  };
-
   // Pagination
   const indexOfLastUser = currentPage * itemsPerPage;
   const currentUsers = filteredUsers.slice(indexOfLastUser - itemsPerPage, indexOfLastUser);
 
   return (
-    <AdminLayout>
+    <MarketingManagerLayout>
       {loading && <MvLoader />}
 
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold">Manage Users</h1>
-        <MvButton onClick={() => openModal()}>Create Marketing Manager</MvButton>
+        <h1 className="text-2xl font-bold">Manage Marketing Coordinators</h1>
+        <MvButton onClick={() => openModal()}>
+          Create Marketing Coordinator
+        </MvButton>
       </div>
 
       {error && <div className="text-red-500 mb-4">{error}</div>}
 
       <SearchFilter
-        placeholder="Search users..."
+        placeholder="Search coordinators..."
         onSearch={setSearchQuery}
-        onFilterChange={handleFilterChange}
-        filters={[roleFilter]}
         className="px-4"
       />
 
       <table className="w-full border-collapse border border-gray-300 mt-4">
         <thead>
           <tr className="bg-secondary-400 dark:bg-secondary-dark-400">
-            {["ID", "Name", "Email", "Role", "Actions"].map((header, index) => (
+            {["ID", "Name", "Email", "Actions"].map((header, index) => (
               <th key={index} className="border p-2">{header}</th>
             ))}
           </tr>
@@ -153,7 +141,6 @@ export const AdminUsers = () => {
                 <td className="border p-2">{user.id}</td>
                 <td className="border p-2">{user.name}</td>
                 <td className="border p-2">{user.email}</td>
-                <td className="border p-2">{user.role || "N/A"}</td>
                 <td className="border p-2 flex gap-2">
                   <MvButton onClick={() => openModal(user)}>Edit</MvButton>
                   <MvButton 
@@ -167,8 +154,8 @@ export const AdminUsers = () => {
             ))
           ) : (
             <tr>
-              <td colSpan={5} className="text-center p-4">
-                {users.length === 0 ? "No users found" : "No matching users found"}
+              <td colSpan={4} className="text-center p-4">
+                {users.length === 0 ? "No coordinators found" : "No matching coordinators"}
               </td>
             </tr>
           )}
@@ -186,10 +173,10 @@ export const AdminUsers = () => {
       <MvModal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title={editingUser ? "Edit User" : "Create Marketing Manager"}
+        title={editingUser ? "Edit Coordinator" : "Create Marketing Coordinator"}
       >
         <AccountCreationForm
-          fixedRole="Marketing Manager"
+          fixedRole="Marketing Coordinator"
           onSubmit={handleUserAction}
           {...(error ? { error } : {})} 
           isSubmitting={isSubmitting}
@@ -199,6 +186,6 @@ export const AdminUsers = () => {
           } : undefined}
         />
       </MvModal>
-    </AdminLayout>
+    </MarketingManagerLayout>
   );
 };

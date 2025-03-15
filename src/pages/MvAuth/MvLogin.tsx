@@ -62,6 +62,8 @@ const Login: React.FC = () => {
           navigate(MvRoutes.STUDENTS.DASHBOARD); // Example route for Student
         } else if (userRole === "Marketing Manager") {
           navigate(MvRoutes.MARKET_MANAGER.FACULTY); // Example route for Student
+        } else if (userRole === "Marketing Coordinator") {
+          navigate(MvRoutes.MARKET_COORDINATOR.USERS); // Example route for Student
         } else {
           navigate(MvRoutes.DASHBOARD); // Default route
         }

@@ -7,12 +7,17 @@ import { IUser } from "../app/Types/objects/user";
 
 export const getAllUsers = async (): Promise<User[]> => {
     const response = await getData(MvUrl.GET_USERS);
+    console.log(response);
     return response.data.users.data.map((userData: IUser) => User.fromJSON(userData));
   };
 
   export const createUser = async (userData: Partial<User>) => {
-    const response = await postData(MvUrl.POST_USER, userData);
-    return response.data; // Returning raw data without transformation
+    try {
+      const response = await postData(MvUrl.POST_USER, userData);
+      return response.data; 
+    } catch (error) {
+      console.error(error);
+    }// Returning raw data without transformation
   };
   
   export const updateUser = async (id: number, userData: Partial<User>) => {

@@ -23,7 +23,7 @@ const [userData, setUserData] = useState<{ name?: string; email?: string } | nul
   }, []);
   const navItems = [
     { icon: <FiHome />, label: 'Dashboard', to: MvRoutes.ADMIN.DASHBOARD},
-    { icon: <FiUsers />, label: 'User Management', to: MvRoutes.ADMIN.CREATE_ACCOUNT},
+    { icon: <FiUsers />, label: 'User Management', to: MvRoutes.ADMIN.USERS},
     { icon: <FaPaintRoller />, label: 'Faculty' , to:MvRoutes.ADMIN.FACULTY},
     { icon: <FaCalendarWeek />, label: 'Academic Year', to:MvRoutes.ADMIN.ACADEMIC_YEAR },
     { icon: <AiFillWarning />, label: 'Closure Dates', to:MvRoutes.ADMIN.CLOSURE_DATES },
