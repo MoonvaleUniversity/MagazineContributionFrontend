@@ -57,7 +57,9 @@ export const MMFaculty : React.FC = () => {
 
   const prepareFormData = (): FormData => {
     const data = new FormData();
-  
+    if(editingId) {
+      data.append("_method", 'PATCH');
+    }
     // Append the name field with the correct backend field name
     data.append("name", formData.name || "");
   
