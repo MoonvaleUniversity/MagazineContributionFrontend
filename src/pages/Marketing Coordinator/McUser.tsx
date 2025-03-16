@@ -69,7 +69,7 @@ export const McUsers = () => {
       } else {
         await createUser({ 
           ...formData, 
-          role: 'Student' // Force role
+          role: 'student' // Force role
         });
       }
       closeModal();

@@ -58,7 +58,6 @@ export const MMFaculty : React.FC = () => {
   const prepareFormData = (): FormData => {
     const data = new FormData();
   
-    // Append the name field with the correct backend field name
     data.append("name", formData.name || "");
   
     // Append the image file if it exists

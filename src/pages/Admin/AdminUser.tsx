@@ -70,7 +70,7 @@ export const AdminUsers = () => {
       if (editingUser) {
         await updateUser(editingUser.id, { name: formData.name, email: formData.email });
       } else {
-        await createUser({ ...formData, role: 'Marketing Manager' });
+        await createUser({ ...formData, role: 'marketing_manager' });
       }
       closeModal();
       await fetchUsers();
