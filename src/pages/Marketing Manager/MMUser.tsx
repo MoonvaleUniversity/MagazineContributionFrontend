@@ -68,7 +68,7 @@ export const MMUsers = () => {
       } else {
         await createUser({ 
           ...formData, 
-          role: 'Marketing Coordinator' // Force role
+          role: 'marketing_coordinator' 
         });
       }
       closeModal();

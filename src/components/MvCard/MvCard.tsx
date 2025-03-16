@@ -1,11 +1,12 @@
 import React from "react";
 import { AiOutlineLike, AiOutlineDislike, AiOutlineMessage } from "react-icons/ai";
 import { FaBookmark } from "react-icons/fa";
-import { IContribution } from "../../app/Types/objects/contribution";
+
 import { useNavigate } from "react-router-dom";
+import { ApiContributionResponse } from "../../app/Types/objects/contribution";
 
 interface MvCardProps {
-  contribution: IContribution;
+  contribution: ApiContributionResponse;
   onEdit: () => void;
   onDelete: () => void;
 }

@@ -79,6 +79,8 @@ export const MvStudentSubmissionsView = () => {
               <MvCard
                 key={submission.id}
                 contribution={submission}
+                onEdit={()=>handleEdit}
+                onDelete={()=>handleDelete}
               />
             ))}
           </div>
