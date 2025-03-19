@@ -7,6 +7,7 @@ export interface IContribution {
   closure_date_id: string;
   user_id: string;
   created_by: string;
+  created_at?:string;
 }
 
 export type ApiContributionResponse = {

@@ -1,4 +1,5 @@
-import React, { useState, forwardRef } from "react";
+// MvFileUpload.tsx
+import React, { useState, forwardRef, useCallback } from "react";
 import clsx from "clsx";
 import { FaUpload, FaTimes, FaFileAlt } from "react-icons/fa";
 import { renderAsync } from "docx-preview";
@@ -9,128 +10,152 @@ interface FileUploadProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 
 export const MvFileUpload = forwardRef<HTMLInputElement, FileUploadProps>(
-  ({ onFilesSelect, onDocumentClick, className, ...props }, ref) => {
+  ({ onFilesSelect, onDocumentClick,  ...props }, ref) => {
     const [images, setImages] = useState<File[]>([]);
     const [documents, setDocuments] = useState<File[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [isDragOver, setIsDragOver] = useState(false);
 
+    const maxImages = 5;
     const validImageTypes = ["image/jpeg", "image/png"];
     const validDocumentTypes = [
       "application/msword",
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     ];
 
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const selectedFiles = event.target.files ? Array.from(event.target.files) : [];
-      processFiles(selectedFiles);
-      event.target.value = "";
-    };
+    const processFiles = useCallback((selectedFiles: File[]) => {
+      const newImages: File[] = [];
+      const newDocuments: File[] = [];
+      let errorMessage: string | null = null;
 
-    const handleDrop = (event: React.DragEvent<HTMLLabelElement>) => {
-      event.preventDefault();
-      event.stopPropagation();
-      setIsDragOver(false);
-      const droppedFiles = event.dataTransfer.files ? Array.from(event.dataTransfer.files) : [];
-      processFiles(droppedFiles);
-    };
+      const currentImages = [...images];
+      const currentDocs = [...documents];
 
-    const handleDragOver = (event: React.DragEvent<HTMLLabelElement>) => {
-      event.preventDefault();
-      event.stopPropagation();
-      setIsDragOver(true);
-    };
+      // Validate new files
+      for (const file of selectedFiles) {
+        if (validImageTypes.includes(file.type)) {
+          if (currentImages.length + newImages.length >= maxImages) {
+            errorMessage = `Maximum ${maxImages} images allowed`;
+            break;
+          }
+          newImages.push(file);
+        } else if (validDocumentTypes.includes(file.type)) {
+          if (currentDocs.length + newDocuments.length >= 1) {
+            errorMessage = "Only one document allowed";
+            break;
+          }
+          newDocuments.push(file);
+        } else {
+          errorMessage = "Invalid file type. Only JPG, PNG, DOC, and DOCX are allowed.";
+          break;
+        }
+      }
 
-    const handleDragLeave = (event: React.DragEvent<HTMLLabelElement>) => {
-      event.preventDefault();
-      event.stopPropagation();
-      setIsDragOver(false);
-    };
+      // Check duplicates
+      if (!errorMessage) {
+        const allExisting = [...currentImages, ...currentDocs];
+        const duplicates = selectedFiles.some(newFile => 
+          allExisting.some(existing => 
+            existing.name === newFile.name && 
+            existing.size === newFile.size
+          )
+        );
+        if (duplicates) errorMessage = "Duplicate files not allowed";
+      }
 
-    const processFiles = (selectedFiles: File[]) => {
-      const newImages = selectedFiles.filter(file => validImageTypes.includes(file.type));
-      const newDocuments = selectedFiles.filter(file => validDocumentTypes.includes(file.type));
-      
-      const duplicateFiles = selectedFiles.filter(file => 
-        [...images, ...documents].some(existingFile => existingFile.name === file.name)
-      );
-
-      if (duplicateFiles.length > 0) {
-        setError("Duplicate files are not allowed.");
+      if (errorMessage) {
+        setError(errorMessage);
         return;
       }
-      
-      if (newImages.length === 0 && newDocuments.length === 0) {
-        setError("Invalid file type. Only JPG, PNG, DOC, and DOCX are allowed.");
-        return;
-      }
-      
-      setImages(prev => [...prev, ...newImages]);
-      setDocuments(prev => [...prev, ...newDocuments]);
+
       setError(null);
+      const updatedImages = [...currentImages, ...newImages];
+      const updatedDocs = [...currentDocs, ...newDocuments];
       
-      if (onFilesSelect) onFilesSelect([...newImages, ...newDocuments]);
+      setImages(updatedImages);
+      setDocuments(updatedDocs);
+      onFilesSelect?.([...updatedImages, ...updatedDocs]);
+    }, [images, documents, onFilesSelect]);
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = e.target.files ? Array.from(e.target.files) : [];
+      processFiles(files);
+      e.target.value = "";
     };
 
-    const removeFile = (index: number, type: "image" | "document") => {
-      if (type === "image") {
-        setImages(prev => prev.filter((_, i) => i !== index));
-      } else {
-        setDocuments(prev => prev.filter((_, i) => i !== index));
-      }
+    const handleDrop = (e: React.DragEvent<HTMLLabelElement>) => {
+      e.preventDefault();
+      setIsDragOver(false);
+      const files = e.dataTransfer.files ? Array.from(e.dataTransfer.files) : [];
+      processFiles(files);
     };
 
-    const handleDocumentClickLocal = (file: File) => {
+    const removeFile = useCallback((file: File) => {
+      setImages(prev => prev.filter(f => !isSameFile(f, file)));
+      setDocuments(prev => prev.filter(f => !isSameFile(f, file)));
+      onFilesSelect?.([...images, ...documents].filter(f => !isSameFile(f, file)));
+    }, [images, documents, onFilesSelect]);
+
+    const handleDocumentPreview = useCallback(async (file: File) => {
       const reader = new FileReader();
       reader.onload = async (e) => {
         const arrayBuffer = e.target?.result;
-        if (arrayBuffer && typeof arrayBuffer !== "string") {
+        if (arrayBuffer instanceof ArrayBuffer) {
           const container = document.createElement("div");
           try {
             await renderAsync(arrayBuffer, container);
-            if (onDocumentClick) {
-              onDocumentClick(container.innerHTML);
-            }
-          } catch (err) {
-            console.error("Error rendering document:", err);
-            if (onDocumentClick) {
-              onDocumentClick(null);
-            }
+            onDocumentClick?.(container.innerHTML);
+          } catch (er) {
+            console.error(er);
+            onDocumentClick?.(null);
           }
         }
       };
       reader.readAsArrayBuffer(file);
-    };
+    }, [onDocumentClick]);
 
     return (
       <div className="space-y-3">
         <label
           className={clsx(
-            "flex flex-col items-center justify-center w-full p-6 border-2 border-dashed rounded-4xl cursor-pointer transition duration-150",
-            "bg-background-50 border-primary-600 text-primary-600 dark:bg-secondary-dark-500 dark:border-primary-dark-50 dark:text-primary-dark-200",
-            isDragOver ? "border-blue-500" : "",
-            className
+            "flex flex-col items-center justify-center w-full p-6 border-2 border-dashed rounded-4xl cursor-pointer",
+            "bg-background-50 border-primary-600 text-primary-600 dark:bg-secondary-dark-500",
+            isDragOver && "border-blue-500"
           )}
           onDrop={handleDrop}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
+          onDragOver={e => { e.preventDefault(); setIsDragOver(true); }}
+          onDragLeave={() => setIsDragOver(false)}
         >
-          <FaUpload className="w-10 h-10 mb-2 text-primary-600 dark:text-primary-dark-200" />
-          <span className="font-semibold">Drag & drop files here or click to upload</span>
-          <input type="file" accept=".jpg,.jpeg,.png,.doc,.docx" onChange={handleFileChange} className="hidden" ref={ref} {...props} />
+          <FaUpload className="w-10 h-10 mb-2" />
+          <span className="font-semibold">Drag & drop files or click to upload</span>
+          <input
+            type="file"
+            accept=".jpg,.jpeg,.png,.doc,.docx"
+            onChange={handleFileChange}
+            className="hidden"
+            ref={ref}
+            {...props}
+          />
         </label>
 
         {error && <div className="text-red-500">{error}</div>}
 
         {images.length > 0 && (
           <div>
-            <h3 className="text-lg font-semibold">Image Previews</h3>
+            <h3 className="text-lg font-semibold mb-2">Images</h3>
             <div className="flex flex-wrap gap-3">
-              {images.map((file, index) => (
-                <div key={index} className="relative w-24 h-24">
-                  <img src={URL.createObjectURL(file)} alt="Uploaded preview" className="object-cover w-full h-full rounded-lg" />
-                  <button className="absolute p-1 text-white transition bg-red-500 rounded-full top-1 right-1 hover:bg-red-700" onClick={() => removeFile(index, "image")}>
-                    <FaTimes size={16} />
+              {images.map((file, i) => (
+                <div key={i} className="relative w-24 h-24">
+                  <img
+                    src={URL.createObjectURL(file)}
+                    alt="Preview"
+                    className="w-full h-full object-cover rounded-lg"
+                  />
+                  <button
+                    onClick={() => removeFile(file)}
+                    className="absolute top-1 right-1 p-1 bg-red-500 rounded-full text-white hover:bg-red-600"
+                  >
+                    <FaTimes size={14} />
                   </button>
                 </div>
               ))}
@@ -140,16 +165,19 @@ export const MvFileUpload = forwardRef<HTMLInputElement, FileUploadProps>(
 
         {documents.length > 0 && (
           <div>
-            <h3 className="text-lg font-semibold">Documents</h3>
-            <div className="flex flex-col gap-2">
-              {documents.map((file, index) => (
-                <div key={index} className="flex items-center justify-between p-2 bg-gray-100 rounded-lg dark:bg-gray-800">
-                  <div className="flex items-center gap-2 cursor-pointer text-primary-600 dark:text-primary-dark-200" onClick={() => handleDocumentClickLocal(file)}>
-                    <FaFileAlt size={20} />
-                    <span>{file.name}</span>
+            <h3 className="text-lg font-semibold mb-2">Documents</h3>
+            <div className="space-y-2">
+              {documents.map((file, i) => (
+                <div key={i} className="flex items-center justify-between p-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
+                  <div className="flex items-center gap-2 cursor-pointer" onClick={() => handleDocumentPreview(file)}>
+                    <FaFileAlt className="text-primary-600 dark:text-primary-200" />
+                    <span className="text-sm">{file.name}</span>
                   </div>
-                  <button className="p-1 text-white transition bg-red-500 rounded-full hover:bg-red-700" onClick={() => removeFile(index, "document")}>
-                    <FaTimes size={16} />
+                  <button
+                    onClick={() => removeFile(file)}
+                    className="p-1 text-white bg-red-500 rounded-full hover:bg-red-600"
+                  >
+                    <FaTimes size={14} />
                   </button>
                 </div>
               ))}
@@ -160,3 +188,5 @@ export const MvFileUpload = forwardRef<HTMLInputElement, FileUploadProps>(
     );
   }
 );
+
+const isSameFile = (a: File, b: File) => a.name === b.name && a.size === b.size && a.type === b.type;

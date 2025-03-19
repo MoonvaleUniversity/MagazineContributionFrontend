@@ -6,7 +6,6 @@ import { MvButton } from "../../components/MvButton";
 import { MvLoader } from "../../components/MvLoader";
 import { MvModal } from "../../components/MvModal";
 import { MvPagination } from "../../components/MvPlagination/MvPlagination";
-
 import AdminLayout from "../../layout/AdminLayout";
 import { getAllUsers, updateUser, createUser, deleteUser } from "../../services/userService";
 import SearchFilter, { Filter } from "../../components/MvSearchFilter/MvSearchFIlter";
@@ -17,7 +16,7 @@ export const AdminUsers = () => {
   const [filters, setFilters] = useState<Record<string, string>>({});
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5);
+  const [itemsPerPage] = useState(10);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -75,11 +74,16 @@ export const AdminUsers = () => {
       closeModal();
       await fetchUsers();
     } catch (error) {
-      setError(error instanceof Error ? error.message : "Operation failed");
+      setError(
+        error instanceof Error 
+          ? `Something went wrong: ${error.message}` 
+          : "An unexpected error occurred. Please try again later."
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
+  
 
   const handleDelete = async (id: number) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
@@ -154,7 +158,7 @@ export const AdminUsers = () => {
                 <td className="border p-2">{user.name}</td>
                 <td className="border p-2">{user.email}</td>
                 <td className="border p-2">{user.role || "N/A"}</td>
-                <td className="border p-2 flex gap-2">
+                <td className=" flex gap-2">
                   <MvButton onClick={() => openModal(user)}>Edit</MvButton>
                   <MvButton 
                     onClick={() => handleDelete(user.id)}

@@ -15,16 +15,20 @@ const MvRoutes = {
     USERS: "/admin/users",
     CLOSURE_DATES: "/admin/closure-dates",
     ACADEMIC_YEAR: "/admin/academic-year",
-    FACULTY: "/admin/faculty"
+    FACULTY: "/admin/faculty",
+    PROFILE_EDIT: "/students/profile-edit",
   },
   MARKET_MANAGER: {
-    DASHBOARD: "",
-    FACULTY:"mm/faculty",
-    USERS:"mm/users"
+    DASHBOARD: "/mm/dashboard",
+    FACULTY:"/mm/faculty",
+    USERS:"/mm/users",
+    SELECTED_CONTRIBUTIONS: "/mm/selected_contribution",
+    PROFILE_EDIT: "/students/profile-edit",
   },
   MARKET_COORDINATOR: {
     DASHBOARD: "",
-    USERS: "mc/users"
+    USERS: "mc/users",
+    PROFILE_EDIT: "/students/profile-edit",
   },
 
 };

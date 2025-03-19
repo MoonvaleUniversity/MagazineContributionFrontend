@@ -1,7 +1,8 @@
-import { FiHome, FiUsers, FiFile, FiBarChart, FiUser, FiSettings, FiChevronDown, FiMenu, FiX, FiLogOut } from "react-icons/fi";
+import { FiHome, FiUsers, FiFile, FiUser, FiSettings, FiChevronDown, FiMenu, FiX, FiLogOut } from "react-icons/fi";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { MvButton } from "../../MvButton";
+import MvRoutes from "../../../app/MvRoutes";
 
 interface MarketingManagerSidebarProps {
   isSidebarOpen: boolean;
@@ -19,11 +20,11 @@ const [userData, setUserData] = useState<{ name?: string; email?: string } | nul
     }
   }, []);
   const navItems = [
-    { icon: <FiHome />, label: "Dashboard", to: "/marketing-manager/dashboard" },
-    { icon: <FiUsers />, label: "Faculties", to: "/marketing-manager/faculties" },
-    { icon: <FiFile />, label: "Selected Contributions", to: "/marketing-manager/contributions" },
-    { icon: <FiBarChart />, label: "Reports", to: "/mm/users" },
-    { icon: <FiUser />, label: "Profile", to: "/marketing-manager/profile" },
+    { icon: <FiHome />, label: "Dashboard", to:  MvRoutes.MARKET_MANAGER.DASHBOARD },
+    { icon: <FiUsers />, label: "Faculties", to:  MvRoutes.MARKET_MANAGER.FACULTY },
+    { icon: <FiFile />, label: "Selected Contributions", to: MvRoutes.MARKET_MANAGER.SELECTED_CONTRIBUTIONS},
+    { icon: <FiUsers />, label: "Users", to: MvRoutes.MARKET_MANAGER.USERS },
+    { icon: <FiUser />, label: "Profile", to: MvRoutes.MARKET_MANAGER.PROFILE_EDIT },
   ];
 
   // Set a random last login time within the last 24 hours

@@ -5,10 +5,10 @@ import MvCard from "../../components/MvCard/MvCard";
 import MvContributionTable from "../../components/MvTables/MvContributionTable";
 import StudentLayout from "../../layout/StudentLayout";
 import { MvContributionServices } from "../../services/ContributionService";
-import { ApiContributionResponse } from "../../app/Types/objects/contribution"; // Import the service
+import {IContribution } from "../../app/Types/objects/contribution"; // Import the service
 
 export const MvStudentSubmissionsView = () => {
-  const [submissions, setSubmissions] = useState<ApiContributionResponse[]>([]);
+  const [submissions, setSubmissions] = useState<IContribution[]>([]);
   const [view, setView] = useState<'table' | 'card'>('table'); // Toggle between table and card views
   const navigate = useNavigate();
 

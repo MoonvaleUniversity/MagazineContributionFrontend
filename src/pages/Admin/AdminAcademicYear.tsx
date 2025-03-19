@@ -2,11 +2,11 @@ import { useState, useEffect } from "react";
 import { MvButton } from "../../components/MvButton";
 import { MvInput } from "../../components/MvInput";
 import { MvModal } from "../../components/MvModal";
-
 import AdminLayout from "../../layout/AdminLayout";
 import { getAllAcademicYears, updateAcademicYear, createAcademicYear, deleteAcademicYear } from "../../services/AcademicYearService";
 import { MvLoader } from "../../components/MvLoader";
 import SearchFilter  from "../../components/MvSearchFilter/MvSearchFIlter";
+import { MvPagination } from "../../components/MvPlagination/MvPlagination";
 
 export interface IAcademicYear {
   id: number;
@@ -22,6 +22,9 @@ export const AdminAcademicYears: React.FC = () => {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
+
   const fetchAcademicYears = async () => {
     try {
       setLoading(true);
@@ -40,41 +43,51 @@ export const AdminAcademicYears: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    console.log("Fetched academic years:", academicYears);
+    const filtered = academicYears.filter(ay =>
+      ay.year_name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredYears(filtered);
+    setCurrentPage(1); // Reset to first page on search/filter change
+  }, [searchQuery, academicYears]);
+
+  // Pagination calculations
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentYears = filteredYears.slice(indexOfFirstItem, indexOfLastItem);
+
+  const validateYearFormat = (year: string) => {
+    const yearRegex = /^\d{4}-\d{4}$/;
+    if (!yearRegex.test(year)) return false;
+    
+    const [startYear, endYear] = year.split('-').map(Number);
+    return startYear < endYear && endYear === startYear + 1;
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setError(null); // Clear error when user starts typing
+  };
   
-    if (!Array.isArray(academicYears)) {
-      console.error("academicYears is not an array!", academicYears);
+  const handleSubmit = async () => {
+    if (!formData.year_name) {
+      setError("Year field is required.");
       return;
     }
   
-    const filtered = academicYears.filter((ay) =>
-      ay.year_name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  
-    setFilteredYears(filtered);
-  }, [searchQuery, academicYears]);
-  
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async () => {
-    if (!formData.year_name) {
-      setError("All fields are required.");
+    if (!validateYearFormat(formData.year_name)) {
+      setError("Invalid year format. Please use YYYY-YYYY format and ensure consecutive years.");
       return;
     }
   
     try {
+      setLoading(true); // Prevent multiple submissions
       if (editingId) {
-        // Update academic year
         await updateAcademicYear(editingId, formData);
       } else {
-        // Create new academic year
         await createAcademicYear(formData);
       }
   
-      await fetchAcademicYears(); // Refresh the data after submit
-  
+      await fetchAcademicYears();
       setFormData({});
       setEditingId(null);
       setError(null);
@@ -82,8 +95,12 @@ export const AdminAcademicYears: React.FC = () => {
     } catch (error) {
       console.log(error);
       setError("Failed to save academic year.");
+    } finally {
+      setLoading(false); // Re-enable the button
     }
   };
+ 
+
   
 
   const handleEdit = (academicYear: IAcademicYear) => {
@@ -96,18 +113,17 @@ export const AdminAcademicYears: React.FC = () => {
     try {
       const isDeleted = await deleteAcademicYear(id);
       if (isDeleted) {
-        await fetchAcademicYears(); // Refresh the data after delete
+        await fetchAcademicYears();
       }
     } catch (error) {
       console.log(error);
       setError("Failed to delete academic year.");
     }
   };
-  
 
   return (
     <AdminLayout>
-       {loading ? <MvLoader /> : ""}
+      {loading ? <MvLoader /> : ""}
             
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-xl font-bold">Manage Academic Years</h1>
@@ -121,11 +137,10 @@ export const AdminAcademicYears: React.FC = () => {
       </div>
 
       <SearchFilter
-        placeholder="Search users..."
+        placeholder="Search academic years..."
         onSearch={setSearchQuery}
         className="px-4"
       />
-
 
       {error && <div className="text-red-500 mb-4">{error}</div>}
 
@@ -137,15 +152,15 @@ export const AdminAcademicYears: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredYears.length > 0 ? (
-            filteredYears.map((ay) => (
+          {currentYears.length > 0 ? (
+            currentYears.map((ay) => (
               <tr key={ay.id} className="border">
                 <td className="border p-2">{ay.year_name}</td>
                 <td className="border p-2 flex gap-2">
                   <MvButton onClick={() => handleEdit(ay)}>Edit</MvButton>
                   <MvButton
                     onClick={() => handleDelete(ay.id)}
-                  className="bg-red-500 dark:bg-red-300"
+                    className="bg-red-500 dark:bg-red-300"
                   >
                     Delete
                   </MvButton>
@@ -162,6 +177,16 @@ export const AdminAcademicYears: React.FC = () => {
         </tbody>
       </table>
 
+      {filteredYears.length > 0 && (
+        <MvPagination
+          currentPage={currentPage}
+          totalItems={filteredYears.length}
+          itemsPerPage={itemsPerPage}
+          onPageChange={setCurrentPage}
+          className="mt-4"
+        />
+      )}
+
       <MvModal
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
@@ -172,10 +197,14 @@ export const AdminAcademicYears: React.FC = () => {
           <MvInput
             type="text"
             name="year_name"
-            label="Year Name"
+            label="Academic Year"
             value={formData.year_name || ""}
             onChange={handleInputChange}
+            placeholder="Example: 2023-2024"
           />
+          <div className="text-sm text-gray-500">
+            Format must be YYYY-YYYY (consecutive years)
+          </div>
           <div className="flex justify-end">
             <MvButton onClick={handleSubmit}>
               {editingId ? "Update" : "Create"}

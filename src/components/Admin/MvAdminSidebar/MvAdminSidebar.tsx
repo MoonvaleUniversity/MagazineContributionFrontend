@@ -1,10 +1,11 @@
-import { FiHome, FiUsers, FiSettings,   FiChevronDown, FiMenu, FiX, FiLogOut } from 'react-icons/fi';
+
 import { useEffect, useState } from 'react';
 import { MvButton } from '../../MvButton';
 import { NavLink } from 'react-router-dom';
 import MvRoutes from '../../../app/MvRoutes';
-import {  FaCalendarWeek, FaPaintRoller } from 'react-icons/fa';
-import { AiFillWarning } from 'react-icons/ai';
+import {   FaChalkboardTeacher, FaRegCalendarAlt, FaUserCog } from 'react-icons/fa';
+import {AiOutlineStop } from 'react-icons/ai';
+import { FiX, FiMenu, FiChevronDown, FiLogOut, FiSettings, FiHome } from 'react-icons/fi';
 
 interface MvAdminSidebarProps {
   isSidebarOpen: boolean;
@@ -22,11 +23,11 @@ const [userData, setUserData] = useState<{ name?: string; email?: string } | nul
     }
   }, []);
   const navItems = [
-    { icon: <FiHome />, label: 'Dashboard', to: MvRoutes.ADMIN.DASHBOARD},
-    { icon: <FiUsers />, label: 'User Management', to: MvRoutes.ADMIN.USERS},
-    { icon: <FaPaintRoller />, label: 'Faculty' , to:MvRoutes.ADMIN.FACULTY},
-    { icon: <FaCalendarWeek />, label: 'Academic Year', to:MvRoutes.ADMIN.ACADEMIC_YEAR },
-    { icon: <AiFillWarning />, label: 'Closure Dates', to:MvRoutes.ADMIN.CLOSURE_DATES },
+    { icon: <FiHome/>, label: 'Dashboard', to: MvRoutes.ADMIN.DASHBOARD},
+    { icon: <FaUserCog  />, label: 'User Management', to: MvRoutes.ADMIN.USERS},
+    { icon: <FaChalkboardTeacher />, label: 'Faculty' , to:MvRoutes.ADMIN.FACULTY},
+    { icon: <FaRegCalendarAlt />, label: 'Academic Year', to:MvRoutes.ADMIN.ACADEMIC_YEAR },
+    { icon: <AiOutlineStop />, label: 'Closure Dates', to:MvRoutes.ADMIN.CLOSURE_DATES },
   ];
 
   const handleLogout = () => {

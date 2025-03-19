@@ -1,12 +1,11 @@
 import React from "react";
 import { AiOutlineLike, AiOutlineDislike, AiOutlineMessage } from "react-icons/ai";
 import { FaBookmark } from "react-icons/fa";
-
 import { useNavigate } from "react-router-dom";
-import { ApiContributionResponse } from "../../app/Types/objects/contribution";
+import { IContribution } from "../../app/Types/objects/contribution";
 
 interface MvCardProps {
-  contribution: ApiContributionResponse;
+  contribution: IContribution;
   onEdit: () => void;
   onDelete: () => void;
 }
@@ -14,6 +13,13 @@ interface MvCardProps {
 const MvCard: React.FC<MvCardProps> = ({ contribution, onEdit, onDelete }) => {
   const navigate = useNavigate();
 
+  // Ensure images exist and are an array
+  const imageUrl = Array.isArray(contribution.image_url) && contribution.image_url.length > 0
+    ? contribution.image_url[0]
+    : "/src/Assets/images/404.jpeg";
+  
+    console.log(contribution.image_url);
+  
   return (
     <div
       className="max-w-2xs p-4 bg-secondary-400 dark:bg-secondary-dark-500 rounded-2xl shadow-lg cursor-pointer"
@@ -21,11 +27,11 @@ const MvCard: React.FC<MvCardProps> = ({ contribution, onEdit, onDelete }) => {
     >
       {/* Image */}
       <div className="flex justify-center rounded-xl">
-        {/* <img
-          src={contribution.image_url.length > 0 ? contribution.image_url[0] : "/src/Assets/images/404.jpeg"}
+        <img
+          src={imageUrl}
           alt={contribution.name || "Contribution Image"}
           className="w-full aspect-4/3 -mt-1 rounded-xl transition-transform duration-300 hover:scale-110"
-        /> */}
+        />
       </div>
 
       {/* Title */}

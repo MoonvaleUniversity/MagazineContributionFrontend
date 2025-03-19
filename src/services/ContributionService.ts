@@ -3,12 +3,12 @@ import { getData,
    uploadMultimedia } from "../app/MvApi";
 import { MvUrl } from "../app/MvUrl";
 
-import { ApiContributionResponse } from "../app/Types/objects/contribution";
+import { ApiContributionResponse, IContribution } from "../app/Types/objects/contribution";
 
 export const MvContributionServices = {
   // Fetch contributions
  // Fetch contributions
- getContributions: async (): Promise<ApiContributionResponse[]> => {
+ getContributions: async (): Promise<IContribution[]> => {
   try {
     const response = await getData(MvUrl.GET_CONTRIBUTIONS);
     console.log(response);
@@ -24,7 +24,8 @@ export const MvContributionServices = {
       id: item.id.toString(),
       name: item.name,
       doc_url: item.doc_url,
-      images: item.images ?? "", // Ensure 'images' is handled correctly
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      image_url: Array.isArray(item.images) ? item.images.map((img: { image_url: any; }) => img.image_url) : [], // Extract image URLs
       closure_date_id: item.closure_date_id.toString(),
       user_id: item.user_id.toString(),
       created_by: item.created_by ? item.created_by.toString() : "",

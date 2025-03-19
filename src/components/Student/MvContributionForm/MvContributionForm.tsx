@@ -18,41 +18,46 @@ export const MvContributionForm: React.FC = () => {
   const [docPreviewContent, setDocPreviewContent] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  // Function to handle file selection
-  const handleFilesSelect = (selectedFiles: File[]) => {
-    const newImages: File[] = [];
-    let newDocument: File | null = null;
+ 
+const handleFilesSelect = (selectedFiles: File[]) => {
+  // Process all files to separate images and document
+  const newImages: File[] = [];
+  let newDocument: File | null = null;
+  let errorMessage: string | null = null;
 
-    selectedFiles.forEach((file) => {
-      if (file.type.startsWith("image/")) {
-        newImages.push(file);
-      } else if (file.type.startsWith("application/")) {
-        if (!newDocument) {
-          newDocument = file;
-        } else {
-          setError("Only one document file is allowed.");
-        }
+  // First pass: Validate files
+  for (const file of selectedFiles) {
+    if (file.type.startsWith("image/")) {
+      if (newImages.length >= 5) {
+        errorMessage = "Maximum 5 images allowed";
+        break;
       }
-    });
-
-    if (newDocument) {
-      setDocument(newDocument);
+      newImages.push(file);
+    } else if (file.type.startsWith("application/")) {
+      if (newDocument) {
+        errorMessage = "Only one document allowed";
+        break;
+      }
+      newDocument = file;
     }
-    setImages(newImages);
-    setError(null);
-  };
+  }
 
-  // Document preview function
-  const handleDocumentPreview = (preview: string | null) => {
-    setDocPreviewContent(preview);
-    setIsDocModalOpen(true);
-  };
+  if (errorMessage) {
+    setError(errorMessage);
+    return;
+  }
 
-  // Handle form submission
+  // Update states with complete list
+  setError(null);
+  setDocument(newDocument);
+  setImages(newImages);
+};
+   
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log(images);
 
-    // Basic validation
     if (!title.trim()) {
       setError("Please enter a title.");
       return;
@@ -69,15 +74,14 @@ export const MvContributionForm: React.FC = () => {
       setError("Please accept the Terms and Conditions.");
       return;
     }
+
     setError(null);
     setIsSubmitting(true);
 
     try {
-      // Assume closureDateId is fetched from somewhere; using a dummy value here
       const closureDateId = 1;
       const userId = 1;
 
-      // Submit contribution: Pass title as 'name', document as 'doc', and images as 'images'
       await MvContributionServices.createContribution(
         userId,
         closureDateId,
@@ -88,7 +92,7 @@ export const MvContributionForm: React.FC = () => {
 
       alert("Contribution submitted successfully!");
 
-      // Reset form after successful submission
+      // Reset form
       setTitle("");
       setDescription("");
       setDocument(null);
@@ -106,29 +110,45 @@ export const MvContributionForm: React.FC = () => {
     <>
       <form
         onSubmit={handleSubmit}
-        className="w-11/12 max-sm:w-11/12 p-6 mx-auto space-y-4 shadow-lg bg-background-100/40 dark:bg-secondary-dark-700 rounded-2xl"
+        className="w-11/12 max-sm/w-11/12 p-6 mx-auto space-y-4 shadow-lg bg-background-100/40 dark:bg-secondary-dark-700 rounded-2xl"
         encType="multipart/form-data"
       >
         <h2 className="text-xl text-center font-semibold text-primary-600 dark:text-primary-dark-200">
           Submit Your Magazine Contribution
         </h2>
         {error && <p className="text-sm text-red-500">{error}</p>}
+        
         <MvInput
           label="Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
         />
+        
         <MvTextarea
           label="Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
+        
         <MvFileUpload
           onFilesSelect={handleFilesSelect}
-          onDocumentClick={handleDocumentPreview}
+          onDocumentClick={(preview) => {
+            setDocPreviewContent(preview);
+            setIsDocModalOpen(true);
+          }}
           ref={fileInputRef}
+          multiple={true}
+          accept="image/*,application/*"
         />
+        <div className="text-sm text-gray-500">
+          Upload requirements: 
+          <ul className="list-disc pl-4">
+            <li>1 document file (PDF, Word, etc.)</li>
+            <li>Up to 5 images</li>
+          </ul>
+        </div>
+        
         <div className="flex items-center space-x-2">
           <MvCheckbox
             id="terms"
@@ -149,8 +169,6 @@ export const MvContributionForm: React.FC = () => {
         onClose={() => setIsDocModalOpen(false)}
         title="Document Preview"
       >
-        
-         
         {docPreviewContent ? (
           <div
             className="document-preview"
@@ -159,7 +177,7 @@ export const MvContributionForm: React.FC = () => {
         ) : (
           <p>No preview available.</p>
         )}
-        </MvModal>
+      </MvModal>
     </>
   );
 };
