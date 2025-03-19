@@ -174,7 +174,11 @@ export const MvFileUpload = forwardRef<HTMLInputElement, FileUploadProps>(
                     <span className="text-sm">{file.name}</span>
                   </div>
                   <button
-                    onClick={() => removeFile(file)}
+                      onClick={(e) => {
+                        e.preventDefault(); 
+                        e.stopPropagation(); 
+                        removeFile(file);
+                      }}
                     className="p-1 text-white bg-red-500 rounded-full hover:bg-red-600"
                   >
                     <FaTimes size={14} />

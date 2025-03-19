@@ -7,28 +7,39 @@ import { ApiContributionResponse, IContribution } from "../app/Types/objects/con
 
 export const MvContributionServices = {
   // Fetch contributions
- // Fetch contributions
- getContributions: async (): Promise<IContribution[]> => {
-  try {
-    const response = await getData(MvUrl.GET_CONTRIBUTIONS);
-    console.log(response);
 
-    // Ensure response.data and response.data.contributions.data exist
+ getContributions: async (
+  options?: { userId?: string; facultyId?: string; page?: number; }
+): Promise<IContribution[]> => {
+  try {
+    // Build query parameters properly
+    const queryParams = new URLSearchParams();
+    if (options?.userId) queryParams.append("user_id", options.userId);
+    if (options?.facultyId) queryParams.append("faculty_id", options.facultyId);
+    if (options?.page) queryParams.append("page", options.page.toString());
+
+    // Append parameters correctly to the URL
+    const url = `${MvUrl.GET_CONTRIBUTIONS}?${queryParams.toString()}`;
+
+    // Call API with the corrected URL
+    const response = await getData(url);
+
     if (!response?.data?.contributions?.data || !Array.isArray(response.data.contributions.data)) {
       throw new Error("Invalid response format");
     }
 
-    // Return data mapped to ApiContributionResponse
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return response.data.contributions.data.map((item:any) => ({
+    return response.data.contributions.data.map((item: any) => ({
       id: item.id.toString(),
       name: item.name,
       doc_url: item.doc_url,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      image_url: Array.isArray(item.images) ? item.images.map((img: { image_url: any; }) => img.image_url) : [], // Extract image URLs
+      image_url: Array.isArray(item.images) ? item.images.map((img: any) => img.image_url) : [],
       closure_date_id: item.closure_date_id.toString(),
       user_id: item.user_id.toString(),
-      created_by: item.created_by ? item.created_by.toString() : "",
+      created_by: item.created_by?.toString() || "",
+      created_at: item.created_at,
+      is_selected_for_publication: item.is_selected_for_publication
     }));
   } catch (error) {
     console.error("Error fetching contributions:", error);

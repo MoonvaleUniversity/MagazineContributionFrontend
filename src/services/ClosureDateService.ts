@@ -3,6 +3,8 @@ import { IClosureDate } from "../app/MvObjects/clousuredate";
 import { MvUrl } from "../app/MvUrl";
 import { AxiosResponse } from "axios";
 
+const parseId = (id: string | number): number => (typeof id === "string" ? parseInt(id, 10) : id);
+
 /**
  * Fetch all closure dates.
  */
@@ -15,8 +17,9 @@ export const getAllClosureDates = async (): Promise<IClosureDate[]> => {
 /**
  * Fetch a closure date by ID.
  */
-export const getClosureDateById = async (id: number): Promise<IClosureDate> => {
-    const response: AxiosResponse<{ closure_dates: IClosureDate }> = await getData(MvUrl.SHOW_CLOSURE(id));
+export const getClosureDateById = async (id: number |string): Promise<IClosureDate> => {
+    const numericId = parseId(id);
+    const response: AxiosResponse<{ closure_dates: IClosureDate }> = await getData(MvUrl.SHOW_CLOSURE(numericId));
     return response.data.closure_dates;
 };
 

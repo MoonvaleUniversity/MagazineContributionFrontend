@@ -6,57 +6,121 @@ import MvContributionTable from "../../components/MvTables/MvContributionTable";
 import StudentLayout from "../../layout/StudentLayout";
 import { MvContributionServices } from "../../services/ContributionService";
 import {IContribution } from "../../app/Types/objects/contribution"; // Import the service
+import MvRoutes from "../../app/MvRoutes";
+import { MvPagination } from "../../components/MvPlagination/MvPlagination";
+import SearchFilter from "../../components/MvSearchFilter/MvSearchFIlter";
+
 
 export const MvStudentSubmissionsView = () => {
-  const [submissions, setSubmissions] = useState<IContribution[]>([]);
-  const [view, setView] = useState<'table' | 'card'>('table'); // Toggle between table and card views
+  const [allSubmissions, setAllSubmissions] = useState<IContribution[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [view, setView] = useState<'table' | 'card'>('table');
   const navigate = useNavigate();
 
-  // Fetch contributions when the component mounts
+  // Calculate submission status
+  const getStatus = (contribution: IContribution) => {
+    if (contribution.is_selected_for_publication === 1) return 'approved';
+    const createdAt = new Date(contribution.created_at!);
+    const now = new Date();
+    const diffDays = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 3600 * 24));
+    return diffDays > 14 ? 'rejected' : 'pending';
+  };
+
+  // Filter and search submissions
+  const filteredSubmissions = allSubmissions.filter(submission => {
+    const matchesSearch = submission.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = statusFilter === "all" || getStatus(submission) === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  // Pagination calculations
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentSubmissions = filteredSubmissions.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Fetch all submissions
   useEffect(() => {
     const fetchContributions = async () => {
+      let userId = '';
+      const storedUserData = localStorage.getItem('userData') || sessionStorage.getItem('userData');
+      
+      if (storedUserData) {
+        try {
+          const userData = JSON.parse(storedUserData);
+          userId = userData?.id.p || '';
+        } catch (error) {
+          console.error('Error parsing userData:', error);
+        }
+      }
+
       try {
-        const data = await MvContributionServices.getContributions();
-        setSubmissions(data); // Set contributions to the state
+        const data = await MvContributionServices.getContributions({ userId });
+        setAllSubmissions(data);
       } catch (error) {
         console.error("Error loading submissions:", error);
       }
     };
 
-    fetchContributions(); // Call the service to load contributions
+    fetchContributions();
   }, []);
 
-  const handleEdit = (id: string) => {
-    navigate(`/edit-submission/${id}`); // Navigate to edit page
+  // Handlers
+  const handlePageChange = (page: number) => setCurrentPage(page);
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
   };
-
+  const handleFilterChange = (filterName: string, value: string) => {
+    if (filterName === "status") {
+      setStatusFilter(value);
+      setCurrentPage(1);
+    }
+  };
+  const handleEdit = (id: string) => navigate(`/edit-submission/${id}`);
   const handleDelete = (id: string) => {
-    const updatedSubmissions = submissions.filter((submission) => submission.id !== id);
-    setSubmissions(updatedSubmissions);
+    setAllSubmissions(prev => prev.filter(sub => sub.id !== id));
   };
-
-  const handleCreateNew = () => {
-    navigate("/create-submission"); // Navigate to the create form
+  const handleCreateNew = () => navigate(MvRoutes.STUDENTS.CONTRIBUTION_FORM);
+  const handlePreview = (contribution: IContribution) => {
+    // Implement preview logic
+    console.log("Preview:", contribution);
   };
 
   return (
     <StudentLayout>
       <div className="submission-view">
-        {/* Header with title and create button */}
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold">Student Submissions</h2>
-          <MvButton
-            onClick={handleCreateNew}
-            className="py-2 px-4 font-extrabold"
-            variant="accent"
-          >
+          <MvButton onClick={handleCreateNew} className="py-2 px-4 font-extrabold" variant="accent">
             Create New Submission
           </MvButton>
         </div>
         <hr />
-        {/* Toggle view button */}
-        <div className="my-10 mb-5 flex items-center justify-between">
-          <h2>{view === "table" ? "Table" : "Card"} View</h2>
+
+        <SearchFilter
+          placeholder="Search submissions..."
+          onSearch={handleSearch}
+          onFilterChange={handleFilterChange}
+          filters={[
+            {
+              name: "status",
+              label: "Status",
+              options: [
+                { value: "all", label: "All" },
+                { value: "pending", label: "Pending" },
+                { value: "approved", label: "Approved" },
+                { value: "rejected", label: "Rejected" }
+              ]
+            }
+          ]}
+          className="my-4"
+        />
+
+        <div className="my-4 flex items-center justify-between">
+          <h2 className="text-lg">{view === "table" ? "Table" : "Card"} View</h2>
           <MvButton
             onClick={() => setView(view === 'table' ? 'card' : 'table')}
             size="sm"
@@ -66,25 +130,33 @@ export const MvStudentSubmissionsView = () => {
           </MvButton>
         </div>
 
-        {/* Conditional rendering of the submissions list */}
         {view === 'table' ? (
           <MvContributionTable
-            contributions={submissions}
+            contributions={currentSubmissions}
             onEdit={handleEdit}
+            onPreview={handlePreview}
             onDelete={handleDelete}
           />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {submissions.map((submission) => (
+            {currentSubmissions.map((submission) => (
               <MvCard
                 key={submission.id}
                 contribution={submission}
-                onEdit={()=>handleEdit}
-                onDelete={()=>handleDelete}
+                onEdit={() => handleEdit(submission.id)}
+                onDelete={() => handleDelete(submission.id)}
               />
             ))}
           </div>
         )}
+
+        <MvPagination
+          currentPage={currentPage}
+          totalItems={filteredSubmissions.length}
+          itemsPerPage={itemsPerPage}
+          onPageChange={handlePageChange}
+          className="mt-6"
+        />
       </div>
     </StudentLayout>
   );

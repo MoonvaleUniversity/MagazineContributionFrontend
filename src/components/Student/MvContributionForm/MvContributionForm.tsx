@@ -1,12 +1,12 @@
 import React, { useState, useRef } from "react";
 import { MvButton } from "../../MvButton";
-import { MvInput, MvTextarea, MvFileUpload, MvCheckbox } from "../../MvInput";
+import { MvInput, MvFileUpload, MvCheckbox } from "../../MvInput";
 import { MvModal } from "../../MvModal";
 import { MvContributionServices } from "../../../services/ContributionService";
 
 export const MvContributionForm: React.FC = () => {
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+
   const [document, setDocument] = useState<File | null>(null);
   const [images, setImages] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -80,7 +80,17 @@ const handleFilesSelect = (selectedFiles: File[]) => {
 
     try {
       const closureDateId = 1;
-      const userId = 1;
+      let userId = 0;
+      const storedUserData = localStorage.getItem('userData') || sessionStorage.getItem('userData');
+      
+      if (storedUserData) {
+        try {
+          const userData = JSON.parse(storedUserData);
+          userId = userData?.id || 0;
+        } catch (error) {
+          console.error('Error parsing userData:', error);
+        }
+      }
 
       await MvContributionServices.createContribution(
         userId,
@@ -94,7 +104,7 @@ const handleFilesSelect = (selectedFiles: File[]) => {
 
       // Reset form
       setTitle("");
-      setDescription("");
+    
       setDocument(null);
       setImages([]);
       setTermsAccepted(false);
@@ -125,11 +135,7 @@ const handleFilesSelect = (selectedFiles: File[]) => {
           required
         />
         
-        <MvTextarea
-          label="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
+       
         
         <MvFileUpload
           onFilesSelect={handleFilesSelect}
