@@ -79,7 +79,7 @@ export const MvStudentSubmissionsView = () => {
       setCurrentPage(1);
     }
   };
-  const handleEdit = (id: string) => navigate(`/edit-submission/${id}`);
+  
   const handleDelete = (id: string) => {
     setAllSubmissions(prev => prev.filter(sub => sub.id !== id));
   };
