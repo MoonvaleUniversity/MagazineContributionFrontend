@@ -26,7 +26,7 @@ export const MvStudentSubmissionsView = () => {
     const createdAt = new Date(contribution.created_at!);
     const now = new Date();
     const diffDays = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 3600 * 24));
-    return diffDays > 14 ? 'rejected' : 'pending';
+    return diffDays > 3 ? 'rejected' : 'pending';
   };
 
   // Filter and search submissions
@@ -84,21 +84,18 @@ export const MvStudentSubmissionsView = () => {
     setAllSubmissions(prev => prev.filter(sub => sub.id !== id));
   };
   const handleCreateNew = () => navigate(MvRoutes.STUDENTS.CONTRIBUTION_FORM);
-  const handlePreview = (contribution: IContribution) => {
-    // Implement preview logic
-    console.log("Preview:", contribution);
-  };
+
 
   return (
     <StudentLayout>
-      <div className="submission-view">
-        <div className="flex items-center justify-between mb-4">
+      <div className="max-w-6xl mx-auto p-4">
+        {/* Page Header */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
           <h2 className="text-2xl font-bold">Student Submissions</h2>
           <MvButton onClick={handleCreateNew} className="py-2 px-4 font-extrabold" variant="accent">
-            Create New Submission
+            + New Submission
           </MvButton>
         </div>
-        <hr />
 
         <SearchFilter
           placeholder="Search submissions..."
@@ -119,37 +116,39 @@ export const MvStudentSubmissionsView = () => {
           className="my-4"
         />
 
-        <div className="my-4 flex items-center justify-between">
-          <h2 className="text-lg">{view === "table" ? "Table" : "Card"} View</h2>
+        {/* View Toggle Button */}
+        <div className="flex items-center justify-between my-4">
+          <h2 className="text-lg font-medium">{view === "table" ? "Table View" : "Card View"}</h2>
           <MvButton
+            variant="secondary"
             onClick={() => setView(view === 'table' ? 'card' : 'table')}
+            className="border-none  transition"
             size="sm"
-            variant="primary"
           >
-            Switch to {view === 'table' ? 'Card View' : 'Table View'}
+            {view === 'table' ? '📄 Switch to Card View' : '📋 Switch to Table View'}
           </MvButton>
         </div>
 
+        {/* Content Display */}
         {view === 'table' ? (
           <MvContributionTable
             contributions={currentSubmissions}
-            onEdit={handleEdit}
-            onPreview={handlePreview}
             onDelete={handleDelete}
           />
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {currentSubmissions.map((submission) => (
               <MvCard
                 key={submission.id}
                 contribution={submission}
-                onEdit={() => handleEdit(submission.id)}
+               
                 onDelete={() => handleDelete(submission.id)}
               />
             ))}
           </div>
         )}
 
+        {/* Pagination */}
         <MvPagination
           currentPage={currentPage}
           totalItems={filteredSubmissions.length}

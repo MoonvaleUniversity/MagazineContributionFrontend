@@ -75,6 +75,7 @@ export const MvFileUpload = forwardRef<HTMLInputElement, FileUploadProps>(
       setImages(updatedImages);
       setDocuments(updatedDocs);
       onFilesSelect?.([...updatedImages, ...updatedDocs]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [images, documents, onFilesSelect]);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -119,7 +120,7 @@ export const MvFileUpload = forwardRef<HTMLInputElement, FileUploadProps>(
         <label
           className={clsx(
             "flex flex-col items-center justify-center w-full p-6 border-2 border-dashed rounded-4xl cursor-pointer",
-            "bg-background-50 border-primary-600 text-primary-600 dark:bg-secondary-dark-500",
+            "bg-background-50  text-primary-600 dark:text-primary-dark-400 dark:bg-secondary-dark-500",
             isDragOver && "border-blue-500"
           )}
           onDrop={handleDrop}

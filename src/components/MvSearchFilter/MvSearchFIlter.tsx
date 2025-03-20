@@ -37,7 +37,7 @@ const SearchFilter = ({
 
   return (
     <div className={`flex flex-col items-center justify-between md:flex-row gap-4 mb-4 ${className}`}>
-      <div className="flex items-center max-md:max-w-full w-full max-w-lg border-2 rounded-4xl p-2 border-primary-400 dark:border-primary-dark-500 bg-secondary-200 dark:bg-secondary-dark-900">
+      <div className="flex items-center max-md:max-w-full w-full max-w-lg border-2 rounded-2xl p-2 border-primary-400 dark:border-primary-dark-500 bg-secondary-200 dark:bg-secondary-dark-900">
         <input 
           type="text" 
           placeholder={placeholder}
@@ -53,9 +53,9 @@ const SearchFilter = ({
           <label className="text-sm dark:text-white">{filter.label}:</label>
           <select
             onChange={handleFilterChange(filter.name)}
-            className=" border-2 rounded-4xl p-2 border-primary-400 dark:border-primary-dark-500 bg-secondary-200 dark:bg-secondary-dark-900"
+            className=" border-2 rounded-2xl p-2 border-primary-400 dark:border-primary-dark-500 bg-secondary-200 dark:bg-secondary-dark-900"
           >
-            <option value="">All</option>
+          
             {filter.options.map(option => (
               <option key={option.value} value={option.value}>
                 {option.label}
