@@ -84,5 +84,8 @@ export const MvContributionServices = {
     }
   },
   
-  
+  async updateContributionStatus(){
+    console.log("");
+  },
+
 };

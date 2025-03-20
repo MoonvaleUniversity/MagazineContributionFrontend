@@ -8,6 +8,8 @@ export type Filter = {
   options: Array<{ value: string; label: string }>;
 };
 
+
+// components/SearchFilter.tsx
 interface SearchFilterProps {
   placeholder: string;
   onSearch: (query: string) => void;
@@ -15,9 +17,10 @@ interface SearchFilterProps {
   filters?: Filter[];
   className?: string;
 }
+
 const SearchFilter = ({ 
   onSearch, 
-  onFilterChange = ()=>{},
+  onFilterChange = () => {},
   placeholder, 
   filters = [],
   className = "",
@@ -45,27 +48,27 @@ const SearchFilter = ({
           onChange={handleSearchChange}
           className="w-full outline-none bg-transparent px-2 text-black dark:text-white"
         />
-        <AiOutlineSearch className="w-6 h-6  text-gray-500 dark:text-gray-400" />
+        <AiOutlineSearch className="w-6 h-6 text-gray-500 dark:text-gray-400" />
       </div>
       
-      {filters.map(filter => (
-        <div key={filter.name} className="flex items-center gap-2">
-          <label className="text-sm dark:text-white">{filter.label}:</label>
-          <select
-            onChange={handleFilterChange(filter.name)}
-            className=" border-2 rounded-2xl p-2 border-primary-400 dark:border-primary-dark-500 bg-secondary-200 dark:bg-secondary-dark-900"
-          >
-          
-            {filter.options.map(option => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </div>
-      ))}
+      <div className="flex flex-wrap gap-4">
+        {filters.map(filter => (
+          <div key={filter.name} className="flex items-center gap-2 min-w-[200px]">
+            <label className="text-sm dark:text-white">{filter.label}:</label>
+            <select
+              onChange={handleFilterChange(filter.name)}
+              className="border-2 rounded-2xl p-2 border-primary-400 dark:border-primary-dark-500 bg-secondary-200 dark:bg-secondary-dark-900 flex-1"
+            >
+              {filter.options.map(option => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
-
 export default SearchFilter;

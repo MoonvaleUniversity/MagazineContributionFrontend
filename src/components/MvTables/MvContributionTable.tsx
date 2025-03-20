@@ -1,16 +1,22 @@
 import React from "react";
 import { IContribution } from "../../app/Types/objects/contribution";
 import { useNavigate } from "react-router-dom";
-import { FaFilePdf, FaFileWord, FaImage, FaTrash, FaEye } from "react-icons/fa";
+import { FaFilePdf, FaFileWord, FaImage, FaTrash, FaEye, FaLock,  } from "react-icons/fa";
 
 interface MvContributionTableProps {
   contributions: IContribution[];
   onDelete: (id: string) => void;
-}
+  onDownloadZip?: (id: string) => void;
+  isMarketingManager?: boolean;
+  closureDates?: { [key: string]: { final_closure_date: string }}; // Added closure dates prop
+};
 
 const MvContributionTable: React.FC<MvContributionTableProps> = ({
   contributions,
   onDelete,
+  onDownloadZip,
+  closureDates = {},
+  isMarketingManager = false,
 }) => {
   const navigate = useNavigate();
 
@@ -50,6 +56,11 @@ const MvContributionTable: React.FC<MvContributionTableProps> = ({
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
               Title
             </th>
+            {isMarketingManager && (
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                Closure Date
+              </th>
+            )}
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
               Created At
             </th>
@@ -71,7 +82,7 @@ const MvContributionTable: React.FC<MvContributionTableProps> = ({
           {contributions.length === 0 ? (
             <tr>
               <td
-                colSpan={6}
+                colSpan={isMarketingManager ? 7 : 6}
                 className="px-6 py-4 text-center text-gray-500 dark:text-gray-300"
               >
                 No contributions available.
@@ -86,6 +97,11 @@ const MvContributionTable: React.FC<MvContributionTableProps> = ({
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
                   {contribution.name}
                 </td>
+                {isMarketingManager && (
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                    {formatDate(closureDates[contribution.closure_date_id]?.final_closure_date)}
+                  </td>
+                )}
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                   {formatDate(contribution.created_at)}
                 </td>
@@ -106,25 +122,34 @@ const MvContributionTable: React.FC<MvContributionTableProps> = ({
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                <span
-    className={`px-2 py-1 text-xs font-semibold rounded-full ${
-      getStatus(contribution) === "Approved"
-        ? "bg-green-600 text-white dark:bg-green-300 dark:text-green-900"
-        : getStatus(contribution) === "Rejected"
-        ? "bg-red-600 text-white dark:bg-red-300 dark:text-red-900"
-        : "bg-yellow-600 text-white dark:bg-yellow-300 dark:text-yellow-900"
-    }`}
-  >
+                  <span
+                    className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                      getStatus(contribution) === "Approved"
+                        ? "bg-green-600 text-white dark:bg-green-300 dark:text-green-900"
+                        : getStatus(contribution) === "Rejected"
+                        ? "bg-red-600 text-white dark:bg-red-300 dark:text-red-900"
+                        : "bg-yellow-600 text-white dark:bg-yellow-300 dark:text-yellow-900"
+                    }`}
+                  >
                     {getStatus(contribution)}
                   </span>
                 </td>
-
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div className="flex items-center space-x-4">
+                    {isMarketingManager && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDownloadZip?.(contribution.id);
+                        }}
+                        className="text-purple-600 hover:text-purple-900 dark:text-purple-400 dark:hover:text-purple-300 flex items-center"
+                      >
+                        <FaLock className="mr-1" />
+                        ZIP
+                      </button>
+                    )}
                     <button
-                      onClick={() =>
-                        navigate(`/contributions/${contribution.id}`)
-                      }
+                      onClick={() => navigate(`/contributions/${contribution.id}`)}
                       className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 flex items-center"
                     >
                       <FaEye className="mr-1" />

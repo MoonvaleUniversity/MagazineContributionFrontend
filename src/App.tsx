@@ -15,6 +15,8 @@ import MMFaculty from "./pages/Marketing Manager/MvMMfaculty";
 import { AdminUsers } from "./pages/Admin/AdminUser";
 import { MMUsers } from "./pages/Marketing Manager/MMUser";
 import { McUsers } from "./pages/Marketing Coordinator/McUser";
+import { McSubmissionsView } from "./pages/Marketing Coordinator/MvMcSubmissionView";
+import { MmSubmissionsView } from "./pages/Marketing Manager/MMContributions";
 
 
 
@@ -89,11 +91,21 @@ function App() {
            <MMUsers/>
           </ProtectedRoute>
         } />
+        <Route path={MvRoutes.MARKET_MANAGER.SELECTED_CONTRIBUTIONS} element={
+          <ProtectedRoute roles={['Marketing Manager']}>
+         <MmSubmissionsView/>
+          </ProtectedRoute>
+        } />
           {/* Marketing Coordinator-specific routes */}
        
         <Route path={MvRoutes.MARKET_COORDINATOR.USERS} element={
           <ProtectedRoute roles={['Marketing Coordinator']}>
            <McUsers/>
+          </ProtectedRoute>
+        } />
+        <Route path={MvRoutes.MARKET_COORDINATOR.CONTRIBUTIONS} element={
+          <ProtectedRoute roles={['Marketing Coordinator']}>
+         <McSubmissionsView/>
           </ProtectedRoute>
         } />
 

@@ -8,7 +8,8 @@ import { IClosureDate } from "../../app/MvObjects/clousuredate";
 
 interface MvCardProps {
   contribution: IContribution;
-  
+  onStatusChange?: (newStatus: 'approved' | 'rejected') => void;
+  isMarketingCoordinator?: boolean;
   onDelete: () => void;
 }
 
@@ -20,7 +21,8 @@ const getStatus = (contribution: IContribution) => {
   return diffDays > 14 ? "Rejected" : "Pending";
 };
 
-const MvCard: React.FC<MvCardProps> = ({ contribution, onDelete }) => {
+const MvCard: React.FC<MvCardProps> = ({ contribution, onDelete, onStatusChange,
+  isMarketingCoordinator = false  }) => {
   const navigate = useNavigate();
   const [closureDate, setClosureDate] = useState<IClosureDate | null>(null);
   const [loading, setLoading] = useState(true);
@@ -85,7 +87,10 @@ const MvCard: React.FC<MvCardProps> = ({ contribution, onDelete }) => {
         <h3 className="text-lg font-bold text-gray-800 dark:text-background-200">
           {contribution.name}
         </h3>
-
+        {isMarketingCoordinator && (
+          <div className="text-sm text-gray-500 dark:text-background-400">
+            User ID: {contribution.user_id}
+          </div>)}
         <div className="flex items-center text-sm text-gray-500 dark:text-background-400">
           {getFileType(contribution.doc_url) === "PDF" ? (
             <FaFilePdf className="mr-2 text-red-500" />
@@ -145,6 +150,25 @@ const MvCard: React.FC<MvCardProps> = ({ contribution, onDelete }) => {
       </div>
       {/* Action Buttons */}
       <div className="mt-4 flex justify-between">
+      {isMarketingCoordinator && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onStatusChange?.(
+                  contribution.is_selected_for_publication === 1 
+                    ? 'rejected' 
+                    : 'approved'
+                );
+              }}
+              className={`px-2 py-1 text-xs rounded-full ${
+                contribution.is_selected_for_publication === 1
+                  ? 'bg-red-100 text-red-600 hover:bg-red-200'
+                  : 'bg-green-100 text-green-600 hover:bg-green-200'
+              }`}
+            >
+              {contribution.is_selected_for_publication === 1 ? 'Reject' : 'Approve'}
+            </button>
+          )}
         <button
                              onClick={() =>
                                navigate(`/contributions/${contribution.id}`)
