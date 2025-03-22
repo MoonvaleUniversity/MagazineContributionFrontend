@@ -14,9 +14,12 @@ import MvNotAuthorized from "./pages/Not Found/MvNotAuthorized";
 import MMFaculty from "./pages/Marketing Manager/MvMMfaculty";
 import { AdminUsers } from "./pages/Admin/AdminUser";
 import { MMUsers } from "./pages/Marketing Manager/MMUser";
-import { McUsers } from "./pages/Marketing Coordinator/McUser";
+import { McStudents } from "./pages/Marketing Coordinator/McStudent";
 import { McSubmissionsView } from "./pages/Marketing Coordinator/MvMcSubmissionView";
 import { MmSubmissionsView } from "./pages/Marketing Manager/MMContributions";
+import { AdminSubmissionsView } from "./pages/Admin/AdminContributions";
+import { McGuests } from "./pages/Marketing Coordinator/McGuests";
+import RegisterGuest from "./pages/MvRegister/MvRegister";
 
 
 
@@ -26,9 +29,10 @@ function App() {
       <Routes>
         {/* Public Routes */}
         <Route path={MvRoutes.LOGIN} element={<Login />} />
+        <Route path={MvRoutes.REGISTER} element={<RegisterGuest />} />
         <Route path={MvRoutes.EMAIL_VERIFY} element={<MvEmailVerify />} />
         <Route path={MvRoutes.NOTFOUND} element={<MvNotFound />} />
-        <Route path={MvRoutes.NOTFOUND} element={<MvNotAuthorized />} />
+        <Route path={MvRoutes.NOTAUTHORIZED} element={<MvNotAuthorized />} />
         
         {/* Global dashboard route */}
         <Route path={MvRoutes.DASHBOARD} element={
@@ -80,6 +84,11 @@ function App() {
             <AdminUsers/>
           </ProtectedRoute>
         } />
+        <Route path={MvRoutes.ADMIN.CONTRIBUTION} element={
+          <ProtectedRoute roles={['Admin']}>
+            <AdminSubmissionsView/>
+          </ProtectedRoute>
+        } />
           {/* Marketing Manager-specific routes */}
         <Route path={MvRoutes.MARKET_MANAGER.FACULTY} element={
           <ProtectedRoute roles={['Marketing Manager']}>
@@ -98,9 +107,14 @@ function App() {
         } />
           {/* Marketing Coordinator-specific routes */}
        
-        <Route path={MvRoutes.MARKET_COORDINATOR.USERS} element={
+        <Route path={MvRoutes.MARKET_COORDINATOR.STUDENTS} element={
           <ProtectedRoute roles={['Marketing Coordinator']}>
-           <McUsers/>
+           <McStudents/>
+          </ProtectedRoute>
+        } />
+        <Route path={MvRoutes.MARKET_COORDINATOR.GUEST} element={
+          <ProtectedRoute roles={['Marketing Coordinator']}>
+           <McGuests/>
           </ProtectedRoute>
         } />
         <Route path={MvRoutes.MARKET_COORDINATOR.CONTRIBUTIONS} element={

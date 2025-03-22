@@ -26,6 +26,7 @@ const [userData, setUserData] = useState<{ name?: string; email?: string } | nul
     { icon: <FiHome/>, label: 'Dashboard', to: MvRoutes.ADMIN.DASHBOARD},
     { icon: <FaUserCog  />, label: 'User Management', to: MvRoutes.ADMIN.USERS},
     { icon: <FaChalkboardTeacher />, label: 'Faculty' , to:MvRoutes.ADMIN.FACULTY},
+    { icon: <FaChalkboardTeacher />, label: 'Contributions' , to:MvRoutes.ADMIN.CONTRIBUTION},
     { icon: <FaRegCalendarAlt />, label: 'Academic Year', to:MvRoutes.ADMIN.ACADEMIC_YEAR },
     { icon: <AiOutlineStop />, label: 'Closure Dates', to:MvRoutes.ADMIN.CLOSURE_DATES },
   ];

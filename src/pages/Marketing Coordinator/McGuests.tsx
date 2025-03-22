@@ -11,8 +11,8 @@ import MarketingCoordinatorLayout from "../../layout/MarketingCoordinatorLayout"
 import { getAllUsers, updateUser, createUser, deleteUser } from "../../services/userService";
 import SearchFilter from "../../components/MvSearchFilter/MvSearchFIlter";
 
-export const McUsers = () => {
-  const [students, setStudents] = useState<User[]>([]);
+export const McGuests = () => {
+  const [guests, setGuests] = useState<User[]>([]);
   const [filteredStudents, setFilteredStudents] = useState<User[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -30,22 +30,22 @@ export const McUsers = () => {
 
   // Filter students
   useEffect(() => {
-    const filtered = students.filter(student => {
-      const searchMatch = [student.name, student.email].some(field => 
+    const filtered = guests.filter(guest => {
+      const searchMatch = [guest.name, guest.email].some(field => 
         field.toLowerCase().includes(searchQuery.toLowerCase()))
-      return searchMatch && student.role === "Student";
+      return searchMatch && guest.role === "Guest";
     });
     setFilteredStudents(filtered);
     setCurrentPage(1);
-  }, [searchQuery, students]);
+  }, [searchQuery, guests]);
 
   const fetchStudents = async () => {
     try {
       setLoading(true);
       const data = await getAllUsers();
       // Filter to only show Students
-      const students = data.filter(user => user.role === "Student");
-      setStudents(students);
+      const students = data.filter(user => user.role === "Guest");
+      setGuests(students);
     } catch (error) {
       setError(error instanceof Error ? error.message : "Failed to fetch students");
     } finally {
@@ -160,7 +160,7 @@ export const McUsers = () => {
           ) : (
             <tr>
               <td colSpan={5} className="text-center p-4">
-                {students.length === 0 ? "No students found" : "No matching students"}
+                {guests.length === 0 ? "No students found" : "No matching students"}
               </td>
             </tr>
           )}
@@ -178,7 +178,7 @@ export const McUsers = () => {
       <MvModal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title={editingStudent ? "Edit Student" : "Create New Student"}
+        title={editingStudent ? "Edit Guest" : "Create New Guest"}
       >
         <AccountCreationForm
           fixedRole="Student"

@@ -1,6 +1,6 @@
 // components/MvAccountCreation/MvAccountCreation.tsx
 import { useState, FormEvent } from "react";
-import { MvCheckbox, MvInput } from "../../components/MvInput";
+import { MvCheckbox, MvInput, MvPasswordInput } from "../../components/MvInput";
 import { MvButton } from "../../components/MvButton";
 
 interface AccountCreationFormProps {
@@ -90,14 +90,14 @@ const AccountCreationForm: React.FC<AccountCreationFormProps> = ({
 
       {!isEditMode && (
         <>
-          <MvInput
+          <MvPasswordInput
             label="Password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          <MvInput
+          <MvPasswordInput
             label="Confirm Password"
             type="password"
             value={confirmPassword}

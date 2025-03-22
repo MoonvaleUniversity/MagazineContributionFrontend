@@ -1,25 +1,38 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { MvCheckbox, MvInput, MvPasswordInput } from "../../components/MvInput";
 import { MvButton } from "../../components/MvButton";
 import { MvThemeToggle } from "../../components/MvThemeToggle";
 import { loginUser } from "../../services/AuthService";
 import LoginPostData from "../../app/Types/Auth/LoginPostData";
 import { ApiError } from "../../app/MvApi";
-import { useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import MvRoutes from "../../app/MvRoutes";
 import { LoginResponse } from "../../app/Types/Auth/loginResponse";
 import { MvLoader } from "../../components/MvLoader";
 import { logo_dark, logo_light } from "../../app/MvConstants";
+import { MvModal } from "../../components/MvModal";
+
 
 const Login: React.FC = () => {
   const [error, setError] = useState<ApiError>();
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [showRegistrationSuccess, setShowRegistrationSuccess] = useState(false);
   const [loginFormData, setLoginFormData] = useState<LoginPostData>({
     email: "",
     password: "",
   });
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.registrationSuccess) {
+      setShowRegistrationSuccess(true);
+      // Clear the state to prevent showing message on refresh
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location, navigate]);
+
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setLoginFormData((prevData) => ({
@@ -63,7 +76,9 @@ const Login: React.FC = () => {
         } else if (userRole === "Marketing Manager") {
           navigate(MvRoutes.MARKET_MANAGER.FACULTY); // Example route for Student
         } else if (userRole === "Marketing Coordinator") {
-          navigate(MvRoutes.MARKET_COORDINATOR.USERS); // Example route for Student
+          navigate(MvRoutes.MARKET_COORDINATOR.STUDENTS
+            
+          ); // Example route for Student
         } else {
           navigate(MvRoutes.DASHBOARD); // Default route
         }
@@ -97,6 +112,16 @@ const Login: React.FC = () => {
   return (
     <>
       {loading && <MvLoader />}
+      <MvModal 
+        isOpen={showRegistrationSuccess}
+        onClose={() => setShowRegistrationSuccess(false)}
+        title="Registration Successful"
+        className="text-green-700 bg-green-100 dark:bg-green-900 dark:text-green-100"
+      >
+        <div className="text-center p-4">
+          Your account has been created successfully. Please log in.
+        </div>
+      </MvModal>
     <div className="flex items-center justify-center min-h-screen">
       <form
         onSubmit={handleLogin}
@@ -135,13 +160,16 @@ const Login: React.FC = () => {
           checked={rememberMe}
           onChange={(e) => setRememberMe(e.target.checked)}
         />
-        {error && <p className="text-center text-red-500">{error.message}</p>}{" "}
         {/* Display error message */}
+        {error && <p className="text-center text-red-500">{error.message}</p>}{" "}
         <div className="flex flex-col w-full gap-0">
           <MvButton className="w-1/2 mx-auto mt-4" disabled={loading}>
             {loading ? "Logging In..." : "Log In"} {/* Show loading state */}
           </MvButton>
         </div>
+       <p className="self-center mr-4 dark:text-primary-50">
+            Not a registered user?<Link to={MvRoutes.REGISTER} ><u> Register as guest</u></Link>
+          </p>
       </form>
       <MvThemeToggle />
     </div>

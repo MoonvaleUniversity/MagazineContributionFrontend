@@ -1,5 +1,6 @@
 const MvRoutes = {
   LOGIN: "/" ,
+  REGISTER: "/register",
   DASHBOARD: "/dashboard",
   NOTFOUND: "/404",
   NOTAUTHORIZED: "/404",
@@ -16,6 +17,7 @@ const MvRoutes = {
     CLOSURE_DATES: "/admin/closure-dates",
     ACADEMIC_YEAR: "/admin/academic-year",
     FACULTY: "/admin/faculty",
+    CONTRIBUTION: "/admin/contribution",
     PROFILE_EDIT: "/students/profile-edit",
   },
   MARKET_MANAGER: {
@@ -27,7 +29,8 @@ const MvRoutes = {
   },
   MARKET_COORDINATOR: {
     DASHBOARD: "",
-    USERS: "mc/users",
+    STUDENTS: "mc/students",
+    GUEST: "mc/guest",
     CONTRIBUTIONS: "mc/contributions",
     PROFILE_EDIT: "/students/profile-edit",
   },

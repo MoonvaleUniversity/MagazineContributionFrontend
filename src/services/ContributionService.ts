@@ -1,6 +1,8 @@
 
-import { getData, 
-   uploadMultimedia } from "../app/MvApi";
+import {
+  getData,
+  uploadMultimedia
+} from "../app/MvApi";
 import { MvUrl } from "../app/MvUrl";
 
 import { ApiContributionResponse, IContribution } from "../app/Types/objects/contribution";
@@ -8,44 +10,44 @@ import { ApiContributionResponse, IContribution } from "../app/Types/objects/con
 export const MvContributionServices = {
   // Fetch contributions
 
- getContributions: async (
-  options?: { userId?: string; facultyId?: string; page?: number; }
-): Promise<IContribution[]> => {
-  try {
-    // Build query parameters properly
-    const queryParams = new URLSearchParams();
-    if (options?.userId) queryParams.append("user_id", options.userId);
-    if (options?.facultyId) queryParams.append("faculty_id", options.facultyId);
-    if (options?.page) queryParams.append("page", options.page.toString());
+  getContributions: async (
+    options?: { userId?: string; facultyId?: string; page?: number; }
+  ): Promise<IContribution[]> => {
+    try {
+      // Build query parameters properly
+      const queryParams = new URLSearchParams();
+      if (options?.userId) queryParams.append("user_id", options.userId);
+      if (options?.facultyId) queryParams.append("faculty_id", options.facultyId);
+      if (options?.page) queryParams.append("page", options.page.toString());
 
-    // Append parameters correctly to the URL
-    const url = `${MvUrl.GET_CONTRIBUTIONS}?${queryParams.toString()}`;
+      // Append parameters correctly to the URL
+      const url = `${MvUrl.GET_CONTRIBUTIONS}?${queryParams.toString()}`;
 
-    // Call API with the corrected URL
-    const response = await getData(url);
+      // Call API with the corrected URL
+      const response = await getData(url);
 
-    if (!response?.data?.contributions?.data || !Array.isArray(response.data.contributions.data)) {
-      throw new Error("Invalid response format");
-    }
+      if (!response?.data?.contributions?.data || !Array.isArray(response.data.contributions.data)) {
+        throw new Error("Invalid response format");
+      }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return response.data.contributions.data.map((item: any) => ({
-      id: item.id.toString(),
-      name: item.name,
-      doc_url: item.doc_url,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      image_url: Array.isArray(item.images) ? item.images.map((img: any) => img.image_url) : [],
-      closure_date_id: item.closure_date_id.toString(),
-      user_id: item.user_id.toString(),
-      created_by: item.created_by?.toString() || "",
-      created_at: item.created_at,
-      is_selected_for_publication: item.is_selected_for_publication
-    }));
-  } catch (error) {
-    console.error("Error fetching contributions:", error);
-    throw error;
-  }
-},
+      return response.data.contributions.data.map((item: any) => ({
+        id: item.id.toString(),
+        name: item.name,
+        doc_url: item.doc_url,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        image_url: Array.isArray(item.images) ? item.images.map((img: any) => img.image_url) : [],
+        closure_date_id: item.closure_date_id.toString(),
+        user_id: item.user_id.toString(),
+        created_by: item.created_by?.toString() || "",
+        created_at: item.created_at,
+        is_selected_for_publication: item.is_selected_for_publication
+      }));
+    } catch (error) {
+      console.error("Error fetching contributions:", error);
+      throw error;
+    }
+  },
 
 
   createContribution: async (
@@ -58,13 +60,13 @@ export const MvContributionServices = {
     try {
       if (!userId) throw new Error("User ID is required");
       if (!closureDateId) throw new Error("Closure Date ID is required");
-  
+
       const formData = new FormData();
       formData.append("user_id", userId.toString()); // Adjusted field name
       formData.append("closure_date_id", closureDateId.toString()); // Added closure_date_id
       formData.append("name", name);
       formData.append("doc", docFile); // Adjusted field name
-  
+
       imageFiles.forEach((file) => {
         formData.append("images[]", file); // Adjusted field name
       });
@@ -72,19 +74,19 @@ export const MvContributionServices = {
         console.log(`${key}:`, value);
       }
       const response = await uploadMultimedia(MvUrl.UPLOAD_CONTRIBUTION, formData);
-  
+
       if (!response?.data || typeof response.data !== "object") {
         throw new Error("Invalid response: Expected contribution object.");
       }
-  
+
       return response.data as ApiContributionResponse;
     } catch (error) {
       console.error("Error creating contribution:", error);
       throw error;
     }
   },
-  
-  async updateContributionStatus(){
+
+  async updateContributionStatus() {
     console.log("");
   },
 
