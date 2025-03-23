@@ -77,7 +77,6 @@ const handleFilesSelect = (selectedFiles: File[]) => {
 
     setError(null);
     setIsSubmitting(true);
-
     try {
       const closureDateId = 1;
       let userId = 0;

@@ -116,7 +116,7 @@ export const AdminSubmissionsView = () => {
     <MvStats title="Rejected" value={calculateStats().rejected} trend="negative" />
     <MvStats title="Pending" value={calculateStats().pending} trend="neutral" />
     <MvStats title="Overdue" value={calculateStats().overdue} trend="negative" />
-  </div>
+  </div>               
 
         {/* Search and Filter */}
         <SearchFilter

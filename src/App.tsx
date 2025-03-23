@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MvRoutes from "./app/MvRoutes";
 import Login from "./pages/MvAuth/MvLogin";
 import MvEmailVerify from "./pages/MvAuth/MvEmailVerify";
-import { MvStudentDashboard, MvStudentSubmissionsView, MvStudentContributionForm, MvStudentProfileEdit } from "./pages/Student";
+import { MvStudentSubmissionsView, MvStudentContributionForm, MvStudentProfileEdit } from "./pages/Student";
 import MvNotFound from "./pages/Not Found/MvNotFound";
 import { AdminClosureDates } from "./pages/Admin/AdminClosureDate";
 import { AdminAcademicYears } from "./pages/Admin/AdminAcademicYear";
@@ -20,6 +20,7 @@ import { MmSubmissionsView } from "./pages/Marketing Manager/MMContributions";
 import { AdminSubmissionsView } from "./pages/Admin/AdminContributions";
 import { McGuests } from "./pages/Marketing Coordinator/McGuests";
 import RegisterGuest from "./pages/MvRegister/MvRegister";
+import { CanvasCorner } from "./pages/MvCanvasCorner/MvCanvasCorner";
 
 
 
@@ -44,7 +45,7 @@ function App() {
         {/* Student-specific routes */}
         <Route path={MvRoutes.STUDENTS.DASHBOARD} element={
           <ProtectedRoute roles={['Student']}>
-            <MvStudentDashboard />
+            <CanvasCorner/>
           </ProtectedRoute>
         } />
         <Route path={MvRoutes.STUDENTS.SUBMISSIONS} element={

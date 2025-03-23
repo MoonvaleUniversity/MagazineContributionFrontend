@@ -28,6 +28,7 @@ const MvContributionTable: React.FC<MvContributionTableProps> = ({
   const navigate = useNavigate();
 
   const getStatus = (contribution: IContribution) => {
+    
     if (contribution.is_selected_for_publication === 1) return "Approved";
     const createdAt = new Date(contribution.created_at!);
     const now = new Date();
