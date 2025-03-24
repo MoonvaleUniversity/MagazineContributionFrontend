@@ -96,7 +96,7 @@ export const CanvasCorner = () => {
       URL.revokeObjectURL(url);
     } catch (err) {
       console.error('Download failed:', err);
-      setError('Failed to download image. Please try again.');
+      setError('Failed to downloimage. Please try again.');
     } finally {
       setIsPolicyOpen(false);
     }
