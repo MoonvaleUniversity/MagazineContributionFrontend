@@ -5,11 +5,12 @@ import { useState, useEffect, useCallback } from 'react';
 interface SearchBarProps {
   onSearch: (query: string) => void;
   initialQuery?: string;
+  isdisabled?: boolean;
 }
 
 const DEBOUNCE_DELAY = 300;
 
-export const SearchBar = ({ onSearch, initialQuery = '' }: SearchBarProps) => {
+export const SearchBar = ({ onSearch, initialQuery = '' , isdisabled = false }: SearchBarProps) => {
   const [inputValue, setInputValue] = useState(initialQuery);
   const [isTyping, setIsTyping] = useState(false);
 
@@ -37,7 +38,8 @@ export const SearchBar = ({ onSearch, initialQuery = '' }: SearchBarProps) => {
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           placeholder="Search for artistic inspiration..."
-          className="flex items-center w-full border-2 rounded-4xl p-2 border-primary-400 dark:border-primary-dark-500 bg-white/90 dark:bg-secondary-dark-900  outline-none px-5 text-black dark:text-white"
+          disabled={isdisabled} 
+          className="flex items-center w-full border-2 rounded-4xl disabled:bg-white/50 disabled:dark:bg-secondary-dark-900/55 p-2 border-primary-400 dark:border-primary-dark-500 bg-white/90 dark:bg-secondary-dark-900  outline-none px-5 text-black dark:text-white"
         />
         {isTyping && (
           <div className="absolute right-24 top-4">

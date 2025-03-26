@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { AiOutlineDownload } from "react-icons/ai";
 import { MvModal } from "../../components/MvModal";
 import { downloadImage, searchArt } from "../../services/CanvasCornerService";
@@ -29,7 +29,18 @@ export const CanvasCorner = () => {
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [disable, setDisable] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null); // Add this ref
 
+  // Add cleanup effect
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
   // Function to handle new searches (reset state)
   const handleSearch = async (query: string) => {
     try {
@@ -41,6 +52,15 @@ export const CanvasCorner = () => {
       setSearchQuery(query);
     } catch (err) {
       console.error(err);
+      if(err == 'Rate limit exceeded.'){
+        setDisable(true);
+        // Clear any existing timeout
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        // Set new timeout
+        timeoutRef.current = setTimeout(() => {
+          setDisable(false);
+        }, 120000); // 2 minutes
+      }
       setError('Failed to fetch images. Please try again later.');
     } finally {
       setIsLoading(false);
@@ -58,6 +78,7 @@ export const CanvasCorner = () => {
     } catch (err) {
       console.error(err);
       setError('Failed to load more images. Please try again later.');
+      setDisable(true);
     } finally {
       setIsLoading(false);
     }
@@ -96,7 +117,7 @@ export const CanvasCorner = () => {
       URL.revokeObjectURL(url);
     } catch (err) {
       console.error('Download failed:', err);
-      setError('Failed to downloimage. Please try again.');
+      setError('Failed to download image. Please try again.');
     } finally {
       setIsPolicyOpen(false);
     }
@@ -112,6 +133,7 @@ export const CanvasCorner = () => {
       </p>
 
       <SearchBar 
+      isdisabled= {disable}
         onSearch={handleSearch} 
         initialQuery={searchQuery}
       />

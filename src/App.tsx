@@ -21,6 +21,7 @@ import { AdminSubmissionsView } from "./pages/Admin/AdminContributions";
 import { McGuests } from "./pages/Marketing Coordinator/McGuests";
 import RegisterGuest from "./pages/MvRegister/MvRegister";
 import { CanvasCorner } from "./pages/MvCanvasCorner/MvCanvasCorner";
+import { WelcomeUser } from "./pages/MvAuth/MvWelcomeUser";
 
 
 
@@ -34,6 +35,7 @@ function App() {
         <Route path={MvRoutes.EMAIL_VERIFY} element={<MvEmailVerify />} />
         <Route path={MvRoutes.NOTFOUND} element={<MvNotFound />} />
         <Route path={MvRoutes.NOTAUTHORIZED} element={<MvNotAuthorized />} />
+        <Route path={MvRoutes.WelcomeUser} element={<WelcomeUser />} />
         
         {/* Global dashboard route */}
         <Route path={MvRoutes.DASHBOARD} element={

@@ -5,6 +5,7 @@ const MvRoutes = {
   NOTFOUND: "/404",
   NOTAUTHORIZED: "/404",
   EMAIL_VERIFY: "/email-verification",
+  WelcomeUser: "/welcome-user",
   STUDENTS: {
     DASHBOARD: "/students/dashboard",
     SUBMISSIONS: "/students/submissions",

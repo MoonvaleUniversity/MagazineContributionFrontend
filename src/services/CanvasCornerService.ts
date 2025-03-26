@@ -30,7 +30,14 @@
           'Authorization': `Client-ID ${accessKey}`
         }
       });
-  
+      // Handle rate limits
+    if (response.status === 403 || response.status === 429) {
+    
+      return {
+        error: `Rate limit exceeded.`,
+        results: []
+      };
+    }
       // Handle HTTP errors
       if (!response.ok) {
         const errorData = await response.json();
