@@ -1,3 +1,5 @@
+export { MvDropdown } from './MvDropdown';
+
 export { MvDateInput } from './MvDateInput';
 export { MvFileUpload } from './MvFileUpload';
 export { MvTextarea } from './MvTextarea';

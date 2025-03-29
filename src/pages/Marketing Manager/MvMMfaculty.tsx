@@ -158,30 +158,30 @@ export const MMFaculty : React.FC = () => {
       <SearchFilter placeholder="Search faculties..." onSearch={setSearchQuery} />
 
       {error && <div className="text-red-500 mb-4">{error}</div>}
-
-      <table className="w-full border-collapse border border-gray-300">
-        <thead>
-          <tr className="bg-gray-200">
-            <th className="border p-2">Image</th>
-            <th className="border p-2">Name</th>
-            <th className="border p-2">Actions</th>
+      <div className="rounded-lg border border-gray-200 dark:border-gray-700">
+      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+        <thead className="bg-gray-50 dark:bg-primary-800">
+          <tr className="">
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Image</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider p-2">Name</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider p-2">Actions</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="bg-white dark:bg-primary-800 divide-y divide-gray-200 dark:divide-gray-700">
           {filteredFaculties?.length > 0 ? (
             filteredFaculties.map((faculty) => (
               <tr key={faculty.id}>
-                <td className="border p-2">
+                <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider p-2">
                   <img
                     src={faculty.image_url}
                     alt={faculty.name}
                     className="w-10 h-10 object-cover rounded-full"
                   />
                 </td>
-                <td className="border p-2">{faculty.name}</td>
-                <td className="border p-2 flex gap-2">
-                  <MvButton onClick={() => handleEdit(faculty.id)}>Edit</MvButton>
-                  <MvButton onClick={() => handleDelete(faculty.id)} className="bg-red-500" disabled={loading}>
+                <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider p-2">{faculty.name}</td>
+                <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider p-2 flex gap-2">
+                  <MvButton onClick={() => handleEdit(faculty.id)} size="sm">Edit</MvButton>
+                  <MvButton onClick={() => handleDelete(faculty.id)} className="bg-red-500" size="sm" disabled={loading}>
                     {loading ? <MvLoader /> : "Delete"}
                   </MvButton>
                 </td>
@@ -196,7 +196,7 @@ export const MMFaculty : React.FC = () => {
           )}
         </tbody>
       </table>
-
+</div>
       <MvModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} title={editingId ? "Edit Faculty" : "Add Faculty"}>
         <div className="space-y-4">
           {error && <div className="text-red-500">{error}</div>}
@@ -205,9 +205,17 @@ export const MMFaculty : React.FC = () => {
 
           <MvImageUpload onUpload={handleFileUpload} />
 
-          {/* {formData.image_url && type of formData.image_url== string (
-            <img src={formData.image_url} alt="Uploaded" className="w-20 h-20 object-cover rounded-lg" />
-          )} */}
+          {formData?.image_url && (
+  <img 
+    src={typeof formData.image_url === "string" 
+      ? formData.image_url 
+      : URL.createObjectURL(formData.image_url)} 
+    alt="Uploaded" 
+    className="w-20 h-20 object-cover rounded-lg"
+    onError={(e) => (e.currentTarget.style.display = "none")}
+  />
+)}
+
 
           <div className="flex justify-end">
             <MvButton onClick={handleSubmit} disabled={createLoading}>

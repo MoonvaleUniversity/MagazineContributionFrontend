@@ -1,114 +1,144 @@
-import React, { useState, useRef } from "react";
+
+import { useState, useEffect } from "react";
+import { getAllFaculties } from "../../../services/FacultyService";
 import { MvButton } from "../../MvButton";
-import { MvInput, MvTextarea, MvFileUpload, MvCheckbox } from "../../MvInput";
-import { MvModal } from "../../MvModal";
+import { MvDropdown, MvInput } from "../../MvInput";
+import { updateStudents } from "../../../services/StudentServices";
+
+
+
 
 export const MvProfileEdit: React.FC = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [bio, setBio] = useState("");
-  const [isProfilePublic, setIsProfilePublic] = useState(false);
-  const [profilePicture, setProfilePicture] = useState<File | null>(null);
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [facultyId, setFacultyId] = useState("");
+ 
   const [error, setError] = useState<string | null>(null);
+  const [faculties, setFaculties] = useState<Array<{ id: number; name: string }>>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+   
+  useEffect(() => {
+    const loadFaculties = async () => {
+      try {
+        const facultiesData = await getAllFaculties();
+        setFaculties(facultiesData);
+      } catch (error) {
+        console.error("Failed to load faculties:", error);
+      }
+    };
+    loadFaculties();
+  }, []);
 
-  // Modal state for image preview
-  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
-  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  const handleFileSelect = (selectedFiles: File[]) => {
-    if (selectedFiles.length > 0) {
-      const file = selectedFiles[0];
-      setProfilePicture(file);
-      const url = URL.createObjectURL(file);
-      setImagePreviewUrl(url);
-    }
-  };
-
-  const handleImagePreview = () => {
-    if (imagePreviewUrl) {
-      setIsImageModalOpen(true);
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!name || !email) {
-      setError("Please fill in your name and email.");
-      return;
-    }
-
+    setIsSubmitting(true);
     setError(null);
-    // Simulate profile update process
-    console.log({ name, email, bio, isProfilePublic, profilePicture });
-    alert("Profile updated successfully!");
+
+    try {
+      // Basic validation
+      if (!name || !email || !facultyId || !password || !confirmPassword) {
+        setError("Please fill in all required fields.");
+      }
+
+      if (password !== confirmPassword) {
+        setError("Passwords do not match.");
+      }
+
+      // Prepare data for API
+      const userData = {
+        name,
+        email,
+        faculty_id: facultyId, // Match backend expectation
+        password,
+        password_confirmation: confirmPassword, // Match backend validation rule
+      
+      };
+
+      let userId = 0;
+      const storedUserData = localStorage.getItem('userData') || sessionStorage.getItem('userData');
+      
+      if (storedUserData) {
+        try {
+          const userData = JSON.parse(storedUserData);
+          userId = userData?.id || 0;
+        } catch (error) {
+          console.error('Error parsing userData:', error);
+        }
+      }
+      
+      // Call update service
+      const response = await updateStudents(userId, userData);
+      
+      // Handle success
+      alert("Profile updated successfully!");
+      console.log("Update response:", response);
+      
+    } catch (error) {
+      let errorMessage = "Failed to update profile";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      setError(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
-
   return (
-    <>
-      <form
-        onSubmit={handleSubmit}
-        className="w-11/12 max-sm:w-11/12 p-6 mx-auto space-y-4 shadow-lg bg-background-100/40 dark:bg-secondary-dark-700 rounded-2xl"
-      >
-        <h2 className="text-xl text-center font-semibold text-primary-600 dark:text-primary-dark-200">
-          Edit Profile
-        </h2>
-        {error && <p className="text-sm text-red-500">{error}</p>}
-        <MvInput
-          label="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-        <MvInput
-          label="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <MvTextarea
-          label="Bio"
-          value={bio}
-          onChange={(e) => setBio(e.target.value)}
-        />
-        <div className="flex flex-col space-y-2">
-          <label className="text-sm text-gray-600 dark:text-primary-dark-200">
-            Profile Picture
-          </label>
-          <MvFileUpload
-            onFilesSelect={handleFileSelect}
-            onDocumentClick={handleImagePreview}
-            ref={fileInputRef}
-          />
-        </div>
-        <div className="flex items-center space-x-2">
-          <MvCheckbox
-            id="profilePublic"
-            label="Make Profile Public"
-            checked={isProfilePublic}
-            onChange={(e) => setIsProfilePublic(e.target.checked)}
-            className="w-4 h-4 border-gray-300 rounded text-primary-600 focus:ring-primary-500"
-          />
-        </div>
-        <MvButton type="submit" className="w-full">
-          Save Changes
-        </MvButton>
-      </form>
-
-      <MvModal
-        isOpen={isImageModalOpen}
-        onClose={() => setIsImageModalOpen(false)}
-        title="Profile Picture Preview"
-      >
-        {imagePreviewUrl ? (
-          <div className="image-preview">
-            <img src={imagePreviewUrl} alt="Profile Preview" className="w-full h-auto" />
-          </div>
-        ) : (
-          <p>No preview available.</p>
-        )}
-      </MvModal>
-    </>
+    <form
+      onSubmit={handleSubmit}
+      className="w-11/12 max-sm:w-11/12 p-6 mx-auto space-y-4 shadow-lg bg-background-100/40 dark:bg-secondary-dark-700 rounded-2xl"
+    >
+      <h2 className="text-xl text-center font-semibold text-primary-600 dark:text-primary-dark-200">
+        Edit Profile
+      </h2>
+      {error && <p className="text-sm text-red-500">{error}</p>}
+      
+      <MvInput
+        label="Name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        required
+      />
+      
+      <MvInput
+        label="Email"
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+      />
+      
+      <MvDropdown
+        
+        options={faculties.map(f => ({ value: f.id, label: f.name }))}
+        value={facultyId}
+        onChange={(e) => setFacultyId(e.target.value)}
+        required
+      />
+      
+      <MvInput
+        label="Password"
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
+      />
+      
+      <MvInput
+        label="Confirm Password"
+        type="password"
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}
+        required
+      />
+      
+    
+      
+      <MvButton type="submit" className="w-full"   disabled={isSubmitting}>
+      {isSubmitting ? "Saving..." : "Save Changes"}
+      </MvButton>
+    </form>
   );
 };

@@ -1,7 +1,8 @@
-import { FiHome, FiFile, FiCheckCircle, FiUser, FiSettings, FiChevronDown, FiMenu, FiX } from 'react-icons/fi';
+import { FiHome, FiFile, FiCheckCircle,  FiSettings, FiChevronDown, FiMenu, FiX } from 'react-icons/fi';
 import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { MvButton } from '../../MvButton';
+import MvRoutes from '../../../app/MvRoutes';
 
 interface MvStudentSidebarProps {
   isSidebarOpen: boolean;
@@ -23,7 +24,7 @@ export const MvStudentSidebar: React.FC<MvStudentSidebarProps> = ({ isSidebarOpe
     { icon: <FiHome />, label: 'Dashboard', to: '/students/dashboard' },
     { icon: <FiFile />, label: 'My Submissions', to: '/students/submissions' },
     { icon: <FiCheckCircle />, label: 'Submit Contribution', to: '/students/contribution-form' },
-    { icon: <FiUser />, label: 'Profile', to: '/students/profile-edit' },
+    // { icon: <FiUser />, label: 'Profile', to: '/students/profile-edit' },
   ];
 
   
@@ -73,7 +74,7 @@ export const MvStudentSidebar: React.FC<MvStudentSidebarProps> = ({ isSidebarOpe
             className="flex items-center justify-between p-3 text-primary-800 dark:text-primary-dark-200 cursor-pointer"
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
           >
-            <span>Settings</span>
+            <span>More Pages</span>
             <FiChevronDown
               className={`text-primary-800 font-bold dark:text-primary-dark-500 transition-transform ${
                 isDropdownOpen ? 'rotate-180' : ''
@@ -81,9 +82,9 @@ export const MvStudentSidebar: React.FC<MvStudentSidebarProps> = ({ isSidebarOpe
             />
           </div>
           {isDropdownOpen && (
-            <div className="pl-4 text-gray-600 dark:text-primary-dark-200">
-              <div className="p-2 rounded-4xl hover:bg-secondary-200 dark:hover:bg-secondary-dark-700">General</div>
-              <div className="p-2 rounded-4xl hover:bg-secondary-200 dark:hover:bg-secondary-dark-700">Account</div>
+            <div className="pl-4 flex flex-col text-gray-600 dark:text-primary-dark-200">
+              <NavLink to={MvRoutes.CANVAS_CORNER} className="p-2 w-full rounded-4xl hover:bg-secondary-200 dark:hover:bg-secondary-dark-700">Canvas Corner</NavLink>
+              <NavLink to={MvRoutes.STUDENTS.PROFILE_EDIT} className="p-2 w-full rounded-4xl hover:bg-secondary-200 dark:hover:bg-secondary-dark-700">Account</NavLink>
              
             </div>
           )}

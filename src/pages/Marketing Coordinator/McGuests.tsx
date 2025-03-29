@@ -116,7 +116,7 @@ export const McGuests = () => {
       {loading && <MvLoader />}
 
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold">Manage Students</h1>
+        <h1 className="text-2xl font-bold">Manage Guests</h1>
         <MvButton onClick={() => openModal()}>
           Add New Student
         </MvButton>
@@ -125,7 +125,7 @@ export const McGuests = () => {
       {error && <div className="text-red-500 mb-4">{error}</div>}
 
       <SearchFilter
-        placeholder="Search students..."
+        placeholder="Search Guests..."
         onSearch={setSearchQuery}
         className="px-4"
       />
@@ -140,16 +140,16 @@ export const McGuests = () => {
         </thead>
         <tbody>
           {currentStudents.length > 0 ? (
-            currentStudents.map(student => (
-              <tr key={student.id} className="border hover:bg-gray-50 dark:hover:bg-gray-700">
-                <td className="border p-2">{student.id}</td>
-                <td className="border p-2">{student.name}</td>
-                <td className="border p-2">{student.email}</td>
-                <td className="border p-2">{student.facultyId || "N/A"}</td>
+            currentStudents.map(guest => (
+              <tr key={guest.id} className="border hover:bg-gray-50 dark:hover:bg-gray-700">
+                <td className="border p-2">{guest.id}</td>
+                <td className="border p-2">{guest.name}</td>
+                <td className="border p-2">{guest.email}</td>
+                <td className="border p-2">{guest.faculty_id || "N/A"}</td>
                 <td className="border p-2 flex gap-2">
-                  <MvButton onClick={() => openModal(student)}>Edit</MvButton>
+                  <MvButton onClick={() => openModal(guest)}>Approve</MvButton>
                   <MvButton 
-                    onClick={() => handleDelete(student.id)}
+                    onClick={() => handleDelete(guest.id)}
                     className="bg-red-500 dark:bg-red-300"
                   >
                     Delete
@@ -160,7 +160,7 @@ export const McGuests = () => {
           ) : (
             <tr>
               <td colSpan={5} className="text-center p-4">
-                {guests.length === 0 ? "No students found" : "No matching students"}
+                {guests.length === 0 ? "No Guests found" : "No matching Guests"}
               </td>
             </tr>
           )}

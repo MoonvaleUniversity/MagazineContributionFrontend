@@ -63,10 +63,3 @@ export const deleteClosureDate = async (id: number): Promise<boolean> => {
     }
 };
 
-/**
- * Lock submissions for a given contribution.
- */
-export const lockClosureDate = async (contributionId: number): Promise<boolean> => {
-    const response: AxiosResponse<{ success: boolean }> = await postData(MvUrl.LOCK_CLOSURE(contributionId), {});
-    return response.data.success;
-};

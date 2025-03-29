@@ -1,16 +1,21 @@
 // components/MvAccountCreation/MvAccountCreation.tsx
-import { useState, FormEvent } from "react";
-import { MvCheckbox, MvInput, MvPasswordInput } from "../../components/MvInput";
+import { useState, FormEvent, useEffect } from "react";
+import { MvCheckbox, MvDropdown, MvInput, MvPasswordInput } from "../../components/MvInput";
 import { MvButton } from "../../components/MvButton";
+import { getAllFaculties } from "../../services/FacultyService";
+
 
 interface AccountCreationFormProps {
   fixedRole: string;
   isSubmitting?: boolean;
+  isFaculty?: boolean;
   error?: string;
   onSubmit: (data: {
     name: string;
     email: string;
     password?: string;
+    facultyId?: string; // String type for form submission
+
     role: string;
   }) => void;
   initialValues?: {
@@ -18,6 +23,7 @@ interface AccountCreationFormProps {
     email: string;
     password?: string;
     confirmPassword?: string;
+    faculty_id?: string; // Ensure string type here
   };
 }
 
@@ -25,6 +31,7 @@ const AccountCreationForm: React.FC<AccountCreationFormProps> = ({
   fixedRole,
   isSubmitting = false,
   error = "",
+  isFaculty = false,
   onSubmit,
   initialValues,
 }) => {
@@ -34,8 +41,20 @@ const AccountCreationForm: React.FC<AccountCreationFormProps> = ({
   const [confirmPassword, setConfirmPassword] = useState("");
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
-
+  const [faculties, setFaculties] = useState<Array<{ id: number; name: string }>>([]);
+  const [facultyId, setFacultyId] = useState( initialValues?.faculty_id?.toString() || "");
   const isEditMode = !!initialValues;
+useEffect(() => {
+    const loadFaculties = async () => {
+      try {
+        const facultiesData = await getAllFaculties();
+        setFaculties(facultiesData);
+      } catch (error) {
+        console.error("Failed to load faculties:", error);
+      }
+    };
+    loadFaculties();
+  }, []);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -56,6 +75,7 @@ const AccountCreationForm: React.FC<AccountCreationFormProps> = ({
       name,
       email,
       password: isEditMode ? undefined : password,
+      facultyId: isFaculty ? facultyId : undefined, // Include facultyId in submission
       role: fixedRole,
     });
   };
@@ -118,7 +138,15 @@ const AccountCreationForm: React.FC<AccountCreationFormProps> = ({
           />
         </div>
       )}
-
+      {isFaculty && (
+       <MvDropdown
+              
+              options={faculties.map(f => ({ value: f.id, label: f.name }))}
+              value={facultyId}
+              onChange={(e) => setFacultyId(e.target.value)}
+              required
+            />
+            )}
       <MvButton type="submit" className="w-full" disabled={isSubmitting}>
         {isSubmitting 
           ? `${isEditMode ? "Updating..." : "Creating..."}` 

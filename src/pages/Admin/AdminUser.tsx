@@ -7,8 +7,9 @@ import { MvLoader } from "../../components/MvLoader";
 import { MvModal } from "../../components/MvModal";
 import { MvPagination } from "../../components/MvPlagination/MvPlagination";
 import AdminLayout from "../../layout/AdminLayout";
-import { getAllUsers, updateUser, createUser, deleteUser } from "../../services/userService";
+import { getAllUsers, deleteUser, updateUser } from "../../services/userService";
 import SearchFilter, { Filter } from "../../components/MvSearchFilter/MvSearchFIlter";
+import { createManager } from "../../services/MMServices";
 
 export const AdminUsers = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -69,7 +70,7 @@ export const AdminUsers = () => {
       if (editingUser) {
         await updateUser(editingUser.id, { name: formData.name, email: formData.email });
       } else {
-        await createUser({ ...formData, role: 'marketing_manager' });
+        await createManager({ ...formData });
       }
       closeModal();
       await fetchUsers();

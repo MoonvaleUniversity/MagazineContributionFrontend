@@ -10,7 +10,7 @@ import { MvThemeToggle } from "../../components/MvThemeToggle";
 
 export const WelcomeUser = () => {
    // Properly parse user data from localStorage
-   const userData = localStorage.getItem("userData");
+   const userData = localStorage.getItem("userData")|| sessionStorage.getItem("userData");
    const user: User = userData ? JSON.parse(userData) : null;
  
    if (!user) {

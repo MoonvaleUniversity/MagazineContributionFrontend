@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MvRoutes from "./app/MvRoutes";
 import Login from "./pages/MvAuth/MvLogin";
 import MvEmailVerify from "./pages/MvAuth/MvEmailVerify";
-import { MvStudentSubmissionsView, MvStudentContributionForm, MvStudentProfileEdit } from "./pages/Student";
+import { MvStudentSubmissionsView, MvStudentContributionForm, MvStudentProfileEdit, MvStudentDashboard } from "./pages/Student";
 import MvNotFound from "./pages/Not Found/MvNotFound";
 import { AdminClosureDates } from "./pages/Admin/AdminClosureDate";
 import { AdminAcademicYears } from "./pages/Admin/AdminAcademicYear";
@@ -35,7 +35,8 @@ function App() {
         <Route path={MvRoutes.EMAIL_VERIFY} element={<MvEmailVerify />} />
         <Route path={MvRoutes.NOTFOUND} element={<MvNotFound />} />
         <Route path={MvRoutes.NOTAUTHORIZED} element={<MvNotAuthorized />} />
-        <Route path={MvRoutes.WelcomeUser} element={<WelcomeUser />} />
+        <Route path={MvRoutes.WELCOME_USER} element={<WelcomeUser />} />
+        <Route path={MvRoutes.CANVAS_CORNER} element={ <CanvasCorner/>} />
         
         {/* Global dashboard route */}
         <Route path={MvRoutes.DASHBOARD} element={
@@ -47,7 +48,7 @@ function App() {
         {/* Student-specific routes */}
         <Route path={MvRoutes.STUDENTS.DASHBOARD} element={
           <ProtectedRoute roles={['Student']}>
-            <CanvasCorner/>
+           <MvStudentDashboard/>
           </ProtectedRoute>
         } />
         <Route path={MvRoutes.STUDENTS.SUBMISSIONS} element={

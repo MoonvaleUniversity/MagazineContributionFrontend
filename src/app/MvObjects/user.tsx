@@ -5,7 +5,7 @@ export class User {
   id: number;
   name: string;
   academicYearId: number | null;
-  facultyId: number | null;
+  faculty_id: number | string | null;
   email: string;
   emailVerifiedAt: string;
   isSuspended: number;
@@ -20,7 +20,7 @@ export class User {
     this.id = data.id;
     this.name = data.name;
     this.academicYearId = data.academic_year_id;
-    this.facultyId = data.faculty_id;
+    this.faculty_id = data.faculty_id;
     this.email = data.email;
     this.emailVerifiedAt = data.email_verified_at;
     this.isSuspended = data.is_suspended;
@@ -44,7 +44,7 @@ export class User {
       id: this.id,
       name: this.name,
       academic_year_id: this.academicYearId,
-      faculty_id: this.facultyId,
+      faculty_id: this.faculty_id,
       email: this.email,
       email_verified_at: this.emailVerifiedAt,
       is_suspended: this.isSuspended,

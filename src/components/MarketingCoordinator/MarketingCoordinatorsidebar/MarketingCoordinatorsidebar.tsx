@@ -1,7 +1,8 @@
-import { FiHome, FiFileText, FiCheckCircle, FiUser, FiUsers, FiSettings, FiChevronDown, FiMenu, FiX, FiLogOut } from "react-icons/fi";
+import { FiHome, FiFileText, FiCheckCircle, FiUser, FiUsers, FiSettings, FiChevronDown, FiMenu, FiX} from "react-icons/fi";
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { MvButton } from "../../MvButton";
+import MvRoutes from "../../../app/MvRoutes";
 
 interface MarketingCoordinatorSidebarProps {
   isSidebarOpen: boolean;
@@ -23,20 +24,18 @@ export const MvMarketingCoordinatorSidebar: React.FC<MarketingCoordinatorSidebar
   }, []);
   // Navigation items remain as defined
   const navItems = [
-    { icon: <FiHome />, label: "Dashboard", to: "/marketing-coordinator/dashboard" },
-    { icon: <FiFileText />, label: "Submissions", to: "/marketing-coordinator/submissions" },
-    { icon: <FiCheckCircle />, label: "Review & Feedback", to: "/marketing-coordinator/review" },
-    { icon: <FiUsers />, label: "Guest Approvals", to: "/marketing-coordinator/guest-approvals" },
-    { icon: <FiUser />, label: "Profile", to: "/marketing-coordinator/profile" },
+    { icon: <FiHome />, label: "Dashboard", to: MvRoutes.MARKET_COORDINATOR.DASHBOARD},
+    { icon: <FiFileText />, label: "Submissions", to: MvRoutes.MARKET_COORDINATOR.CONTRIBUTIONS},
+    { icon: <FiCheckCircle />, label: "Students", to: MvRoutes.MARKET_COORDINATOR.STUDENTS},
+    { icon: <FiUsers />, label: "Guest Approvals", to: MvRoutes.MARKET_COORDINATOR.GUEST},
+    { icon: <FiUser />, label: "Profile", to: MvRoutes.MARKET_COORDINATOR.PROFILE_EDIT},
   ];
 
   // Generate a random last login within the last 24 hours (for demo)
   const lastLogin = new Date();
   lastLogin.setHours(lastLogin.getHours() - Math.floor(Math.random() * 24));
 
-  const handleLogout = () => {
-    // Add logout logic if needed (e.g. clear storage, redirect, etc.)
-  };
+ 
 
   return (
     <div className="relative">
@@ -94,13 +93,6 @@ export const MvMarketingCoordinatorSidebar: React.FC<MarketingCoordinatorSidebar
             <div className="pl-4 text-gray-600 dark:text-primary-dark-200">
               <div className="p-2 rounded-4xl hover:bg-secondary-200 dark:hover:bg-secondary-dark-700">General</div>
               <div className="p-2 rounded-4xl hover:bg-secondary-200 dark:hover:bg-secondary-dark-700">Account</div>
-              <div
-                className="flex items-center p-2 space-x-2 text-red-500 rounded-4xl hover:bg-secondary-200 dark:hover:bg-secondary-dark-700 cursor-pointer"
-                onClick={handleLogout}
-              >
-                <FiLogOut />
-                <span>Logout</span>
-              </div>
             </div>
           )}
         </div>

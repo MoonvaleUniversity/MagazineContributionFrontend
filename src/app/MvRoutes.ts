@@ -5,7 +5,8 @@ const MvRoutes = {
   NOTFOUND: "/404",
   NOTAUTHORIZED: "/404",
   EMAIL_VERIFY: "/email-verification",
-  WelcomeUser: "/welcome-user",
+  WELCOME_USER: "/welcome-user",
+  CANVAS_CORNER: "/welcome-user",
   STUDENTS: {
     DASHBOARD: "/students/dashboard",
     SUBMISSIONS: "/students/submissions",
@@ -29,10 +30,10 @@ const MvRoutes = {
     PROFILE_EDIT: "/students/profile-edit",
   },
   MARKET_COORDINATOR: {
-    DASHBOARD: "",
-    STUDENTS: "mc/students",
-    GUEST: "mc/guest",
-    CONTRIBUTIONS: "mc/contributions",
+    DASHBOARD: "/mc/dashboard",
+    STUDENTS: "/mc/students",
+    GUEST: "/mc/guest",
+    CONTRIBUTIONS: "/mc/contributions",
     PROFILE_EDIT: "/students/profile-edit",
   },
 
