@@ -119,7 +119,7 @@ const handleFilesSelect = (selectedFiles: File[]) => {
     <>
       <form
         onSubmit={handleSubmit}
-        className="w-11/12 max-sm/w-11/12 p-6 mx-auto space-y-4 shadow-lg bg-background-100/40 dark:bg-secondary-dark-700 rounded-2xl"
+        className="w-11/12 max-sm/w-11/12 p-6 mx-auto space-y-4 shadow-lg bg-background-100/40 dark:bg-primary-700 rounded-2xl"
         encType="multipart/form-data"
       >
         <h2 className="text-xl text-center font-semibold ">
@@ -164,7 +164,7 @@ const handleFilesSelect = (selectedFiles: File[]) => {
           />
         </div>
 
-        <MvButton type="submit" className="w-full" disabled={isSubmitting}>
+        <MvButton type="submit" className="w-full bg-purple-600 hover:bg-purple-700 hover:dark:bg-purple-400 dark:bg-purple-500 dark:text-white" disabled={isSubmitting}>
           {isSubmitting ? "Submitting..." : "Submit"}
         </MvButton>
       </form>

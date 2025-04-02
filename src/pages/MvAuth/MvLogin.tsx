@@ -87,8 +87,8 @@ const Login: React.FC = () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {  
       setError({ message: error?.message || "An unknown error occurred." });
-
-      if (error?.message === "You need to verify your email first.") {
+      console.error(error);
+      if (error?.response.data.message === "You need to verify your email first.") {
         navigate(MvRoutes.EMAIL_VERIFY, {
           state: { email: loginFormData.email },
         });

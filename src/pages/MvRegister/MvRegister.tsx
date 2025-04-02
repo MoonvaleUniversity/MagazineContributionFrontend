@@ -8,6 +8,7 @@ import { MvInput, MvPasswordInput, MvCheckbox } from "../../components/MvInput";
 import { MvLoader } from "../../components/MvLoader";
 import { MvThemeToggle } from "../../components/MvThemeToggle";
 import { getAllFaculties } from "../../services/FacultyService";
+import { createGuest } from "../../services/GuestService";
 
 interface RegisterFormData {
   name: string;
@@ -63,8 +64,8 @@ const RegisterGuest: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-
-    // Validation
+  
+    // Frontend validation
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match");
       return;
@@ -77,26 +78,33 @@ const RegisterGuest: React.FC = () => {
       setError("Please select a faculty");
       return;
     }
-
+  
     try {
       setLoading(true);
-      // Replace with actual registration API call
-      // await registerGuest({
-      //   name: formData.name,
-      //   email: formData.email,
-      //   password: formData.password,
-      //   faculty_id: formData.facultyId,
-      //   role: "Student"
-      // });
       
-      navigate(MvRoutes.LOGIN, { state: { registrationSuccess: true } });
+      await createGuest({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        password_confirmation: formData.confirmPassword, // Add confirmation
+        faculty_id: formData.facultyId
+      });
+  
+    
     } catch (error) {
-      setError(error instanceof Error ? error.message : "Registration failed");
+      console.error(error);
+      const backendError = "Registration failed. Please try again.";
+      setError(backendError);
     } finally {
+      navigate(MvRoutes.LOGIN, { 
+        state: { 
+          registrationSuccess: true,
+          message: "Guest registration successful! Please check your email."
+        } 
+      });
       setLoading(false);
     }
   };
-
   return (
     <>
       {loading && <MvLoader />}

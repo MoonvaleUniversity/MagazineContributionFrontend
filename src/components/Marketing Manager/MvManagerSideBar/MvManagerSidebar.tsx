@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { MvButton } from "../../MvButton";
 import MvRoutes from "../../../app/MvRoutes";
+import { getUserData } from "../../../services/AuthService";
 
 interface MarketingManagerSidebarProps {
   isSidebarOpen: boolean;
@@ -14,10 +15,7 @@ export const MvMarketingManagerSidebar: React.FC<MarketingManagerSidebarProps> =
 const [userData, setUserData] = useState<{ name?: string; email?: string } | null>(null);
 
   useEffect(() => {
-    const storedUserData = localStorage.getItem('userData')|| sessionStorage.getItem('userData');
-    if (storedUserData) {
-      setUserData(JSON.parse(storedUserData));
-    }
+    setUserData(getUserData())
   }, []);
   const navItems = [
     { icon: <FiHome />, label: "Dashboard", to:  MvRoutes.MARKET_MANAGER.DASHBOARD },

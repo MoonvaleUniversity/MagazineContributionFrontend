@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { JSX, useEffect } from "react";
 import { UserRole } from "../app/Types/UserRoles";
+import { getAuthToken, getUserData } from "../services/AuthService";
 
 interface ProtectedRouteProps {
   roles: UserRole[]; // Allowed roles
@@ -10,10 +11,8 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ roles, children }) => {
   const navigate = useNavigate();
 
-  // Retrieve user data and safely parse it
-  const userData = localStorage.getItem("userData") || sessionStorage.getItem("userData");
-  const parsedUserData = userData ? JSON.parse(userData) : null;
-  const token = localStorage.getItem("userToken") || sessionStorage.getItem("userToken");
+  const parsedUserData = getUserData();
+  const token = getAuthToken
   const userRole = parsedUserData?.role || ""; 
 
   useEffect(() => {

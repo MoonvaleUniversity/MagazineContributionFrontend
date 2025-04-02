@@ -1,12 +1,12 @@
 const MvRoutes = {
-  LOGIN: "/" ,
+  LOGIN: "/login" ,
   REGISTER: "/register",
   DASHBOARD: "/dashboard",
   NOTFOUND: "/404",
   NOTAUTHORIZED: "/404",
   EMAIL_VERIFY: "/email-verification",
   WELCOME_USER: "/welcome-user",
-  CANVAS_CORNER: "/welcome-user",
+  CANVAS_CORNER: "/canvas-corner",
   STUDENTS: {
     DASHBOARD: "/students/dashboard",
     SUBMISSIONS: "/students/submissions",

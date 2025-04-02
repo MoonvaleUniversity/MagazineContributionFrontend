@@ -8,9 +8,11 @@ import { MvModal } from "../../components/MvModal";
 import { MvPagination } from "../../components/MvPlagination/MvPlagination";
 
 import MarketingCoordinatorLayout from "../../layout/MarketingCoordinatorLayout";
-import {  updateUser, createUser, deleteUser } from "../../services/userService";
+
 import SearchFilter from "../../components/MvSearchFilter/MvSearchFIlter";
-import { getAllStudents } from "../../services/StudentServices";
+import { createStudents, deleteStudents, getAllStudents, updateStudents } from "../../services/StudentServices";
+import { getUserData } from "../../services/AuthService";
+import { IUser } from "../../app/Types/objects/user";
 
 export const McStudents  = () => {
   const [students, setStudents] = useState<User[]>([]);
@@ -60,18 +62,25 @@ export const McStudents  = () => {
     password?: string;
     role: string;
   }) => {
+    const userData: IUser | null = getUserData();
+
+
     setIsSubmitting(true);
     try {
       if (editingStudent) {
-        await updateUser(editingStudent.id, { 
+        await updateStudents(editingStudent.id, { 
           name: formData.name, 
-          email: formData.email 
+          email: formData.email,
+          
         });
       } else {
-        await createUser({ 
+        if (userData) {
+        await createStudents({ 
           ...formData, 
+          faculty_id: String(userData.faculty_id),
           role: 'student' // Force role
         });
+        }
       }
       closeModal();
       await fetchStudents();
@@ -85,7 +94,7 @@ export const McStudents  = () => {
   const handleDelete = async (id: number) => {
     if (window.confirm("Delete this student?")) {
       try {
-        await deleteUser(id);
+        await deleteStudents(id);
         await fetchStudents();
       } catch (error) {
         setError(error instanceof Error ? error.message : "Delete failed");
@@ -188,7 +197,7 @@ export const McStudents  = () => {
           isSubmitting={isSubmitting}
           initialValues={editingStudent ? {
             name: editingStudent.name,
-            email: editingStudent.email
+            email: editingStudent.email,
           } : undefined}
         />
       </MvModal>

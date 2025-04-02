@@ -13,6 +13,7 @@ export const getAllUsers = async (): Promise<User[]> => {
 
   export const createUser = async (userData: Partial<User>) => {
     try {
+      console.log(userData);
       const response = await postData(MvUrl.POST_USER, userData);
       return response.data; 
     } catch (error) {

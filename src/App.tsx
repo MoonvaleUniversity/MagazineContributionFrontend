@@ -23,12 +23,17 @@ import RegisterGuest from "./pages/MvRegister/MvRegister";
 import { CanvasCorner } from "./pages/MvCanvasCorner/MvCanvasCorner";
 import { WelcomeUser } from "./pages/MvAuth/MvWelcomeUser";
 
+import AuthCheck from "./components/Auth/AuthCheck";
+
 
 
 function App() {
+
   return (
     <BrowserRouter>
       <Routes>
+         {/* Root path handler */}
+         <Route path="/" element={<AuthCheck />} />
         {/* Public Routes */}
         <Route path={MvRoutes.LOGIN} element={<Login />} />
         <Route path={MvRoutes.REGISTER} element={<RegisterGuest />} />

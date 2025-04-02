@@ -7,9 +7,11 @@
   import { MvModal } from "../../components/MvModal";
   import { MvPagination } from "../../components/MvPlagination/MvPlagination";
   import MarketingManagerLayout from "../../layout/MarketingManagerLayout";
-  import {   deleteUser } from "../../services/userService";
+  import {   createUser, deleteUser, updateUser } from "../../services/userService";
   import SearchFilter from "../../components/MvSearchFilter/MvSearchFIlter";
-import { createCoordinators, getAllCoordinators, updateCoordinators } from "../../services/CoordinatorServices";
+import {  getAllCoordinators } from "../../services/CoordinatorServices";
+import { IFaculty } from "../../app/MvObjects/faculty";
+import { getAllFaculties } from "../../services/FacultyService";
 
   export const MMUsers = () => {
     const [users, setUsers] = useState<User[]>([]);
@@ -22,6 +24,7 @@ import { createCoordinators, getAllCoordinators, updateCoordinators } from "../.
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingUser, setEditingUser] = useState<User | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [faculties, setFaculties] = useState<IFaculty[]>([]);
 
     // Fetch users with role filter
     useEffect(() => { 
@@ -42,8 +45,12 @@ import { createCoordinators, getAllCoordinators, updateCoordinators } from "../.
     const fetchUsers = async () => {
       try {
         setLoading(true);
-        const coordinators = await getAllCoordinators();
-        // Filter to only show Marketing Coordinators
+    const [coordinators, allFaculties] = await Promise.all([
+      getAllCoordinators(),
+      getAllFaculties()
+    ]);
+    setUsers(coordinators);
+    setFaculties(allFaculties);
     
         setUsers(coordinators);
       } catch (error) {
@@ -52,7 +59,12 @@ import { createCoordinators, getAllCoordinators, updateCoordinators } from "../.
         setLoading(false);
       }
     };
-
+    // Add faculty name lookup function
+const getFacultyName = (facultyId: number | string | null): string => {
+  if (!facultyId) return 'N/A';
+  const faculty = faculties.find(f => f.id === Number(facultyId));
+  return faculty?.name || 'N/A';
+};
     const handleUserAction = async (formData: {
       name: string;
       email: string;
@@ -63,16 +75,17 @@ import { createCoordinators, getAllCoordinators, updateCoordinators } from "../.
       setIsSubmitting(true);
       try {
         if (editingUser) {
-          await updateCoordinators(editingUser.id, { 
+          await updateUser(editingUser.id, { 
             name: formData.name, 
             email: formData.email,
-            faculty_id: Number(formData.faculty_id), 
+            faculty_id: formData.faculty_id, 
+         
           });
         } else {
-          await createCoordinators({ 
+          await createUser({ 
             ...formData,  
-            faculty_id: Number(formData.faculty_id)
-            
+            faculty_id: formData.faculty_id,
+            role: "marketing_coordinator",
           });
         }
         closeModal();
@@ -94,7 +107,15 @@ import { createCoordinators, getAllCoordinators, updateCoordinators } from "../.
         }
       }
     };
-
+    const getFacultyImage = (facultyId: number | string | null): string => {
+      if (!facultyId) return '';
+      const faculty = faculties.find(f => f.id === Number(facultyId));
+      if(typeof faculty?.image_url === "string") {
+      return faculty?.image_url || '';
+    } else {
+      return "/src/Assets/images/404.jpeg";
+    }
+    };
     // Modal management
     const openModal = (user?: User) => {
       setEditingUser(user || null);
@@ -133,7 +154,7 @@ import { createCoordinators, getAllCoordinators, updateCoordinators } from "../.
         <table className="w-full border-collapse border border-gray-300 mt-min-w-full divide-y divide-gray-200 dark:divide-gray-700">
         <thead className="bg-gray-50 dark:bg-primary-800">
             <tr >
-              {["ID", "Name", "Email", "Actions"].map((header, index) => (
+            {["ID", "Name", "Email", "Faculty Image", "Faculty Name", "Actions"].map((header, index) => (
                 <th key={index} className='px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider'>{header}</th>
               ))}
             </tr>
@@ -145,6 +166,24 @@ import { createCoordinators, getAllCoordinators, updateCoordinators } from "../.
                   <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{user.id}</td>
                   <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{user.name}</td>
                   <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{user.email}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+  {user.faculty_id ? (
+    <div className="flex items-center">
+      <img 
+        src={getFacultyImage(user.faculty_id)} 
+        alt="Faculty" 
+        className="w-12 h-12 rounded-full object-cover mr-3"
+       
+      />
+   
+    </div>
+  ) : (
+    'N/A'
+  )}
+</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+          {getFacultyName(user.faculty_id)}
+        </td> 
                   <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider flex gap-2">
                     <MvButton onClick={() => openModal(user)}>Edit</MvButton>
                     <MvButton 

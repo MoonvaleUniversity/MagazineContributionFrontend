@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { FiArchive, FiCheckCircle, FiXCircle, FiPlus, FiImage, FiUsers, FiList,  FiCalendar } from "react-icons/fi";
+import { FiArchive, FiCheckCircle, FiXCircle, FiPlus, FiImage, FiUsers, FiList,  FiCalendar, FiFile } from "react-icons/fi";
 import MvRoutes from "../../app/MvRoutes";
 import { IContribution } from "../../app/Types/objects/contribution";
 import StudentLayout from "../../layout/StudentLayout";
 import { getClosureDateById } from "../../services/ClosureDateService";
 import { MvContributionServices } from "../../services/ContributionService";
 import { useNavigate } from "react-router-dom";
+import { MvButton } from "../../components/MvButton";
 
 export const MvStudentDashboard = () => {
   const [allSubmissions, setAllSubmissions] = useState<IContribution[]>([]);
@@ -142,9 +143,41 @@ export const MvStudentDashboard = () => {
         </div>
 
         {/* Recent Contributions */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Recent Activity</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* Contributions Grid */}
+      <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold">Latest Contributions</h2>
+            {recentSubmissions.length > 0 && (
+              <MvButton
+                onClick={() => navigate(MvRoutes.STUDENTS.SUBMISSIONS)}
+                className="font-bold dark:font-bold text-sm" size="sm" variant="accent"
+              >
+                View All →
+              </MvButton>
+            )}
+          </div>
+
+          
+          {recentSubmissions.length === 0 ? (
+            <div className="text-center py-12 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg">
+              <div className="w-full mx-auto">
+                <FiFile className="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                  No Contributions Yet
+                </h3>
+                <p className="text-gray-500 dark:text-gray-400 mb-6">
+                  Get started by submitting your first magazine contribution
+                </p>
+                <button
+                  onClick={() => navigate(MvRoutes.STUDENTS.CONTRIBUTION_FORM)}
+                  className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                >
+                  <FiPlus className="w-5 h-5 mr-2" />
+                  Create First Submission
+                </button>
+              </div>
+            </div>
+          ) : (  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {recentSubmissions.map((submission) => (
               <div 
               key={submission.id}
@@ -190,9 +223,10 @@ export const MvStudentDashboard = () => {
               </div>
             </div>
             ))}
+             </div> )}
           </div>
         </div>
-      </div>
+      
     </StudentLayout>
   );
 };

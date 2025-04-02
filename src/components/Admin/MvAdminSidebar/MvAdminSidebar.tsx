@@ -6,6 +6,7 @@ import MvRoutes from '../../../app/MvRoutes';
 import {   FaChalkboardTeacher, FaRegCalendarAlt, FaUserCog } from 'react-icons/fa';
 import {AiOutlineStop } from 'react-icons/ai';
 import { FiX, FiMenu, FiChevronDown, FiLogOut, FiSettings, FiHome } from 'react-icons/fi';
+import { getUserData } from '../../../services/AuthService';
 
 interface MvAdminSidebarProps {
   isSidebarOpen: boolean;
@@ -17,10 +18,7 @@ export const MvAdminSidebar: React.FC<MvAdminSidebarProps> = ({ isSidebarOpen, s
 const [userData, setUserData] = useState<{ name?: string; email?: string } | null>(null);
 
   useEffect(() => {
-    const storedUserData = localStorage.getItem('userData')|| sessionStorage.getItem('userData');
-    if (storedUserData) {
-      setUserData(JSON.parse(storedUserData));
-    }
+   setUserData(getUserData())
   }, []);
   const navItems = [
     { icon: <FiHome/>, label: 'Dashboard', to: MvRoutes.ADMIN.DASHBOARD},

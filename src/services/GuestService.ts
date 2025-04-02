@@ -10,7 +10,13 @@ export const getAllGuest = async (): Promise<User[]> => {
     return response.data.users.data.map((userData: IUser) => User.fromJSON(userData));
   };
 
-  export const createGuest = async (userData: Partial<User>) => {
+  export const createGuest = async (userData: {
+    name: string;
+    email: string;
+    password: string;
+    password_confirmation: string;
+    faculty_id: number;
+  }) => {
     try {
       const response = await postData(MvUrl.GUESTS.STORE, userData);
       return response.data; 

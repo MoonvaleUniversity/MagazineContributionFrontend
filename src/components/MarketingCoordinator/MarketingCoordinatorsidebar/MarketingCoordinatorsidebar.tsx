@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { MvButton } from "../../MvButton";
 import MvRoutes from "../../../app/MvRoutes";
+import { getUserData } from "../../../services/AuthService";
 
 interface MarketingCoordinatorSidebarProps {
   isSidebarOpen: boolean;
@@ -17,10 +18,7 @@ export const MvMarketingCoordinatorSidebar: React.FC<MarketingCoordinatorSidebar
   const [userData, setUserData] = useState<{ name?: string; email?: string } | null>(null);
 
   useEffect(() => {
-    const storedUserData = localStorage.getItem('userData')|| sessionStorage.getItem('userData');
-    if (storedUserData) {
-      setUserData(JSON.parse(storedUserData));
-    }
+    setUserData(getUserData())
   }, []);
   // Navigation items remain as defined
   const navItems = [

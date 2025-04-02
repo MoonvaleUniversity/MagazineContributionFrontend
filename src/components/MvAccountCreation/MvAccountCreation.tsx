@@ -14,7 +14,7 @@ interface AccountCreationFormProps {
     name: string;
     email: string;
     password?: string;
-    facultyId?: string; // String type for form submission
+    faculty_id?: string; // String type for form submission
 
     role: string;
   }) => void;
@@ -75,7 +75,7 @@ useEffect(() => {
       name,
       email,
       password: isEditMode ? undefined : password,
-      facultyId: isFaculty ? facultyId : undefined, // Include facultyId in submission
+      faculty_id: isFaculty ? facultyId : undefined, // Include facultyId in submission
       role: fixedRole,
     });
   };
