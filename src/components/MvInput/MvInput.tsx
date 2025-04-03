@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {  useState } from 'react';
 import clsx from 'clsx';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -24,7 +24,7 @@ export const MvInput: React.FC<InputProps> = ({
     className,
     variantClasses
   );
-
+  
   const handleFocus = () => {
     setIsFocused(true);
   };
@@ -33,7 +33,7 @@ export const MvInput: React.FC<InputProps> = ({
     setIsFocused(false);
     setIsFilled(!!e.target.value);
   };
-
+  
   return (
     <div className="relative ">
       <input
@@ -43,6 +43,13 @@ export const MvInput: React.FC<InputProps> = ({
         autoComplete="off"
         placeholder=" " // Placeholder for floating label
         className={combinedClasses}
+        ref={(el) => {
+              
+          if (el?.value) {
+            handleFocus();
+          }
+         
+        }}
         onFocus={handleFocus}
         onBlur={handleBlur}
         {...props}

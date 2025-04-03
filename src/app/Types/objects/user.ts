@@ -2,7 +2,7 @@ export interface IUser {
     id: number;
     name: string;
     academic_year_id: number | null;
-    faculty_id: number | null;
+    faculty_id: number |string | null;
     email: string;
     role: string;
     email_verified_at: string;

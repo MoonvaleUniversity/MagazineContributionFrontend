@@ -1,5 +1,5 @@
 import { FiArrowUp, FiArrowDown, FiMinus } from "react-icons/fi";
-
+import { IconType } from "react-icons";
 
 type TrendType = "positive" | "negative" | "neutral";
 
@@ -9,6 +9,8 @@ interface MvStatsProps {
   trend?: TrendType;
   trendValue?: string;
   className?: string;
+  icon?: IconType; // New icon prop
+  onClick?: () => void; // Add onClick handler
 }
 
 export const MvStats = ({ 
@@ -16,7 +18,9 @@ export const MvStats = ({
   value, 
   trend = "neutral", 
   trendValue, 
-  className = "" 
+  className = "",
+  icon: IconComponent,
+  onClick 
 }: MvStatsProps) => {
   const trendConfig = {
     positive: {
@@ -36,10 +40,15 @@ export const MvStats = ({
     },
   };
 
-  const Icon = trendConfig[trend].icon;
+  const Icon = IconComponent || trendConfig[trend].icon;
 
   return (
-    <div className={`bg-white dark:bg-primary-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 ${className}`}>
+    <div 
+      className={`bg-white dark:bg-primary-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 ${
+        onClick ? "cursor-pointer hover:shadow-md transition-shadow" : ""
+      } ${className}`}
+      onClick={onClick}
+    >
       <dt className="text-sm font-medium text-primary-500 dark:text-gray-300 truncate">
         {title}
       </dt>
@@ -47,19 +56,14 @@ export const MvStats = ({
         <div className="text-3xl font-semibold text-gray-900 dark:text-gray-100">
           {value}
         </div>
-        {trend && trend !== "neutral" && (
-          <div className={`ml-2 flex items-baseline text-sm font-semibold ${trendConfig[trend].textColor}`}>
+        {(trend && trend !== "neutral" || IconComponent) && (
+          <div className={`ml-2 flex items-baseline text-sm font-semibold ${
+            IconComponent ? "text-primary-600" : trendConfig[trend].textColor
+          }`}>
             <Icon
-              className={`h-4 w-4 mr-1 p-0.5 rounded-full ${trendConfig[trend].color}`}
-              aria-hidden="true"
-            />
-            {trendValue && <span>{trendValue}</span>}
-          </div>
-        )}
-        {trend === "neutral" && (
-          <div className="ml-2 flex items-baseline text-sm font-semibold text-gray-600 dark:text-gray-300">
-            <Icon
-              className="h-4 w-4 mr-1 p-0.5 rounded-full text-gray-600 bg-gray-100"
+              className={`h-4 w-4 mr-1 p-0.5 rounded-full ${
+                IconComponent ? "text-primary-600" : trendConfig[trend].color
+              }`}
               aria-hidden="true"
             />
             {trendValue && <span>{trendValue}</span>}

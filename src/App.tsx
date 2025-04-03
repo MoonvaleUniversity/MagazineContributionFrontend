@@ -24,6 +24,9 @@ import { CanvasCorner } from "./pages/MvCanvasCorner/MvCanvasCorner";
 import { WelcomeUser } from "./pages/MvAuth/MvWelcomeUser";
 
 import AuthCheck from "./components/Auth/AuthCheck";
+import { MmProfileEdit } from "./pages/Marketing Manager/MMProfileEdit";
+import { McProfileEdit } from "./pages/Marketing Coordinator/McProfileEdit";
+import { MmDashboard } from "./pages/Marketing Manager/MMdashboard";
 
 
 
@@ -99,6 +102,11 @@ function App() {
           </ProtectedRoute>
         } />
           {/* Marketing Manager-specific routes */}
+        <Route path={MvRoutes.MARKET_MANAGER.DASHBOARD} element={
+          <ProtectedRoute roles={['Marketing Manager']}>
+           <MmDashboard/>
+          </ProtectedRoute>
+        } />
         <Route path={MvRoutes.MARKET_MANAGER.FACULTY} element={
           <ProtectedRoute roles={['Marketing Manager']}>
            <MMFaculty/>
@@ -112,6 +120,11 @@ function App() {
         <Route path={MvRoutes.MARKET_MANAGER.SELECTED_CONTRIBUTIONS} element={
           <ProtectedRoute roles={['Marketing Manager']}>
          <MmSubmissionsView/>
+          </ProtectedRoute>
+        } />
+        <Route path={MvRoutes.MARKET_MANAGER.PROFILE_EDIT} element={
+          <ProtectedRoute roles={['Marketing Manager']}>
+            <MmProfileEdit/>
           </ProtectedRoute>
         } />
           {/* Marketing Coordinator-specific routes */}
@@ -129,6 +142,11 @@ function App() {
         <Route path={MvRoutes.MARKET_COORDINATOR.CONTRIBUTIONS} element={
           <ProtectedRoute roles={['Marketing Coordinator']}>
          <McSubmissionsView/>
+          </ProtectedRoute>
+        } />
+        <Route path={MvRoutes.MARKET_COORDINATOR.PROFILE_EDIT} element={
+          <ProtectedRoute roles={['Marketing Coordinator']}>
+        <McProfileEdit/>
           </ProtectedRoute>
         } />
 

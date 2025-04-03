@@ -4,7 +4,8 @@ import { getAllFaculties } from "../../../services/FacultyService";
 import { MvButton } from "../../MvButton";
 import { MvDropdown, MvInput } from "../../MvInput";
 import { updateStudents } from "../../../services/StudentServices";
-
+import { IUser } from "../../../app/Types/objects/user";
+import { getUserData } from "../../../services/AuthService";
 
 
 
@@ -13,13 +14,14 @@ export const MvProfileEdit: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [facultyId, setFacultyId] = useState("");
+  const [facultyId, setFacultyId] = useState<string|number>();
  
   const [error, setError] = useState<string | null>(null);
-  const [faculties, setFaculties] = useState<Array<{ id: number; name: string }>>([]);
+  const [faculties, setFaculties] = useState<Array<{ id: number ; name: string }>>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
    
   useEffect(() => {
+   
     const loadFaculties = async () => {
       try {
         const facultiesData = await getAllFaculties();
@@ -28,6 +30,17 @@ export const MvProfileEdit: React.FC = () => {
         console.error("Failed to load faculties:", error);
       }
     };
+    const loadUserData = async () => {
+      const userData:IUser|null = getUserData();
+      if (userData) {
+      setName(userData.name);
+      setEmail(userData.email);
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      userData.faculty_id?  setFacultyId(userData.faculty_id)  : setFacultyId("");
+      
+      }
+    }
+    loadUserData();
     loadFaculties();
   }, []);
 
@@ -103,6 +116,7 @@ export const MvProfileEdit: React.FC = () => {
       />
       
       <MvInput
+      disabled  
         label="Email"
         type="email"
         value={email}

@@ -36,7 +36,7 @@ const MvNotAuthorized: React.FC = () => {
 
         {/* Illustration */}
         <img
-          src="/src/assets/images/not-authorized.jpeg" // Replace with an appropriate image
+          src="/src/assets/images/404.jpeg" // Replace with an appropriate image
           alt="Not Authorized"
           className="w-11/12 mx-auto mt-4"
         />

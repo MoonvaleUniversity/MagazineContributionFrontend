@@ -25,7 +25,7 @@ import { getAllFaculties } from "../../services/FacultyService";
     const [editingUser, setEditingUser] = useState<User | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [faculties, setFaculties] = useState<IFaculty[]>([]);
-
+    const [selectedFaculty, setSelectedFaculty] = useState<string>('');
     // Fetch users with role filter
     useEffect(() => { 
       fetchUsers();
@@ -35,13 +35,22 @@ import { getAllFaculties } from "../../services/FacultyService";
     useEffect(() => {
       const filtered = users.filter(user => {
         const searchMatch = [user.name, user.email].some(field => 
-          field.toLowerCase().includes(searchQuery.toLowerCase()))
-        return searchMatch ;
+          field.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+        const facultyMatch = !selectedFaculty || 
+          user.faculty_id?.toString() === selectedFaculty;
+        
+        return searchMatch && facultyMatch;
       });
       setFilteredUsers(filtered);
       setCurrentPage(1);
-    }, [searchQuery, users]);
-
+    }, [searchQuery, users, selectedFaculty]);
+     // Add faculty filter handler
+  const handleFilterChange = (filterName: string, value: string) => {
+    if (filterName === 'faculty') {
+      setSelectedFaculty(value);
+    }
+  };
     const fetchUsers = async () => {
       try {
         setLoading(true);
@@ -143,67 +152,84 @@ const getFacultyName = (facultyId: number | string | null): string => {
           </MvButton>
         </div>
 
-        {error && <div className="text-red-500 mb-4">{error}</div>}
+        {error && <div className="text-red-500 w-full bg-red-300/30 py-2 rounded-md mb-4">{error}</div>}
 
         <SearchFilter
-          placeholder="Search coordinators..."
-          onSearch={setSearchQuery}
-          className="px-4"
-        />
-    <div className="rounded-lg border border-gray-200 dark:border-gray-700">
-        <table className="w-full border-collapse border border-gray-300 mt-min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-        <thead className="bg-gray-50 dark:bg-primary-800">
-            <tr >
-            {["ID", "Name", "Email", "Faculty Image", "Faculty Name", "Actions"].map((header, index) => (
-                <th key={index} className='px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider'>{header}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="bg-white dark:bg-primary-800 divide-y divide-gray-200 dark:divide-gray-700">
-            {currentUsers.length > 0 ? (
-              currentUsers.map(user => (
-                <tr key={user.id} >
-                  <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{user.id}</td>
-                  <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{user.name}</td>
-                  <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{user.email}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-  {user.faculty_id ? (
-    <div className="flex items-center">
-      <img 
-        src={getFacultyImage(user.faculty_id)} 
-        alt="Faculty" 
-        className="w-12 h-12 rounded-full object-cover mr-3"
-       
+        placeholder="Search coordinators..."
+        onSearch={setSearchQuery}
+        onFilterChange={handleFilterChange}
+        filters={[
+          {
+            name: 'faculty',
+            label: 'Faculty',
+            options: [
+              { value: '', label: 'All Faculties' },
+              ...faculties.map(faculty => ({
+                value: faculty.id.toString(),
+                label: faculty.name,
+              }))
+            ]
+          }
+        ]}
+        className="px-4"
       />
-   
-    </div>
-  ) : (
-    'N/A'
-  )}
-</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-          {getFacultyName(user.faculty_id)}
-        </td> 
-                  <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider flex gap-2">
-                    <MvButton onClick={() => openModal(user)}>Edit</MvButton>
-                    <MvButton 
-                      onClick={() => handleDelete(user.id)}
-                      className="bg-red-500 dark:bg-red-300"
-                    >
-                      Delete
-                    </MvButton>
-                  </td>
-                </tr>
-              ))
+    <div className="rounded-lg border border-gray-200 dark:border-gray-700">
+    <table className="w-full border-collapse mt-min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+  <thead className="bg-gray-50 dark:bg-primary-800">
+    <tr>
+      {["ID", "Name", "Email", "Faculty", "Actions"].map((header, index) => (
+        <th key={index} className='px-6 py-4 text-left text-sm font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider'>
+          {header}
+        </th>
+      ))}
+    </tr>
+  </thead>
+  <tbody className="bg-white dark:bg-primary-800 divide-y divide-gray-200 dark:divide-gray-700">
+    {currentUsers.length > 0 ? (
+      currentUsers.map(user => (
+        <tr key={user.id}>
+          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{user.id}</td>
+          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{user.name}</td>
+          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{user.email}</td>
+          <td className="px-6 py-4 whitespace-nowrap">
+            {user.faculty_id ? (
+              <div className="flex items-center">
+                <img 
+                  src={getFacultyImage(user.faculty_id)} 
+                  alt="Faculty" 
+                  className="w-12 h-12 rounded-full object-cover mr-3"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = '/src/Assets/images/404.jpeg';
+                  }}
+                />
+                <span className="text-sm text-gray-900 dark:text-white">
+                  {getFacultyName(user.faculty_id)}
+                </span>
+              </div>
             ) : (
-              <tr>
-                <td colSpan={4} className="text-center p-4">
-                  {users.length === 0 ? "No coordinators found" : "No matching coordinators"}
-                </td>
-              </tr>
+              <span className="text-sm text-gray-500">N/A</span>
             )}
-          </tbody>
-        </table>
+          </td>
+          <td className="px-6 py-4 whitespace-nowrap flex gap-2">
+            <MvButton onClick={() => openModal(user)}>Edit</MvButton>
+            <MvButton 
+              onClick={() => handleDelete(user.id)}
+              className="bg-red-500 dark:bg-red-300"
+            >
+              Delete
+            </MvButton>
+          </td>
+        </tr>
+      ))
+    ) : (
+      <tr>
+        <td colSpan={5} className="text-center p-4 text-gray-500 dark:text-gray-400">
+          {users.length === 0 ? "No coordinators found" : "No matching coordinators"}
+        </td>
+      </tr>
+    )}
+  </tbody>
+</table>
           
             </div>
         <MvPagination
