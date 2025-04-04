@@ -3,11 +3,13 @@ import { FormDataClosureDate, IClosureDate } from "../../app/MvObjects/clousured
 import { MvButton } from "../../components/MvButton";
 import { getAllClosureDates, updateClosureDate, createClosureDate, deleteClosureDate } from "../../services/ClosureDateService";
 import AdminLayout from "../../layout/AdminLayout";
-import { MvDateInput, MvInput } from "../../components/MvInput";
+import { MvDateInput, MvDropdown } from "../../components/MvInput";
 import { MvLoader } from "../../components/MvLoader";
 import { MvModal } from "../../components/MvModal";
 import SearchFilter, { Filter } from "../../components/MvSearchFilter/MvSearchFIlter";
 import { MvPagination } from "../../components/MvPlagination/MvPlagination";
+import {  getAllAcademicYears } from "../../services/AcademicYearService";
+import { IAcademicYear } from "./AdminAcademicYear";
 
 export const AdminClosureDates = () => {
     const [closureDates, setClosureDates] = useState<IClosureDate[]>([]);
@@ -20,7 +22,8 @@ export const AdminClosureDates = () => {
     const [statusFilter, setStatusFilter] = useState("all");
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(10);
-    
+    const [academicYearMap, setAcademicYearMap] = useState<Record<number, string>>({});
+    const [academicYear, setAcademicYear] = useState<IAcademicYear[]>([])
     const [errors, setErrors] = useState<{
         academic_year_id?: string;
         closure_date?: string;
@@ -40,10 +43,36 @@ export const AdminClosureDates = () => {
         }
     ];
 
+  
     useEffect(() => {
-        fetchClosureDates();
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                const [closureData, academicData] = await Promise.all([
+                    getAllClosureDates(),
+                    getAllAcademicYears()
+                ]);
+                
+                // Create a map of academic year IDs to names
+                const yearMap = academicData.reduce((acc: Record<number, string>, curr: IAcademicYear) => {
+                    acc[curr.id] = curr.year_name;
+                    return acc;
+                }, {});
+                
+                setAcademicYearMap(yearMap);
+                setAcademicYear(academicData)
+                setClosureDates(Array.isArray(closureData) ? closureData : []);
+            } catch (error) {
+                console.error("Failed to fetch data", error);
+                setErrors({ general: "Failed to load data. Please try again later." });
+            } finally {
+                setLoading(false);
+            }
+        };
+    
+        fetchData();
     }, []);
-
+    
     useEffect(() => {
         const filterDates = () => {
             const today = new Date();
@@ -68,11 +97,18 @@ export const AdminClosureDates = () => {
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentDates = filteredDates.slice(indexOfFirstItem, indexOfLastItem);
+    // Replace the getAcademicYear function with this simple lookup
+const getAcademicYearName = (id: number|string) => {
+
+    return academicYearMap[Number(id)] || "Unknown Year";
+};
 
     const fetchClosureDates = async () => {
         try {
             setLoading(true);
             const data = await getAllClosureDates();
+            const adata = await getAllAcademicYears();
+            setAcademicYear(Array.isArray(adata) ? adata : [])
             setClosureDates(Array.isArray(data) ? data : []);
             setLoading(false);
         } catch (error) {
@@ -164,7 +200,7 @@ export const AdminClosureDates = () => {
         setModalOpen(true);
         setErrors({});
     };
-
+  
     const handleDelete = async (id: number) => {
         try {
             await deleteClosureDate(id);
@@ -223,7 +259,7 @@ export const AdminClosureDates = () => {
 
                             return (
                                 <tr key={closureDate.id} className="border">
-                                    <td className="border p-2">{closureDate.academic_year_id}</td>
+                                    <td className="border p-2">{getAcademicYearName(closureDate.academic_year_id)}</td>
                                     <td className="border p-2">{closureDate.closure_date}</td>
                                     <td className="border p-2">{closureDate.final_closure_date}</td>
                                     <td className="border p-2">
@@ -278,14 +314,15 @@ export const AdminClosureDates = () => {
             >
                 <div className="space-y-4">
                     <div>
-                        <MvInput
-                            type="number"
-                            name="academic_year_id"
-                            label="Academic Year ID"
-                            value={formData.academic_year_id || ""}
-                            onChange={handleInputChange}
-                            className={errors.academic_year_id ? "border-red-500" : ""}
-                        />
+                         <MvDropdown
+                                placeholder="Academic Year"
+                                options={academicYear.map(f => ({ value: f.id, label: f.year_name }))}
+                                value={formData.academic_year_id || ""}
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                onChange={(e) => handleInputChange(e as any)} 
+                                required
+                              />
+                       
                         {errors.academic_year_id && (
                             <p className="text-red-500 text-sm mt-1">{errors.academic_year_id}</p>
                         )}

@@ -149,6 +149,12 @@ function App() {
         <McProfileEdit/>
           </ProtectedRoute>
         } />
+         {/* Guest-specific routes */}
+        <Route path={MvRoutes.GUEST.DASHBOARD} element={
+          <ProtectedRoute roles={['Marketing Coordinator']}>
+        <McProfileEdit/>
+          </ProtectedRoute>
+        } />
 
         {/* Catch-all route */}
         <Route path="*" element={<MvNotFound />} />

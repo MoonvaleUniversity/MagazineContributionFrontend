@@ -3,19 +3,22 @@ import { useState, FormEvent, useEffect } from "react";
 import { MvCheckbox, MvDropdown, MvInput, MvPasswordInput } from "../../components/MvInput";
 import { MvButton } from "../../components/MvButton";
 import { getAllFaculties } from "../../services/FacultyService";
+import { getAllAcademicYears } from "../../services/AcademicYearService";
+import { IAcademicYear } from "../../app/MvObjects/academicyear";
 
 
 interface AccountCreationFormProps {
   fixedRole: string;
   isSubmitting?: boolean;
   isFaculty?: boolean;
+  isAcademicYear?: boolean;
   error?: string;
   onSubmit: (data: {
     name: string;
     email: string;
     password?: string;
     faculty_id?: string; // String type for form submission
-
+    academic_year_id?: string
     role: string;
   }) => void;
   initialValues?: {
@@ -23,7 +26,8 @@ interface AccountCreationFormProps {
     email: string;
     password?: string;
     confirmPassword?: string;
-    faculty_id?: string; // Ensure string type here
+    faculty_id?: string; 
+    academic_year_id?: string;
   };
 }
 
@@ -32,6 +36,7 @@ const AccountCreationForm: React.FC<AccountCreationFormProps> = ({
   isSubmitting = false,
   error = "",
   isFaculty = false,
+  isAcademicYear = false,
   onSubmit,
   initialValues,
 }) => {
@@ -43,12 +48,20 @@ const AccountCreationForm: React.FC<AccountCreationFormProps> = ({
   const [formError, setFormError] = useState<string | null>(null);
   const [faculties, setFaculties] = useState<Array<{ id: number; name: string }>>([]);
   const [facultyId, setFacultyId] = useState( initialValues?.faculty_id?.toString() || "");
+  const [academicYears, setAcademicYears] = useState<IAcademicYear[]>();
+  const [academicYearId, setAcademicYearId] = useState(
+    initialValues?.academic_year_id?.toString() || ""
+  );
   const isEditMode = !!initialValues;
 useEffect(() => {
     const loadFaculties = async () => {
       try {
-        const facultiesData = await getAllFaculties();
+        const [facultiesData, academicYearsData] = await Promise.all([
+          getAllFaculties(),
+          getAllAcademicYears(), // Fetch academic years
+        ]);
         setFaculties(facultiesData);
+        setAcademicYears(academicYearsData);
       } catch (error) {
         console.error("Failed to load faculties:", error);
       }
@@ -75,7 +88,8 @@ useEffect(() => {
       name,
       email,
       password: isEditMode ? undefined : password,
-      faculty_id: isFaculty ? facultyId : undefined, // Include facultyId in submission
+      faculty_id: isFaculty ? facultyId : undefined, 
+      academic_year_id: isAcademicYear ? academicYearId : undefined,
       role: fixedRole,
     });
   };
@@ -126,7 +140,27 @@ useEffect(() => {
           />
         </>
       )}
-
+    {isAcademicYear && academicYears ? (
+        <MvDropdown
+        placeholder="Academic Year"
+          options={academicYears.map(ay => ({
+            value: ay.id.toString(),
+            label: ay.year_name
+          }))}
+          value={academicYearId}
+          onChange={(e) => setAcademicYearId(e.target.value)}
+          required
+        />
+      ): ""}
+       {isFaculty && (
+       <MvDropdown
+              
+              options={faculties.map(f => ({ value: f.id, label: f.name }))}
+              value={facultyId}
+              onChange={(e) => setFacultyId(e.target.value)}
+              required
+            />
+            )}
       {!isEditMode && (
         <div className="flex items-center space-x-2">
           <MvCheckbox
@@ -138,15 +172,7 @@ useEffect(() => {
           />
         </div>
       )}
-      {isFaculty && (
-       <MvDropdown
-              
-              options={faculties.map(f => ({ value: f.id, label: f.name }))}
-              value={facultyId}
-              onChange={(e) => setFacultyId(e.target.value)}
-              required
-            />
-            )}
+     
       <MvButton type="submit" className="w-full" disabled={isSubmitting}>
         {isSubmitting 
           ? `${isEditMode ? "Updating..." : "Creating..."}` 

@@ -1,18 +1,18 @@
 import clsx from "clsx";
+
 interface DropdownProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
- 
   options: Array<{ value: string | number; label: string }>;
   className?: string;
+  placeholder?: string; // New placeholder prop
 }
 
 export const MvDropdown: React.FC<DropdownProps> = ({
- 
   options,
   className,
   id,
+  placeholder = "Select Faculty", // Default to Faculty but configurable
   ...props
 }) => {
-  
   const baseClasses = 'w-full pt-4 px-3 pb-2 text-sm border-2 border-primary-600 text-primary-600 rounded-4xl focus:outline-none';
   const variantClasses = "bg-background-50 border-primary-600 text-primary-600 dark:bg-secondary-dark-500 dark:border-primary-dark-50 dark:text-primary-dark-200";
 
@@ -23,24 +23,21 @@ export const MvDropdown: React.FC<DropdownProps> = ({
     "appearance-none"
   );
 
-  
-
   return (
     <div className="relative">
       <select
         id={id}
         className={combinedClasses}
-       
         {...props}
       >
-        <option value="">Select Faculty</option>
+        <option value="">{placeholder}</option>
         {options.map(option => (
           <option key={option.value} value={option.value}>
             {option.label}
           </option>
         ))}
       </select>
-     
+      
       <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-2 transform">
         <svg className="h-5 w-5 text-primary-600 dark:text-primary-dark-200" 
              xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">

@@ -36,6 +36,13 @@ const MvRoutes = {
     CONTRIBUTIONS: "/mc/contributions",
     PROFILE_EDIT: "/mc/profile-edit",
   },
+  GUEST: {
+    DASHBOARD: "/guest/dashboard",
+    STUDENTS: "/mc/students",
+    GUEST: "/mc/guest",
+    CONTRIBUTIONS: "/mc/contributions",
+    PROFILE_EDIT: "/mc/profile-edit",
+  },
 
 };
 

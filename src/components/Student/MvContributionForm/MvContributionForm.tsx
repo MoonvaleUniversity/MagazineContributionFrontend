@@ -3,6 +3,7 @@ import { MvButton } from "../../MvButton";
 import { MvInput, MvFileUpload, MvCheckbox } from "../../MvInput";
 import { MvModal } from "../../MvModal";
 import { MvContributionServices } from "../../../services/ContributionService";
+import { getUserData } from "../../../services/AuthService";
 
 export const MvContributionForm: React.FC = () => {
   const [title, setTitle] = useState("");
@@ -78,14 +79,18 @@ const handleFilesSelect = (selectedFiles: File[]) => {
     setError(null);
     setIsSubmitting(true);
     try {
+      
       const closureDateId = 1;
       let userId = 0;
-      const storedUserData = localStorage.getItem('userData') || sessionStorage.getItem('userData');
+      let academicId = 0;
+      const userData = getUserData();
       
-      if (storedUserData) {
+      if (userData) {
         try {
-          const userData = JSON.parse(storedUserData);
+          
           userId = userData?.id || 0;
+          academicId = userData?.academic_year_id|| 0;
+          
         } catch (error) {
           console.error('Error parsing userData:', error);
         }

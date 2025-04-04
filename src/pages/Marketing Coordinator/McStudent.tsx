@@ -195,6 +195,7 @@ export const McStudents  = () => {
           onSubmit={handleStudentAction}
           {...(error ? { error } : {})} 
           isSubmitting={isSubmitting}
+          isAcademicYear= {true}
           initialValues={editingStudent ? {
             name: editingStudent.name,
             email: editingStudent.email,
