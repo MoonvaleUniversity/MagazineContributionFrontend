@@ -143,20 +143,20 @@ export const AdminAcademicYears: React.FC = () => {
       />
 
       {error && <div className="text-red-500 mb-4">{error}</div>}
-
-      <table className="w-full border-collapse border border-gray-300 mt-4">
-        <thead>
-          <tr className="bg-secondary-400 dark:bg-secondary-dark-400">
-            <th className="border p-2">Year Name</th>
-            <th className="border p-2">Actions</th>
+      <div className="rounded-lg border border-gray-200 dark:border-gray-700">
+      <table className="min-w-full divide-y divide-gray-200  dark:divide-gray-700">
+        <thead className="bg-gray-50 dark:bg-primary-800">
+          <tr className="">
+            <th colSpan={2} className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Year Name</th>
+            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="bg-white dark:bg-primary-800 divide-y divide-gray-200 dark:divide-gray-700">
           {currentYears.length > 0 ? (
             currentYears.map((ay) => (
-              <tr key={ay.id} className="border">
-                <td className="border p-2">{ay.year_name}</td>
-                <td className="border p-2 flex gap-2">
+              <tr key={ay.id} className="">
+                <td colSpan={2} className="px-6 py-4  text-gray-500 dark:text-gray-300">{ay.year_name}</td>
+                <td className="px-6 py-4 text-right text-gray-500 dark:text-gray-300">
                   <MvButton onClick={() => handleEdit(ay)}>Edit</MvButton>
                   <MvButton
                     onClick={() => handleDelete(ay.id)}
@@ -176,7 +176,7 @@ export const AdminAcademicYears: React.FC = () => {
           )}
         </tbody>
       </table>
-
+          </div>
       {filteredYears.length > 0 && (
         <MvPagination
           currentPage={currentPage}
