@@ -9,7 +9,7 @@ interface StudentLayoutProps {
 }
 
 const StudentLayout: React.FC<StudentLayoutProps> = ({ children }) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
 
   return (
     <div className="flex h-screen">

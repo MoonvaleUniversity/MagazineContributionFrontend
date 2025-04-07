@@ -27,6 +27,8 @@ import AuthCheck from "./components/Auth/AuthCheck";
 import { MmProfileEdit } from "./pages/Marketing Manager/MMProfileEdit";
 import { McProfileEdit } from "./pages/Marketing Coordinator/McProfileEdit";
 import { MmDashboard } from "./pages/Marketing Manager/MMdashboard";
+import { AdminDashboard } from "./pages/Admin/AdminDashboard";
+import MvContributionDetailsPage from "./pages/Card Details/MvContributionDetails";
 
 
 
@@ -46,13 +48,15 @@ function App() {
         <Route path={MvRoutes.WELCOME_USER} element={<WelcomeUser />} />
         <Route path={MvRoutes.CANVAS_CORNER} element={ <CanvasCorner/>} />
         
-        {/* Global dashboard route */}
-        <Route path={MvRoutes.DASHBOARD} element={
-          <ProtectedRoute roles={['Admin', 'Student', 'Marketing Coordinator']}>
-            <MvContributionDetails />
-          </ProtectedRoute>
-        } />
-        
+        <Route 
+  path={MvRoutes.CONTRIBUTION_DETAILS} 
+  element={
+    <ProtectedRoute roles={['Student', 'Admin', 'Marketing Coordinator', 'Marketing Manager']}>
+      <MvContributionDetailsPage />
+    </ProtectedRoute>
+  }
+/>
+          
         {/* Student-specific routes */}
         <Route path={MvRoutes.STUDENTS.DASHBOARD} element={
           <ProtectedRoute roles={['Student']}>
@@ -76,6 +80,11 @@ function App() {
         } />
         
         {/* Admin-specific routes */}
+        <Route path={MvRoutes.ADMIN.DASHBOARD} element={
+          <ProtectedRoute roles={['Admin']}>
+            <AdminDashboard/>
+          </ProtectedRoute>
+        } />
         <Route path={MvRoutes.ADMIN.CLOSURE_DATES} element={
           <ProtectedRoute roles={['Admin']}>
             <AdminClosureDates />

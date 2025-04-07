@@ -239,18 +239,18 @@ const getAcademicYearName = (id: number|string) => {
                 filters={statusOptions}
                 className="px-4"
             />
-
-            <table className="w-full border-collapse border border-gray-300">
-                <thead>
-                    <tr className="bg-secondary-400 dark:bg-secondary-dark-400">
-                        <th className="border p-2">Academic Year</th>
-                        <th className="border p-2">Closure Date</th>
-                        <th className="border p-2">Final Closure Date</th>
-                        <th className="border p-2">Status</th>
-                        <th className="border p-2">Actions</th>
+             <div className="rounded-lg border border-gray-200 dark:border-gray-700">
+            <table className="min-w-full divide-y divide-gray-200  dark:divide-gray-700">
+                <thead className="bg-gray-50 dark:bg-primary-800">
+                    <tr >
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Academic Year</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Closure Date</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Final Closure Date</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody className="bg-white dark:bg-primary-800 divide-y divide-gray-200 dark:divide-gray-700">
                     {currentDates.length > 0 ? (
                         currentDates.map((closureDate: IClosureDate) => {
                             const today = new Date();
@@ -258,11 +258,11 @@ const getAcademicYearName = (id: number|string) => {
                             const status = finalDate > today ? "Open" : "Closed";
 
                             return (
-                                <tr key={closureDate.id} className="border">
-                                    <td className="border p-2">{getAcademicYearName(closureDate.academic_year_id)}</td>
-                                    <td className="border p-2">{closureDate.closure_date}</td>
-                                    <td className="border p-2">{closureDate.final_closure_date}</td>
-                                    <td className="border p-2">
+                                <tr key={closureDate.id} className="">
+                                    <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{getAcademicYearName(closureDate.academic_year_id)}</td>
+                                    <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{closureDate.closure_date}</td>
+                                    <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{closureDate.final_closure_date}</td>
+                                    <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                         <span className={`px-2 py-1 rounded ${
                                             status === "Open" 
                                                 ? "bg-green-100 text-green-800" 
@@ -271,8 +271,8 @@ const getAcademicYearName = (id: number|string) => {
                                             {status}
                                         </span>
                                     </td>
-                                    <td className="border p-2 flex gap-2">
-                                        <MvButton onClick={() => handleEdit(closureDate)}>Edit</MvButton>
+                                    <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        <MvButton className="mx-3 max-md:my-3" onClick={() => handleEdit(closureDate)}>Edit</MvButton>
                                         <MvButton 
                                             onClick={() => handleDelete(closureDate.id)} 
                                             className="bg-red-500 dark:bg-red-300"
@@ -292,6 +292,7 @@ const getAcademicYearName = (id: number|string) => {
                     )}
                 </tbody>
             </table>
+            </div>
 
             {/* Pagination */}
             {filteredDates.length > itemsPerPage && (

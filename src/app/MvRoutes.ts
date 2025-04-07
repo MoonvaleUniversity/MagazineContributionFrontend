@@ -7,6 +7,7 @@ const MvRoutes = {
   EMAIL_VERIFY: "/email-verification",
   WELCOME_USER: "/welcome-user",
   CANVAS_CORNER: "/canvas-corner",
+  CONTRIBUTION_DETAILS: `/contributions/:id`,
   STUDENTS: {
     DASHBOARD: "/students/dashboard",
     SUBMISSIONS: "/students/submissions",

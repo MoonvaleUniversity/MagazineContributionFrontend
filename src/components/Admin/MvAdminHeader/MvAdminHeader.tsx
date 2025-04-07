@@ -8,11 +8,11 @@ export const MvAdminHeader: React.FC = () => {
   const handleLogout = () => {
     // Remove user-related data
     localStorage.removeItem('userData');
-    localStorage.removeItem('token');
+    localStorage.removeItem('userToken');
     localStorage.removeItem('username');
   
     sessionStorage.removeItem('userData');
-    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('userToken');
     sessionStorage.removeItem('username');
   
     // Redirect to login page

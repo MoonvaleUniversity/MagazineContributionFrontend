@@ -8,7 +8,7 @@ interface MarketingManagerLayoutProps {
 }
 
 const MarketingManagerLayout: React.FC<MarketingManagerLayoutProps> = ({ children }) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
 
   return (
     <div className="flex h-screen">

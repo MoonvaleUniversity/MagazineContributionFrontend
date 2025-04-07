@@ -3,9 +3,9 @@ import { useState, useEffect } from "react";
 import { getAllFaculties } from "../../../services/FacultyService";
 import { MvButton } from "../../MvButton";
 import { MvDropdown, MvInput } from "../../MvInput";
-import { updateStudents } from "../../../services/StudentServices";
 import { IUser } from "../../../app/Types/objects/user";
 import { getUserData } from "../../../services/AuthService";
+import { updateUser } from "../../../services/userService";
 
 
 
@@ -61,9 +61,7 @@ export const MvProfileEdit: React.FC = () => {
 
       // Prepare data for API
       const userData = {
-        name,
-        email,
-        faculty_id: facultyId, // Match backend expectation
+        name,   
         password,
         password_confirmation: confirmPassword, // Match backend validation rule
       
@@ -82,7 +80,7 @@ export const MvProfileEdit: React.FC = () => {
       }
       
       // Call update service
-      const response = await updateStudents(userId, userData);
+      const response = await updateUser(userId, userData);
       
       // Handle success
       alert("Profile updated successfully!");
@@ -137,7 +135,7 @@ export const MvProfileEdit: React.FC = () => {
         type="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        required
+       
       />
       
       <MvInput
@@ -145,10 +143,8 @@ export const MvProfileEdit: React.FC = () => {
         type="password"
         value={confirmPassword}
         onChange={(e) => setConfirmPassword(e.target.value)}
-        required
-      />
       
-    
+      />
       
       <MvButton type="submit" className="w-full"   disabled={isSubmitting}>
       {isSubmitting ? "Saving..." : "Save Changes"}

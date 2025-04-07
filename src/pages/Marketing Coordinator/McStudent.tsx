@@ -10,9 +10,10 @@ import { MvPagination } from "../../components/MvPlagination/MvPlagination";
 import MarketingCoordinatorLayout from "../../layout/MarketingCoordinatorLayout";
 
 import SearchFilter from "../../components/MvSearchFilter/MvSearchFIlter";
-import { createStudents, deleteStudents, getAllStudents, updateStudents } from "../../services/StudentServices";
+import { createStudents,  getAllStudents, updateStudents } from "../../services/StudentServices";
 import { getUserData } from "../../services/AuthService";
 import { IUser } from "../../app/Types/objects/user";
+import { deleteUser } from "../../services/userService";
 
 export const McStudents  = () => {
   const [students, setStudents] = useState<User[]>([]);
@@ -94,7 +95,7 @@ export const McStudents  = () => {
   const handleDelete = async (id: number) => {
     if (window.confirm("Delete this student?")) {
       try {
-        await deleteStudents(id);
+        await deleteUser(id);
         await fetchStudents();
       } catch (error) {
         setError(error instanceof Error ? error.message : "Delete failed");

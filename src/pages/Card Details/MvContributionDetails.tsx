@@ -1,127 +1,125 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FiArrowLeft } from "react-icons/fi";
-import { AiOutlineLike, AiOutlineDislike, AiOutlineMessage } from "react-icons/ai";
-import { FaBookmark } from "react-icons/fa";
-import { Link } from "react-router-dom";
-import { renderAsync } from "docx-preview"; // Make sure to import docx-preview
+import { Link, useParams } from "react-router-dom";
+import { renderAsync } from "docx-preview";
 import StudentLayout from "../../layout/StudentLayout";
+import { IContribution } from "../../app/Types/objects/contribution";
+import { MvContributionServices } from "../../services/ContributionService";
+
+import MvRoutes from "../../app/MvRoutes";
 
 const MvContributionDetailsPage: React.FC = () => {
   const docxContainerRef = useRef<HTMLDivElement>(null);
+  const { id } = useParams<{ id: string }>();
+  const [contribution, setContribution] = useState<IContribution | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Fetch the DOCX file as an ArrayBuffer
-    fetch("/src/Assets/RM.docx")
-      .then((response) => response.arrayBuffer())
-      .then((arrayBuffer) => {
-        // Ensure the docxContainerRef exists
-        if (docxContainerRef.current) {
-          // Render the document using docx-preview
-          renderAsync(arrayBuffer, docxContainerRef.current).catch((error) => {
-            console.error("Error rendering document:", error);
-          });
-        }
-      })
-      .catch((error) => {
-        console.error("Error loading document:", error);
-      });
-  }, []);
+    if (!id) return;
+    
+    const fetchContribution = async () => {
+      try {
+        const data = await MvContributionServices.getContributionById(id);
+        setContribution(data);
+        setError(null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to load contribution");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchContribution();
+  }, [id]);
+
+  useEffect(() => {
+    if (contribution?.doc_url) {
+      fetch(contribution.doc_url)
+        .then((response) => response.arrayBuffer())
+        .then((arrayBuffer) => {
+          renderAsync(arrayBuffer, docxContainerRef.current!);
+        })
+        .catch((error) => {
+          console.error("Error rendering document:", error);
+        });
+    }
+  }, [contribution]);
+
+  if (loading) {
+    return (
+      <StudentLayout>
+        <div className="text-center p-8">
+          <span className="loading loading-spinner loading-lg"></span>
+          <p>Loading contribution details...</p>
+        </div>
+      </StudentLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <StudentLayout>
+        <div className="alert alert-error max-w-2xl mx-auto mt-8">
+          <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>{error}</span>
+        </div>
+      </StudentLayout>
+    );
+  }
 
   return (
     <StudentLayout>
-      {/* Header / Back Navigation */}
-      <header className="mb-6">
-        <Link to="/contributions" className="flex items-center text-purple-600 hover:text-purple-700 dark:text-purple-300 hover:underline">
+      <header className="mb-6 px-4">
+        <Link
+          to={MvRoutes.STUDENTS.SUBMISSIONS}
+          className="btn btn-ghost text-primary"
+        >
           <FiArrowLeft className="mr-2" />
           Back to Contributions
         </Link>
       </header>
 
-      {/* Main Details Card */}
-      <div className="max-w-4xl mx-auto bg-white dark:bg-secondary-dark-500 rounded-2xl shadow-lg p-4">
-        {/* Title & Description */}
-        <div className="mb-4">
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
-            Document Title Here
-          </h1>
-          <p className="text-sm text-gray-600 dark:text-background-600 mt-1">
-            This is a brief description of the contribution. It includes context about the document and the images shown.
-          </p>
-        </div>
+      <div className="max-w-4xl mx-auto p-4">
+        <div className="card bg-base-100 shadow-xl">
+          <div className="card-body">
+            <h1 className="card-title text-3xl mb-4">
+              {contribution?.name}
+            </h1>
+            
+            <div className="text-sm text-gray-500 mb-6">
+              <p>Submitted by: User #{contribution?.user_id}</p>
+              <p>Submitted at: {contribution?.created_at}</p>
+            </div>
 
-        {/* Images Section */}
-        <div className="flex flex-col md:flex-row gap-4 mb-4">
-          {/* Main Thumbnail Image */}
-          <div className="md:w-1/2">
-            <img
-              src="/src/Assets/images/thumbnail.jpg"
-              alt="Main Thumbnail"
-              className="w-full h-64 object-cover rounded-xl transition-transform duration-300 hover:scale-105"
-            />
-          </div>
-          {/* Additional Images Grid */}
-          <div className="md:w-1/2 grid grid-cols-2 gap-2">
-            <img
-              src="/src/Assets/images/image1.jpg"
-              alt="Additional Image 1"
-              className="w-full h-32 object-cover rounded-lg transition-transform duration-300 hover:scale-105"
-            />
-            <img
-              src="/src/Assets/images/image2.jpg"
-              alt="Additional Image 2"
-              className="w-full h-32 object-cover rounded-lg transition-transform duration-300 hover:scale-105"
-            />
-            <img
-              src="/src/Assets/images/image3.jpg"
-              alt="Additional Image 3"
-              className="w-full h-32 object-cover rounded-lg transition-transform duration-300 hover:scale-105"
-            />
-            <img
-              src="/src/Assets/images/image4.jpg"
-              alt="Additional Image 4"
-              className="w-full h-32 object-cover rounded-lg transition-transform duration-300 hover:scale-105"
-            />
-          </div>
-        </div>
+            {contribution?.image_url && contribution.image_url.length > 0 && (
+              <div className="grid grid-cols-2 gap-4 mb-8">
+                {contribution.image_url.map((img, index) => (
+                  <div key={index} className="aspect-square overflow-hidden rounded-lg">
+                    <img
+                      src={img}
+                      alt={`Contribution image ${index + 1}`}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform"
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
 
-        {/* Document Preview Section */}
-        <div className="mb-4">
-          <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
-            Document Preview
-          </h2>
-          <div
-            ref={docxContainerRef}
-            className="overflow-auto rounded-lg shadow p-4"
-            style={{
-              background: "transparent",
-              minHeight: "20px",
-              borderRadius: "20px",
-            }}
-          >
-            {/* The DOCX content will be rendered here by docx-preview */}
-          </div>
-        </div>
-
-        {/* Engagement Section with React Icons */}
-        <div className="flex justify-between items-center text-gray-500 dark:text-white text-sm">
-          <div className="flex items-center gap-1">
-            <AiOutlineLike className="w-5 h-5 text-purple-600 dark:text-purple-300 hover:text-purple-800" />
-            <span className="text-gray-800 dark:text-white">100</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <AiOutlineDislike className="w-5 h-5 text-red-500 dark:text-red-300 hover:text-red-700" />
-            <span className="text-gray-800 dark:text-white">20</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <AiOutlineMessage className="w-5 h-5 text-blue-500 dark:text-blue-300 hover:text-blue-700" />
-            <span className="text-gray-800 dark:text-white">10</span>
-          </div>
-          <div>
-            <FaBookmark className="w-5 h-5 text-yellow-500 dark:text-yellow-300 hover:text-yellow-700" />
+            <div className="border rounded-lg overflow-hidden">
+              <div className="p-4 bg-base-200">
+                <h2 className="text-lg font-semibold mb-2">Document Preview</h2>
+              </div>
+              <div
+                ref={docxContainerRef}
+                className="p-4 min-h-[500px] docx-container"
+              />
+            </div>
           </div>
         </div>
       </div>
-   
     </StudentLayout>
   );
 };

@@ -157,7 +157,7 @@ export const AdminAcademicYears: React.FC = () => {
               <tr key={ay.id} className="">
                 <td colSpan={2} className="px-6 py-4  text-gray-500 dark:text-gray-300">{ay.year_name}</td>
                 <td className="px-6 py-4 text-right text-gray-500 dark:text-gray-300">
-                  <MvButton onClick={() => handleEdit(ay)}>Edit</MvButton>
+                  <MvButton onClick={() => handleEdit(ay)} className="mx-3">Edit</MvButton>
                   <MvButton
                     onClick={() => handleDelete(ay.id)}
                     className="bg-red-500 dark:bg-red-300"

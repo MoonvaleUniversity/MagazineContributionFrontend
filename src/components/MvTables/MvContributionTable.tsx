@@ -27,8 +27,8 @@ const MvContributionTable: React.FC<MvContributionTableProps> = ({
 }) => {
   const navigate = useNavigate();
 
+  // Determine contribution status
   const getStatus = (contribution: IContribution) => {
-    
     if (contribution.is_selected_for_publication === 1) return "Approved";
     const createdAt = new Date(contribution.created_at!);
     const now = new Date();
@@ -36,6 +36,7 @@ const MvContributionTable: React.FC<MvContributionTableProps> = ({
     return diffDays > 3 ? "Rejected" : "Pending";
   };
 
+  // Format dates consistently
   const formatDate = React.useCallback((dateString?: string) => {
     if (!dateString) return "N/A";
     const date = new Date(dateString);
@@ -46,11 +47,13 @@ const MvContributionTable: React.FC<MvContributionTableProps> = ({
     });
   }, []);
 
+  // Determine file type from URL
   const getFileType = React.useCallback((url: string) => {
     const extension = url.split(".").pop()?.toLowerCase();
     return extension === "pdf" ? "PDF" : "DOC";
   }, []);
 
+  // Check if closure date has passed
   const isClosureDatePassed = (contributionId: string) => {
     const closureDate = closureDates[contributionId]?.final_closure_date;
     return closureDate ? new Date(closureDate) < new Date() : false;
@@ -59,6 +62,7 @@ const MvContributionTable: React.FC<MvContributionTableProps> = ({
   return (
     <div className="rounded-lg border border-gray-200 dark:border-gray-700">
       <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+        {/* Table Header */}
         <thead className="bg-gray-50 dark:bg-primary-800">
           <tr>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
@@ -92,6 +96,7 @@ const MvContributionTable: React.FC<MvContributionTableProps> = ({
           </tr>
         </thead>
 
+        {/* Table Body */}
         <tbody className="bg-white dark:bg-primary-800 divide-y divide-gray-200 dark:divide-gray-700">
           {contributions.length === 0 ? (
             <tr>
@@ -102,35 +107,38 @@ const MvContributionTable: React.FC<MvContributionTableProps> = ({
           ) : (
             contributions.map((contribution) => {
               const status = getStatus(contribution);
-              const canDownload = isMarketingManager && 
-                isClosureDatePassed(contribution.closure_date_id);
+              const canDownload = isMarketingManager && isClosureDatePassed(contribution.closure_date_id);
 
               return (
                 <tr
                   key={contribution.id}
                   className="hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
-                  // onClick={() => !isAdmin && navigate(`/contributions/${contribution.id}`)}
                 >
+                  {/* Contribution Title */}
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
                     {contribution.name}
                   </td>
 
+                  {/* User ID (Marketing Coordinator only) */}
                   {isMarketingCoordinator && (
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                       {contribution.user_id}
                     </td>
                   )}
 
+                  {/* Closure Date (Marketing Manager only) */}
                   {isMarketingManager && (
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                       {formatDate(closureDates[contribution.closure_date_id]?.final_closure_date)}
                     </td>
                   )}
 
+                  {/* Creation Date */}
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                     {formatDate(contribution.created_at)}
                   </td>
 
+                  {/* Images Count */}
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                     <div className="flex items-center">
                       <FaImage className="mr-2 text-blue-500" />
@@ -138,6 +146,7 @@ const MvContributionTable: React.FC<MvContributionTableProps> = ({
                     </div>
                   </td>
 
+                  {/* Document Type */}
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                     <div className="flex items-center">
                       {getFileType(contribution.doc_url) === "PDF" ? (
@@ -149,12 +158,12 @@ const MvContributionTable: React.FC<MvContributionTableProps> = ({
                     </div>
                   </td>
 
+                  {/* Status */}
                   <td className="px-6 py-4 whitespace-nowrap">
                     {isMarketingCoordinator && !isAdmin ? (
                       <select
                         value={status === "Approved" ? "approved" : "rejected"}
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        onChange={(e) => onStatusChange?.(contribution.id, e.target.value as any)}
+                        onChange={(e) => onStatusChange?.(contribution.id, e.target.value as 'approved' | 'rejected')}
                         className={`px-2 py-1 text-xs font-semibold rounded-full ${
                           status === "Approved" 
                             ? "bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100"
@@ -177,8 +186,10 @@ const MvContributionTable: React.FC<MvContributionTableProps> = ({
                     )}
                   </td>
 
+                  {/* Action Buttons */}
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex items-center space-x-4">
+                      {/* ZIP Download */}
                       {canDownload && (
                         <button
                           onClick={(e) => {
@@ -192,6 +203,7 @@ const MvContributionTable: React.FC<MvContributionTableProps> = ({
                         </button>
                       )}
 
+                      {/* Preview Button */}
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -203,6 +215,7 @@ const MvContributionTable: React.FC<MvContributionTableProps> = ({
                         Preview
                       </button>
 
+                      {/* Delete Button */}
                       {!isAdmin && (
                         <button
                           onClick={(e) => {

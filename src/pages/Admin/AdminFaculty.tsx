@@ -59,27 +59,27 @@ export const AdminFaculties: React.FC = () => {
 
       {error && <div className="text-red-500 mb-4">{error}</div>}
 
-      <table className="w-full border-collapse border border-gray-300">
-        <thead>
-          <tr className="bg-secondary-400 dark:bg-secondary-dark-400">
-            <th>Id</th>
-            <th className="border p-2">Image</th>
-            <th className="border p-2">Name</th>
+      <table className="min-w-full divide-y divide-gray-200  dark:divide-gray-700">
+        <thead className="bg-gray-50 dark:bg-primary-800bg-gray-50 dark:bg-primary-800">
+          <tr>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Id</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Image</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Name</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="bg-white dark:bg-primary-800 divide-y divide-gray-200 dark:divide-gray-700">
           {currentFaculties.length > 0 ? (
             currentFaculties.map((faculty) => (
               <tr key={faculty.id}>
-                <td className="border p-2">{faculty.id}</td>
-                <td className="border p-2">
+                <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{faculty.id}</td>
+                <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   <img
                     src={faculty.image_url}
                     alt={faculty.name}
-                    className="w-10 h-10 object-cover rounded-full"
+                    className="w-12 h-12 object-cover rounded-full"
                   />
                 </td>
-                <td className="border p-2">{faculty.name}</td>
+                <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{faculty.name}</td>
               </tr>
             ))
           ) : (

@@ -55,7 +55,7 @@ const [userData, setUserData] = useState<{ name?: string; email?: string } | nul
       >
         {/* Logo */}
         <div className="flex max-sm:items-end max-sm:justify-end justify-center mb-8 space-x-2">
-          <span className="text-xl text-end font-bold">Moonvale University</span>
+          <span className="text-xl text-end font-bold">Admin Dashboard</span>
         </div>
 
        {/* Navigation Links */}

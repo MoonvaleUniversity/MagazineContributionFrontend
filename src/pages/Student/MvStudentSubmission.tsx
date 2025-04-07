@@ -80,9 +80,26 @@ export const MvStudentSubmissionsView = () => {
     }
   };
   
-  const handleDelete = (id: string) => {
-    setAllSubmissions(prev => prev.filter(sub => sub.id !== id));
+  const handleDelete = async (id: string) => {
+    try {
+      // Confirm deletion
+      const confirmDelete = window.confirm("Are you sure you want to delete this submission?");
+      if (!confirmDelete) return;
+
+      // Call the delete service
+      await MvContributionServices.deleteContribution(id);
+      
+      // Optimistic UI update
+      setAllSubmissions(prev => prev.filter(sub => sub.id !== id));
+      
+      // Optional: Show success feedback
+      alert("Submission deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting submission:", error);
+      alert("Failed to delete submission. Please try again.");
+    }
   };
+
   const handleCreateNew = () => navigate(MvRoutes.STUDENTS.CONTRIBUTION_FORM);
 
 

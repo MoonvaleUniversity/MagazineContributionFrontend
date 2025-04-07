@@ -17,7 +17,7 @@ export const AdminUsers = () => {
   const [filters, setFilters] = useState<Record<string, string>>({});
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10);
+  const [itemsPerPage] = useState(5);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -143,23 +143,23 @@ export const AdminUsers = () => {
         className="px-4"
       />
 
-      <table className="w-full border-collapse border border-gray-300 mt-4">
-        <thead>
-          <tr className="bg-secondary-400 dark:bg-secondary-dark-400">
+<table className="min-w-full divide-y divide-gray-200  dark:divide-gray-700">
+<thead className="bg-gray-50 dark:bg-primary-800bg-gray-50 dark:bg-primary-800">
+          <tr className="">
             {["ID", "Name", "Email", "Role", "Actions"].map((header, index) => (
-              <th key={index} className="border p-2">{header}</th>
+              <th key={index} className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{header}</th>
             ))}
           </tr>
         </thead>
-        <tbody>
+        <tbody className="bg-white dark:bg-primary-800 divide-y divide-gray-200 dark:divide-gray-700">
           {currentUsers.length > 0 ? (
             currentUsers.map(user => (
-              <tr key={user.id} className="border hover:bg-gray-50 dark:hover:bg-gray-700">
-                <td className="border p-2">{user.id}</td>
-                <td className="border p-2">{user.name}</td>
-                <td className="border p-2">{user.email}</td>
-                <td className="border p-2">{user.role || "N/A"}</td>
-                <td className=" flex gap-2">
+              <tr key={user.id} className="">
+                <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{user.id}</td>
+                <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{user.name}</td>
+                <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{user.email}</td>
+                <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{user.role || "N/A"}</td>
+                <td className="px-6 py-3 gap-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   <MvButton onClick={() => openModal(user)}>Edit</MvButton>
                   <MvButton 
                     onClick={() => handleDelete(user.id)}
