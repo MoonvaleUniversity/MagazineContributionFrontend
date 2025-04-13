@@ -7,8 +7,9 @@ export interface IContribution {
   closure_date_id: string;
   user_id: string;
   created_by: string;
-  created_at: string;
-  is_selected_for_publication: number;
+  created_at: Date;
+  is_selected_for_publication?: 0 | 1 | 2; // 0 = pending, 1 = approved, 2 = rejected
+  comment?: string;
 }
 
 export interface PaginatedContributions {

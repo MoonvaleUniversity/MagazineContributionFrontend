@@ -140,24 +140,24 @@ export const McStudents  = () => {
         onSearch={setSearchQuery}
         className="px-4"
       />
-
-      <table className="w-full border-collapse border border-gray-300 mt-4">
-        <thead>
-          <tr className="bg-secondary-400 dark:bg-secondary-dark-400">
+<div className="rounded-lg border border-gray-200 dark:border-gray-700">
+<table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+<thead className="bg-gray-50 dark:bg-primary-800">
+<tr className="">
             {["ID", "Name", "Email", "Faculty", "Actions"].map((header, index) => (
-              <th key={index} className="border p-2">{header}</th>
+              <th key={index} className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{header}</th>
             ))}
           </tr>
         </thead>
-        <tbody>
+        <tbody className="bg-white dark:bg-primary-800 divide-y divide-gray-200 dark:divide-gray-700">
           {currentStudents.length > 0 ? (
             currentStudents.map(student => (
-              <tr key={student.id} className="border hover:bg-gray-50 dark:hover:bg-gray-700">
-                <td className="border p-2">{student.id}</td>
-                <td className="border p-2">{student.name}</td>
-                <td className="border p-2">{student.email}</td>
-                <td className="border p-2">{student.faculty_id || "N/A"}</td>
-                <td className="border p-2 flex gap-2">
+              <tr key={student.id} className="">
+                <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{student.id}</td>
+                <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{student.name}</td>
+                <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{student.email}</td>
+                <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{student.faculty_id || "N/A"}</td>
+                <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider flex gap-2">
                   <MvButton onClick={() => openModal(student)}>Edit</MvButton>
                   <MvButton 
                     onClick={() => handleDelete(student.id)}
@@ -176,7 +176,7 @@ export const McStudents  = () => {
             </tr>
           )}
         </tbody>
-      </table>
+      </table></div>
 
       <MvPagination
         currentPage={currentPage}

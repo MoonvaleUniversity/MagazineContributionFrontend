@@ -4,6 +4,7 @@ import { MvInput, MvFileUpload, MvCheckbox } from "../../MvInput";
 import { MvModal } from "../../MvModal";
 import { MvContributionServices } from "../../../services/ContributionService";
 import { getUserData } from "../../../services/AuthService";
+import { MvLoader } from "../../MvLoader";
 
 export const MvContributionForm: React.FC = () => {
   const [title, setTitle] = useState("");
@@ -90,7 +91,7 @@ const handleFilesSelect = (selectedFiles: File[]) => {
           
           userId = userData?.id || 0;
           academicId = userData?.academic_year_id|| 0;
-          
+          console.log(academicId);
         } catch (error) {
           console.error('Error parsing userData:', error);
         }
@@ -113,7 +114,16 @@ const handleFilesSelect = (selectedFiles: File[]) => {
       setImages([]);
       setTermsAccepted(false);
       setIsSubmitting(false);
-    } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error : any) {
+      console.log(error?.response.data.message );
+      if( error?.response.data.message   === "You already created this contribution.") {
+        setError("You have already created contribution with the same title");
+        setIsSubmitting(false);
+        
+        return
+        
+      }
       console.error("Error submitting contribution:", error);
       setError("An error occurred while submitting your contribution.");
       setIsSubmitting(false);
@@ -127,6 +137,7 @@ const handleFilesSelect = (selectedFiles: File[]) => {
         className="w-11/12 max-sm/w-11/12 p-6 mx-auto space-y-4 shadow-lg bg-background-100/40 dark:bg-primary-700 rounded-2xl"
         encType="multipart/form-data"
       >
+        {isSubmitting ? <MvLoader/> : ""}
         <h2 className="text-xl text-center font-semibold ">
           Submit Your Magazine Contribution
         </h2>

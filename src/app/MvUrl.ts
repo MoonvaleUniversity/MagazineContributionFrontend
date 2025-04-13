@@ -3,6 +3,7 @@ const API_BASE_URL = "http://localhost:8000/api/v1";
 export const MvUrl = {
   // Authentication endpoints
   LOGIN: `${API_BASE_URL}/login`,
+  REGISTER: `${API_BASE_URL}/register`,
   VERIFY_EMAIL: (id: number) => `${API_BASE_URL}/email_verifying/${id}`,
   SEND_VERIFICATION: (email: string) => `${API_BASE_URL}/email_verification_sending/${email}`,
   CONFIRM_VERIFICATION_PAGE: (id: number) => `${API_BASE_URL}/confirmed_email_verification/${id}`,
@@ -16,9 +17,18 @@ export const MvUrl = {
   UPDATE_CLOSURE: (id: number) => `${API_BASE_URL}/closure-dates/${id}`,
   DELETE_CLOSURE: (id: number) => `${API_BASE_URL}/closure-dates/${id}`,
 
-  // Contributions endpoints
-  GET_CONTRIBUTIONS: `${API_BASE_URL}/contributions`,
-  UPLOAD_CONTRIBUTION: `${API_BASE_URL}/contributions`,
+   // Contributions
+   CONTRIBUTIONS: {
+    INDEX: `${API_BASE_URL}/contributions`,
+    STORE: `${API_BASE_URL}/contributions`,
+    SHOW: (id: number) => `${API_BASE_URL}/contributions/${id}`,
+    UPDATE: (id: number) => `${API_BASE_URL}/contributions/${id}`,
+    DESTROY: (id: number) => `${API_BASE_URL}/contributions/${id}`,
+    DOWNLOAD: (id: number) => `${API_BASE_URL}/download/${id}`,
+    PUBLISH: (id: number) => `${API_BASE_URL}/published/${id}`,
+    EMAIL_AUTO: `${API_BASE_URL}/emailAuto`,
+  },
+
 
   // Academic Year endpoints
   GET_ACADEMIC_YEARS: `${API_BASE_URL}/academic-years`,    // Get all academic years

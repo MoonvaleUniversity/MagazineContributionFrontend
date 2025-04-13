@@ -142,6 +142,7 @@ export const AdminUsers = () => {
         filters={[roleFilter]}
         className="px-4"
       />
+<div className="rounded-lg overflow-x-scroll max-w-screen border border-gray-200 dark:border-gray-700">
 
 <table className="min-w-full divide-y divide-gray-200  dark:divide-gray-700">
 <thead className="bg-gray-50 dark:bg-primary-800bg-gray-50 dark:bg-primary-800">
@@ -178,7 +179,7 @@ export const AdminUsers = () => {
             </tr>
           )}
         </tbody>
-      </table>
+      </table> </div>
 
       <MvPagination
         currentPage={currentPage}

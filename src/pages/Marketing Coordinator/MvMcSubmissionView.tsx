@@ -79,7 +79,7 @@ export const McSubmissionsView = () => {
   // Status change handler
   const handleStatusChange = async (id: string, newStatus: 'approved' | 'rejected') => {
     try {
-      await MvContributionServices.updateContributionStatus();
+      await MvContributionServices.publishContribution(id);
       setAllSubmissions(prev => prev.map(sub => 
         sub.id === id ? { 
           ...sub, 

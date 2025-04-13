@@ -24,7 +24,7 @@ const StudentLayout: React.FC<StudentLayoutProps> = ({ children }) => {
         }}
       >
         <MvStudentHeader />
-        <main className="p-6 overflow-y-scroll lg:h-[90vh] h-full lg:mt-0">
+        <main className="p-6 max-w-screen overflow-y-scroll lg:h-[90vh] h-full lg:mt-0">
           {children}
         </main>
         <MvThemeToggle/>

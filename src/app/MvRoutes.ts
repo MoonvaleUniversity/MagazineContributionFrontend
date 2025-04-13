@@ -31,7 +31,7 @@ const MvRoutes = {
     PROFILE_EDIT: "/mm/profile-edit",
   },
   MARKET_COORDINATOR: {
-    DASHBOARD: "/mc/dashboard",
+      DASHBOARD: "/mc/dashboard",
     STUDENTS: "/mc/students",
     GUEST: "/mc/guest",
     CONTRIBUTIONS: "/mc/contributions",

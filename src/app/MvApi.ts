@@ -54,6 +54,16 @@ export const postData = async <T>(url: string, data: object): Promise<AxiosRespo
     const response = await api.post(url, data); // Use api instead of axios
     return response;
 };
+export const postBlobData = async <T>(url: string, data: object): Promise<AxiosResponse<T>> => {
+    const response = await api.post(url, data, {
+        responseType: 'blob'  // Add blob response type
+    });
+    return response;
+};  
+export const patchData = async <T>(url: string, data?: object): Promise<AxiosResponse<T>> => {
+    const response = await api.patch(url, data);
+    return response;
+};
 export const postLogin = async <T>(url: string, data: object): Promise<AxiosResponse<T>> => {
    
     

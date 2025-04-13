@@ -12,7 +12,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
 
   return (
-    <div className="flex h-screen">
+    <div className="flex  h-screen">
       {/* Sidebar */}
       <MvAdminSidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
       
@@ -24,7 +24,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         }}
       >
         <MvAdminHeader />
-        <main className="p-6 overflow-y-scroll lg:h-[90vh] h-full lg:mt-0">
+        <main className="p-6 overflow-y-scroll max-w-screen lg:h-[90vh] h-full lg:mt-0">
           {children}
         </main>
         <MvThemeToggle/>

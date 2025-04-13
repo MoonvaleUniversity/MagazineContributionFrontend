@@ -19,7 +19,7 @@ const MarketingManagerLayout: React.FC<MarketingManagerLayoutProps> = ({ childre
       />
       
       {/* Main Content */}
-      <div className="flex-1 flex flex-col transition-all duration-300 ml-0 lg:ml-64 z-10">
+      <div className="flex-1 max-w-screen flex flex-col transition-all duration-300 ml-0 lg:ml-64 z-10">
         <MvMarketingManagerHeader />
         <main className="p-6 overflow-y-scroll lg:h-[90vh] h-full lg:mt-0">
           {children}

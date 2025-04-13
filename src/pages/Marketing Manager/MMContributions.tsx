@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
 import { MvButton } from "../../components/MvButton";
 import MvContributionTable from "../../components/MvTables/MvContributionTable";
 import MarketingManagerLayout from "../../layout/MarketingManagerLayout";
@@ -96,9 +97,69 @@ export const MmSubmissionsView = () => {
     setCurrentPage(1);
   };
 
-  const handleDownloadZip = () => {
-    // Implement ZIP download logic
-    console.log("Downloading ZIP...");
+  const handleDownloadZip = async () => {
+    try {
+      const zip = new JSZip();
+
+      // Filter only approved contributions from current filtered results
+      const approvedSubmissions = filteredSubmissions.filter(
+        (c) => c.is_selected_for_publication
+      );
+
+      if (approvedSubmissions.length === 0) {
+        alert("No approved contributions available for download");
+        return;
+      }
+  
+      // Helper to fetch files with authentication
+      const fetchFile = async (url: string): Promise<Blob> => {
+        const response = await fetch(url, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        });
+        if (!response.ok) throw new Error(`Failed to fetch ${url}`);
+        return await response.blob();
+      };
+
+      // Process each approved contribution
+      for (const contribution of approvedSubmissions) {
+        const folderName = contribution.name.replace(/[^a-z0-9]/gi, "_");
+        const folder = zip.folder(folderName);
+
+        // Add document
+        if (contribution.doc_url) {
+          try {
+            const docBlob = await fetchFile(contribution.doc_url);
+            folder?.file(`document_${contribution.name}.pdf`, docBlob);
+          } catch (error) {
+            console.error("Error downloading document:", error);
+          }
+        }
+
+        // Add images
+        if (contribution.image_url?.length) {
+          await Promise.all(
+            contribution.image_url.map(async (url, index) => {
+              try {
+                const imageBlob = await fetchFile(url);
+                const extension = url.split(".").pop() || "jpg";
+                folder?.file(`image_${index + 1}.${extension}`, imageBlob);
+              } catch (error) {
+                console.error("Error downloading image:", error);
+              }
+            })
+          );
+        }
+      }
+
+      // Generate and save ZIP
+      const content = await zip.generateAsync({ type: "blob" });
+      saveAs(content, "approved_contributions.zip");
+    } catch (error) {
+      console.error("Error creating ZIP file:", error);
+      alert("Failed to create download package. Please try again.");
+    }
   };
 
   return (

@@ -7,7 +7,6 @@ import MvNotFound from "./pages/Not Found/MvNotFound";
 import { AdminClosureDates } from "./pages/Admin/AdminClosureDate";
 import { AdminAcademicYears } from "./pages/Admin/AdminAcademicYear";
 import { AdminFaculties } from "./pages/Admin/AdminFaculty";
-import MvContributionDetails from "./pages/Card Details/MvContributionDetails";
 
 import ProtectedRoute from "./middleware/ProtectedRoute";
 import MvNotAuthorized from "./pages/Not Found/MvNotAuthorized";
@@ -29,6 +28,7 @@ import { McProfileEdit } from "./pages/Marketing Coordinator/McProfileEdit";
 import { MmDashboard } from "./pages/Marketing Manager/MMdashboard";
 import { AdminDashboard } from "./pages/Admin/AdminDashboard";
 import MvContributionDetailsPage from "./pages/Card Details/MvContributionDetails";
+import { McDashboard } from "./pages/Marketing Coordinator/McDashboard";
 
 
 
@@ -141,6 +141,11 @@ function App() {
         <Route path={MvRoutes.MARKET_COORDINATOR.STUDENTS} element={
           <ProtectedRoute roles={['Marketing Coordinator']}>
            <McStudents/>
+          </ProtectedRoute>
+        } />
+        <Route path={MvRoutes.MARKET_COORDINATOR.DASHBOARD} element={
+          <ProtectedRoute roles={['Marketing Coordinator']}>
+          <McDashboard></McDashboard>
           </ProtectedRoute>
         } />
         <Route path={MvRoutes.MARKET_COORDINATOR.GUEST} element={
