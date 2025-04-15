@@ -1,42 +1,44 @@
 import React, { useEffect, useState } from "react";
-import { AiOutlineLike, AiOutlineDislike, AiOutlineMessage } from "react-icons/ai";
+import { AiOutlineLike,  AiOutlineMessage, AiOutlineEllipsis } from "react-icons/ai";
 import { FaBookmark, FaEye, FaFilePdf, FaFileWord, FaImage, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { IContribution } from "../../app/Types/objects/contribution";
 import { getClosureDateById } from "../../services/ClosureDateService";
 import { IClosureDate } from "../../app/MvObjects/clousuredate";
+import { MvLoader } from "../MvLoader";
 
 interface MvCardProps {
   contribution: IContribution;
-  onStatusChange?: (newStatus: 'approved' | 'rejected') => void;
+  onStatusChange?: (newStatus: 1 | 2) => void; // Updated to match API status codes
   isMarketingCoordinator?: boolean;
   onDelete: () => void;
 }
 
-const getStatus = (contribution: IContribution) => {
-  if (contribution.is_selected_for_publication === 1) return "Approved";
-  const createdAt = new Date(contribution.created_at!);
-  const now = new Date();
-  const diffDays = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 3600 * 24));
-  return diffDays > 14 ? "Rejected" : "Pending";
+const statusStyles = {
+  0: "bg-yellow-100 text-yellow-800 dark:bg-yellow-800/30 dark:text-yellow-500",
+  1: "bg-green-100 text-green-800 dark:bg-green-800/30 dark:text-green-500",
+  2: "bg-red-100 text-red-800 dark:bg-red-800/30 dark:text-red-500"
 };
 
-const MvCard: React.FC<MvCardProps> = ({ contribution, onDelete, onStatusChange,
-  isMarketingCoordinator = false  }) => {
+const MvCard: React.FC<MvCardProps> = ({ 
+  contribution, 
+  onDelete, 
+  onStatusChange,
+  isMarketingCoordinator = false  
+}) => {
   const navigate = useNavigate();
   const [closureDate, setClosureDate] = useState<IClosureDate | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showMenu, setShowMenu] = useState(false);
 
   // Get first image URL
-  const imageUrl = contribution.image_url[0] || "/src/Assets/images/404.jpeg";
+  const imageUrl = contribution.image_url[0]?.image_url || "/default-image.jpg";
 
-  // Get document type
   const getFileType = (url: string) => {
     const extension = url.split('.').pop()?.toLowerCase();
     return extension === 'pdf' ? 'PDF' : 'DOC';
   };
-
-  // Fetch closure date
+  
   useEffect(() => {
     const fetchClosureDate = async () => {
       try {
@@ -52,142 +54,131 @@ const MvCard: React.FC<MvCardProps> = ({ contribution, onDelete, onStatusChange,
     fetchClosureDate();
   }, [contribution.closure_date_id]);
 
-  const formatDate = (dateString: string | undefined) => {
-    if (!dateString) return "N/A";
+  const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleString("en-US", {
-      year: "numeric",
-      month: "long",
+      month: "short",
       day: "numeric",
       hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
+      minute: "2-digit"
     });
   };
+
   return (
-    <div
-      className="max-w-xs p-4 bg-white dark:bg-secondary-dark-500 rounded-xl shadow-lg cursor-pointer"
-      onClick={() => navigate(`/card-details/${contribution.id}`)}
-    >
+    <div className="relative max-w-xs p-4 bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+      {/* Context Menu */}
+      {loading ? <MvLoader/>: ""}
+      <div className="absolute top-2 right-2 ">
+        <button 
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowMenu(!showMenu);
+          }}
+          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
+        >
+          <AiOutlineEllipsis className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+        </button>
+
+        {showMenu && (
+          <div 
+            className="absolute right-0 mt-1 w-40 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-10"
+            onMouseLeave={() => setShowMenu(false)}
+          >
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/contributions/${contribution.id}`);
+                setShowMenu(false);
+              }}
+              className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
+            >
+              <FaEye className="mr-2" />
+              Preview
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete();
+                setShowMenu(false);
+              }}
+              className="flex items-center w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-600"
+            >
+              <FaTrash className="mr-2" />
+              Delete
+            </button>
+          </div>
+        )}
+      </div>
+
       {/* Image */}
-      <div className="flex justify-center rounded-xl relative">
+      <div className="rounded-xl overflow-hidden mt-4 relative">
         <img
           src={imageUrl}
-          alt={contribution.name || "Contribution Image"}
-          className="w-full aspect-4/3 rounded-xl object-cover transition-transform duration-300 hover:scale-110"
+          alt={contribution.name}
+          className="w-full aspect-4/3 object-cover transition-transform duration-300 mt- hover:scale-105"
         />
         <div className="absolute bottom-2 right-2 bg-black/50 text-white px-2 py-1 rounded-full text-sm flex items-center">
           <FaImage className="mr-1" />
-          <span>{contribution.image_url?.length || 0}</span>
+          <span>{contribution.image_url.length}</span>
         </div>
       </div>
 
-      {/* Title and Metadata */}
+      {/* Content */}
       <div className="mt-4 space-y-2">
-        <h3 className="text-lg font-bold text-gray-800 dark:text-background-200">
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
           {contribution.name}
         </h3>
-        {isMarketingCoordinator && (
-          <div className="text-sm text-gray-500 dark:text-background-400">
-            User ID: {contribution.user_id}
-          </div>)}
-        <div className="flex items-center text-sm text-gray-500 dark:text-background-400">
+        
+        <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
           {getFileType(contribution.doc_url) === "PDF" ? (
             <FaFilePdf className="mr-2 text-red-500" />
           ) : (
             <FaFileWord className="mr-2 text-blue-500" />
           )}
-          <span>{getFileType(contribution.doc_url)} Document</span>
-        </div>
-
-        <div className="text-sm text-gray-500 dark:text-background-400">
-          {loading ? (
-            "Loading dates..."
-          ) : closureDate ? (
-            <>
-              <div>Final: {new Date(closureDate.final_closure_date).toLocaleDateString()}</div>
-            </>
-          ) : (
-            "Date information unavailable"
-          )}
+          <span>{contribution.user.faculty.name} </span>
+          <span>{closureDate?.final_closure_date}</span>
         </div>
 
         <div className="flex justify-between items-center text-sm">
-          <span className="text-gray-500 dark:text-background-400">
+          <span className="text-gray-500 dark:text-gray-400">
             {formatDate(contribution.created_at)}
           </span>
-          <span
-    className={`px-2 py-1 text-xs font-semibold rounded-full ${
-      getStatus(contribution) === "Approved"
-        ? "bg-green-600 text-white dark:bg-green-300 dark:text-green-900"
-        : getStatus(contribution) === "Rejected"
-        ? "bg-red-600 text-white dark:bg-red-300 dark:text-red-900"
-        : "bg-yellow-600 text-white dark:bg-yellow-300 dark:text-yellow-900"
-    }`}
-  >
-            {getStatus(contribution)}
+          <span className={`px-2 py-1 text-xs font-medium rounded-full ${statusStyles[contribution.is_selected_for_publication]}`}>
+            {contribution.is_selected_for_publication === 1 ? 'Approved' : 
+             contribution.is_selected_for_publication === 2 ? 'Rejected' : 'Pending'}
           </span>
         </div>
+
+        {isMarketingCoordinator && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onStatusChange?.(contribution.is_selected_for_publication === 1 ? 2 : 1);
+            }}
+            className={`w-full mt-2 px-3 py-1.5 text-sm rounded-lg ${
+              contribution.is_selected_for_publication === 1 
+                ? 'bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-800/30 dark:hover:bg-red-800/40'
+                : 'bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-800/30 dark:hover:bg-green-800/40'
+            }`}
+          >
+            {contribution.is_selected_for_publication === 1 ? 'Reject Contribution' : 'Approve Contribution'}
+          </button>
+        )}
       </div>
 
-      {/* Icons Section */}
-      <div className="mt-4 flex justify-between items-center text-gray-500 dark:text-background-400 text-sm">
-        <div className="flex items-center gap-1">
-          <AiOutlineLike className="w-5 h-5" />
-          <span>100</span>
+      {/* Engagement Metrics */}
+      <div className="mt-4 flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
+        <div className="flex items-center space-x-3">
+          <div className="flex items-center">
+            <AiOutlineLike className="mr-1" />
+            <span>0</span>
+          </div>
+          <div className="flex items-center">
+            <AiOutlineMessage className="mr-1" />
+            <span>0</span>
+          </div>
         </div>
-        <div className="flex items-center gap-1">
-          <AiOutlineDislike className="w-5 h-5" />
-          <span>100</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <AiOutlineMessage className="w-5 h-5" />
-          <span>100</span>
-        </div>
-        <div>
-          <FaBookmark className="w-5 h-5" />
-        </div>
-      </div>
-      {/* Action Buttons */}
-      <div className="mt-4 flex justify-between">
-      {isMarketingCoordinator && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onStatusChange?.(
-                  contribution.is_selected_for_publication === 1 
-                    ? 'rejected' 
-                    : 'approved'
-                );
-              }}
-              className={`px-2 py-1 text-xs rounded-full ${
-                contribution.is_selected_for_publication === 1
-                  ? 'bg-red-100 text-red-600 hover:bg-red-200'
-                  : 'bg-green-100 text-green-600 hover:bg-green-200'
-              }`}
-            >
-              {contribution.is_selected_for_publication === 1 ? 'Reject' : 'Approve'}
-            </button>
-          )}
-        <button
-                             onClick={() =>
-                               navigate(`/contributions/${contribution.id}`)
-                             }
-                             className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 flex items-center"
-                           >
-                             <FaEye className="mr-1" />
-                             Preview
-                           </button>
-                           <button
-                             onClick={(e) => {
-                               e.stopPropagation();
-                               onDelete();
-                             }}
-                             className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 flex items-center"
-                           >
-                             <FaTrash className="mr-1" />
-                             Delete
-                           </button>
+        <FaBookmark className="hover:text-yellow-500 cursor-pointer" />
       </div>
     </div>
   );

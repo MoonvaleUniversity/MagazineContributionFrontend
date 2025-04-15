@@ -24,15 +24,19 @@ export const MvContributionServices = {
       }
 
       return response.data.contributions.map((item: any) => ({
-        id: item.id.toString(),
+        id: item.id,
         name: item.name,
         doc_url: item.doc_url,
-        image_url: Array.isArray(item.images) ? item.images.map((img: any) => img.image_url) : [],
-        closure_date_id: item.closure_date_id.toString(),
-        user_id: item.user_id.toString(),
-        created_by: item.created_by?.toString() || "",
+        image_url: item.images || [],
+        closure_date_id: item.closure_date_id,
+        user_id: item.user_id,
+        created_by: item.created_by,
         created_at: item.created_at,
-        is_selected_for_publication: item.is_selected_for_publication
+        is_selected_for_publication: item.is_selected_for_publication,
+        user: item.user,
+        version: item.version,
+        updated_by: item.updated_by,
+        updated_at: item.updated_at
       }));
     } catch (error) {
       console.error("Error fetching contributions:", error);
@@ -78,19 +82,7 @@ export const MvContributionServices = {
 
       const item = response.data.data;
       
-      return {
-        id: item.id.toString(),
-        name: item.name,
-        doc_url: item.doc_url,
-        image_url: Array.isArray(item.image_url) 
-          ? item.image_url.map((img: any) => img.image_url) 
-          : [],
-        closure_date_id: item.closure_date_id.toString(),
-        user_id: item.user_id.toString(),
-        created_by: item.created_by?.toString() || "",
-        created_at: item.created_at,
-        is_selected_for_publication: 1 // Force to true after publishing
-      };
+      return item;
     } catch (error) {
       console.error(`Error publishing contribution ${id}:`, error);
       throw new Error(`Publishing failed: ${(error as Error).message}`);
@@ -113,33 +105,61 @@ export const MvContributionServices = {
     }
   },
 
-  // Get single contribution
-  getContributionById: async (id: string): Promise<IContribution> => {
-    try {
-      // Corrected to use SHOW endpoint
-      const response = await getData(MvUrl.CONTRIBUTIONS.SHOW(Number(id)));
+ // Get single contribution
+getContributionById: async (id: string): Promise<IContribution> => {
+  try {
+    const response = await getData(
+      MvUrl.CONTRIBUTIONS.SHOW(Number(id))
+    );
 
-      if (!response?.data) {
-        throw new Error("Contribution not found");
-      }
-
-      const item = response.data.contributions;
-      return {
-        id: item.id.toString(),
-        name: item.name,
-        doc_url: item.doc_url,
-        image_url: Array.isArray(item.images) ? item.images.map((img: any) => img.image_url) : [],
-        closure_date_id: item.closure_date_id.toString(),
-        user_id: item.user.name,
-        created_by: item.created_by?.toString() || "",
-        created_at: item.created_at,
-        is_selected_for_publication: item.is_selected_for_publication
-      };
-    } catch (error) {
-      console.error(`Error fetching contribution ${id}:`, error);
-      throw error;
+    if (!response?.data?.contributions) {
+      throw new Error("Contribution not found");
     }
-  },
+
+    // Map the API response to match IContribution interface
+    return {
+      id: response.data.contributions.id,
+      name: response.data.contributions.name,
+      user_id: response.data.contributions.user_id,
+      closure_date_id: response.data.contributions.closure_date_id,
+      doc_url: response.data.contributions.doc_url,
+      is_selected_for_publication: response.data.contributions.is_selected_for_publication,
+      version: response.data.contributions.version,
+      created_by: response.data.contributions.created_by,
+      updated_by: response.data.contributions.updated_by,
+      created_at: response.data.contributions.created_at,
+      updated_at: response.data.contributions.updated_at,
+      image_url: response.data.contributions.images.map((img: { id: any; image_url: any; created_at: any; updated_at: any; }) => ({
+        id: img.id,
+        image_url: img.image_url,
+        created_at: img.created_at,
+        updated_at: img.updated_at
+      })),
+      user: {
+        id: response.data.contributions.user.id,
+        name: response.data.contributions.user.name,
+        faculty: {
+          id: response.data.contributions.user.faculty.id,
+          name: response.data.contributions.user.faculty.name,
+          image_url: response.data.contributions.user.faculty.image_url,
+          description: response.data.contributions.user.faculty.description
+        },
+        roles: response.data.contributions.user.roles.map((role: { id: any; name: any; pivot: { model_type: any; model_id: any; role_id: any; }; }) => ({
+          id: role.id,
+          name: role.name,
+          pivot: {
+            model_type: role.pivot.model_type,
+            model_id: role.pivot.model_id,
+            role_id: role.pivot.role_id
+          }
+        }))
+      }
+    };
+  } catch (error) {
+    console.error(`Error fetching contribution ${id}:`, error);
+    throw error;
+  }
+},
 
   // Delete contribution
   deleteContribution: async (id: string): Promise<void> => {

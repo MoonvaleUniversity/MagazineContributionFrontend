@@ -70,13 +70,13 @@ const Login: React.FC = () => {
 
         const userRole = response.data.user.role;  // Assuming role is in response data
         if (userRole === "Admin") {
-          navigate(MvRoutes.ADMIN.FACULTY); // Example route for Admin
+          navigate(MvRoutes.ADMIN.DASHBOARD); // Example route for Admin
         } else if (userRole === "Student") {
           navigate(MvRoutes.STUDENTS.DASHBOARD); // Example route for Student
         } else if (userRole === "Marketing Manager") {
-          navigate(MvRoutes.MARKET_MANAGER.FACULTY); // Example route for Student
+          navigate(MvRoutes.MARKET_MANAGER.DASHBOARD); // Example route for Student
         } else if (userRole === "Marketing Coordinator") {
-          navigate(MvRoutes.MARKET_COORDINATOR.STUDENTS
+          navigate(MvRoutes.MARKET_COORDINATOR.DASHBOARD
             
           ); // Example route for Student
         } else {
@@ -97,7 +97,7 @@ const Login: React.FC = () => {
         setError({message: "Please check your email and try again"});
       }
       else if (error?.message === "Request failed with status code 401"){
-        setError({message: "Wrong Password. Please try again"});     
+        setError({message: "The credentials you provided is incorrect. Please try again"});     
       }
       
       else if (error?.message === "Request failed with status code 422"){

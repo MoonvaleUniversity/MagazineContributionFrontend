@@ -6,10 +6,10 @@ import { IClosureDate } from "../../app/MvObjects/clousuredate";
 
 interface MvContributionTableProps {
   contributions: IContribution[];
-  closureDates?: Record<string, IClosureDate>;
-  onDelete: (id: string) => void;
-  onStatusChange?: (id: string, newStatus: 'approved' | 'rejected') => void;
-  onDownloadZip?: (id: string) => void;
+  closureDates?: Record<number, IClosureDate>; // Changed to number keys
+  onDelete?: (id: number) => void;
+  onStatusChange?: (id: number, newStatus: 1 | 2) => void; // Updated to match API status codes
+  onDownloadZip?: (id: number) => void;
   isMarketingCoordinator?: boolean;
   isMarketingManager?: boolean;
   isAdmin?: boolean;
@@ -27,18 +27,19 @@ const MvContributionTable: React.FC<MvContributionTableProps> = ({
 }) => {
   const navigate = useNavigate();
 
-  // Determine contribution status
+  // Status determination based on API codes
   const getStatus = (contribution: IContribution) => {
     if (contribution.is_selected_for_publication === 1) return "Approved";
-    const createdAt = new Date(contribution.created_at!);
+    if (contribution.is_selected_for_publication === 2) return "Rejected";
+    
+    const createdAt = new Date(contribution.created_at);
     const now = new Date();
     const diffDays = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 3600 * 24));
-    return diffDays > 3 ? "Rejected" : "Pending";
+    return diffDays > 14 ? "Overdue" : "Pending"; // Changed to 14 days threshold
   };
 
   // Format dates consistently
-  const formatDate = React.useCallback((dateString?: string) => {
-    if (!dateString) return "N/A";
+  const formatDate = React.useCallback((dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
       year: "numeric",
@@ -54,8 +55,8 @@ const MvContributionTable: React.FC<MvContributionTableProps> = ({
   }, []);
 
   // Check if closure date has passed
-  const isClosureDatePassed = (contributionId: string) => {
-    const closureDate = closureDates[contributionId]?.final_closure_date;
+  const isClosureDatePassed = (closureDateId: number |string) => {
+    const closureDate = closureDates[Number(closureDateId)]?.final_closure_date;
     return closureDate ? new Date(closureDate) < new Date() : false;
   };
 
@@ -70,22 +71,22 @@ const MvContributionTable: React.FC<MvContributionTableProps> = ({
             </th>
             {isMarketingCoordinator && (
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                User ID
+                Author
               </th>
             )}
             {isMarketingManager && (
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                Closure Date
+                Faculty
               </th>
             )}
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-              Created At
+              Submitted At
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
               Images
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-              Document Type
+              Document
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
               Status
@@ -101,7 +102,7 @@ const MvContributionTable: React.FC<MvContributionTableProps> = ({
           {contributions.length === 0 ? (
             <tr>
               <td colSpan={8} className="px-6 py-4 text-center text-gray-500 dark:text-gray-300">
-                No contributions available.
+                No contributions available
               </td>
             </tr>
           ) : (
@@ -119,21 +120,21 @@ const MvContributionTable: React.FC<MvContributionTableProps> = ({
                     {contribution.name}
                   </td>
 
-                  {/* User ID (Marketing Coordinator only) */}
+                  {/* Author (Marketing Coordinator only) */}
                   {isMarketingCoordinator && (
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                      {contribution.user_id}
+                      {contribution.user.name}
                     </td>
                   )}
 
-                  {/* Closure Date (Marketing Manager only) */}
+                  {/* Faculty (Marketing Manager only) */}
                   {isMarketingManager && (
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                      {formatDate(closureDates[contribution.closure_date_id]?.final_closure_date)}
+                      {contribution.user.faculty.name}
                     </td>
                   )}
 
-                  {/* Creation Date */}
+                  {/* Submission Date */}
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                     {formatDate(contribution.created_at)}
                   </td>
@@ -160,25 +161,27 @@ const MvContributionTable: React.FC<MvContributionTableProps> = ({
 
                   {/* Status */}
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {isMarketingCoordinator && !isAdmin ? (
+                    {isMarketingCoordinator ? (
                       <select
-                        value={status === "Approved" ? "approved" : "rejected"}
-                        onChange={(e) => onStatusChange?.(contribution.id, e.target.value as 'approved' | 'rejected')}
+                        value={contribution.is_selected_for_publication}
+                        onChange={(e) => onStatusChange?.(Number(contribution.id), Number(e.target.value) as 1 | 2)}
                         className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                          status === "Approved" 
+                          contribution.is_selected_for_publication === 1 
                             ? "bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100"
                             : "bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100"
                         } cursor-pointer`}
                       >
-                        <option value="approved">Approve</option>
-                        <option value="rejected">Reject</option>
+                        <option value={1}>Approve</option>
+                        <option value={2}>Reject</option>
                       </select>
                     ) : (
                       <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                        status === "Approved" 
+                        contribution.is_selected_for_publication === 1 
                           ? "bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100"
-                          : status === "Rejected"
+                          : contribution.is_selected_for_publication === 2
                           ? "bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100"
+                          : status === "Overdue"
+                          ? "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-100"
                           : "bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100"
                       }`}>
                         {status}
@@ -194,7 +197,7 @@ const MvContributionTable: React.FC<MvContributionTableProps> = ({
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            onDownloadZip?.(contribution.id);
+                            onDownloadZip?.(Number(contribution.id));
                           }}
                           className="text-purple-600 hover:text-purple-900 dark:text-purple-400 dark:hover:text-purple-300 flex items-center"
                         >
@@ -212,7 +215,7 @@ const MvContributionTable: React.FC<MvContributionTableProps> = ({
                         className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 flex items-center"
                       >
                         <FaEye className="mr-1" />
-                        Preview
+                        View
                       </button>
 
                       {/* Delete Button */}
@@ -220,7 +223,7 @@ const MvContributionTable: React.FC<MvContributionTableProps> = ({
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            onDelete(contribution.id);
+                            onDelete?.(Number(contribution.id));
                           }}
                           className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 flex items-center"
                         >

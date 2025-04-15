@@ -14,7 +14,7 @@ import SearchFilter from "../../components/MvSearchFilter/MvSearchFIlter";
 export const MvStudentSubmissionsView = () => {
   const [allSubmissions, setAllSubmissions] = useState<IContribution[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5);
+  const [itemsPerPage] = useState(6);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [view, setView] = useState<'table' | 'card'>('table');
@@ -150,7 +150,7 @@ export const MvStudentSubmissionsView = () => {
         {view === 'table' ? (
           <MvContributionTable
             contributions={currentSubmissions}
-            onDelete={handleDelete}
+            onDelete={(id)=>handleDelete(id.toString())}
           />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -159,7 +159,7 @@ export const MvStudentSubmissionsView = () => {
                 key={submission.id}
                 contribution={submission}
                
-                onDelete={() => handleDelete(submission.id)}
+                onDelete={() => handleDelete(submission.id.toString())}
               />
             ))}
           </div>
