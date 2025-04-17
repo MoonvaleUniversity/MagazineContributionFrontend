@@ -29,6 +29,7 @@ import { MmDashboard } from "./pages/Marketing Manager/MMdashboard";
 import { AdminDashboard } from "./pages/Admin/AdminDashboard";
 import MvContributionDetailsPage from "./pages/Card Details/MvContributionDetails";
 import { McDashboard } from "./pages/Marketing Coordinator/McDashboard";
+import { AdminProfileEdit } from "./pages/Admin/AdminProfile";
 
 
 
@@ -103,6 +104,11 @@ function App() {
         <Route path={MvRoutes.ADMIN.USERS} element={
           <ProtectedRoute roles={['Admin']}>
             <AdminUsers/>
+          </ProtectedRoute>
+        } />
+        <Route path={MvRoutes.ADMIN.PROFILE_EDIT} element={
+          <ProtectedRoute roles={['Admin']}>
+            <AdminProfileEdit/>
           </ProtectedRoute>
         } />
         <Route path={MvRoutes.ADMIN.CONTRIBUTION} element={

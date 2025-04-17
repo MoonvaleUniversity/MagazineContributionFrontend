@@ -72,7 +72,7 @@ export const MvImageUpload = forwardRef<HTMLInputElement, MvImageUploadProps>(
         </label>
 
         {error && <div className="text-red-500">{error}</div>}
-
+        <div className="text-gray-500">Preview</div>  
         {image && (
           <div className="relative w-32 h-32">
             <img src={URL.createObjectURL(image)} alt="Uploaded preview" className="object-cover w-full h-full rounded-lg" />

@@ -3,9 +3,9 @@ import React, { useState } from 'react';
 import { MvProfileEdit } from '../../components/Student/MvProfileEdit';
 import { getUserData } from '../../services/AuthService';
 import { IUser } from '../../app/Types/objects/user';
-import MarketingCoordinatorLayout from '../../layout/MarketingCoordinatorLayout';
+import AdminLayout from '../../layout/AdminLayout';
 
-export const McProfileEdit: React.FC = () => {
+export const AdminProfileEdit: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'profile' | 'contributions'>('profile');
   const userData:IUser |null = getUserData();
   // Mock data - replace with actual API calls
@@ -27,7 +27,7 @@ export const McProfileEdit: React.FC = () => {
   ];
 
   return (
-    <MarketingCoordinatorLayout>
+    <AdminLayout>
       {/* ... existing header code ... */}
       <div className="relative bg-gradient-to-r from-purple-50 to-blue-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl shadow-lg mb-8 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-purple-100/20 to-blue-100/20 dark:from-gray-900/50 dark:to-gray-900/50" />
@@ -120,7 +120,7 @@ export const McProfileEdit: React.FC = () => {
           </div>
         </div>
       )}
-    </MarketingCoordinatorLayout>
+    </AdminLayout>
   );
 };
 

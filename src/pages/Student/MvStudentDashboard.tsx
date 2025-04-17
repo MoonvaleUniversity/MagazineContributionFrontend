@@ -33,7 +33,7 @@ export const MvStudentDashboard = () => {
           const submissions = await MvContributionServices.getContributions({ userId: userData.id });
           setAllSubmissions(submissions);
           // Get first 3 for recent display
-          setRecentSubmissions(submissions.slice(0, 3));
+          setRecentSubmissions(submissions.splice(-3));
           setLastLogin(new Date(userData.last_login).toLocaleString());
         }
 
@@ -186,7 +186,7 @@ export const MvStudentDashboard = () => {
               {/* Image Section */}
               <div className="w-24 h-24 flex-shrink-0">
                 <img
-                  src={submission.image_url?.[0] || '/src/Assets/images/404.jpeg'}
+                  src={submission.image_url?.[0].image_url || '/src/Assets/images/404.jpeg'}
                   alt={submission.name}
                   className="w-full h-full object-cover rounded-lg"
                 />

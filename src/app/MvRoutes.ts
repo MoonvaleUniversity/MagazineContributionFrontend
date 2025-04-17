@@ -21,7 +21,7 @@ const MvRoutes = {
     ACADEMIC_YEAR: "/admin/academic-year",
     FACULTY: "/admin/faculty",
     CONTRIBUTION: "/admin/contribution",
-    PROFILE_EDIT: "/students/profile-edit",
+    PROFILE_EDIT: "/admin/profile-edit",
   },
   MARKET_MANAGER: {
     DASHBOARD: "/mm/dashboard",

@@ -6,7 +6,7 @@ export const MvThemeToggle: React.FC = () => {
     return savedTheme ? JSON.parse(savedTheme) : false;
   });
 
-  // Effect to apply the theme to the body
+    // Effect to apply the theme to the body
   useEffect(() => {
     if (isDarkMode) {
       document.body.classList.add('dark'); // Add dark class to body
