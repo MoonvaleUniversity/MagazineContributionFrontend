@@ -4,8 +4,11 @@ import react from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [ tailwindcss(),react()],
+  plugins: [tailwindcss(), react()],
   define: {
     'import.meta.env': JSON.stringify(process.env)
+  },
+  server: {
+    port: 5174
   }
 })
