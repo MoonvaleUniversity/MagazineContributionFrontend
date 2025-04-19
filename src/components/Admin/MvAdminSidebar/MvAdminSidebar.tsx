@@ -5,7 +5,7 @@ import { NavLink } from 'react-router-dom';
 import MvRoutes from '../../../app/MvRoutes';
 import {   FaChalkboardTeacher, FaRegCalendarAlt, FaUserCog } from 'react-icons/fa';
 import {AiOutlineStop } from 'react-icons/ai';
-import { FiX, FiMenu, FiChevronDown, FiLogOut, FiSettings, FiHome, FiLock } from 'react-icons/fi';
+import { FiX, FiMenu, FiChevronDown, FiLogOut, FiSettings, FiHome} from 'react-icons/fi';
 import { getUserData } from '../../../services/AuthService';
 import clsx from 'clsx';
 
@@ -110,14 +110,11 @@ const [userData, setUserData] = useState<{ name?: string; email?: string } | nul
         
         {isDropdownOpen && (
           <div className="pl-9 mt-2 space-y-2 animate-fade-in">
-            <div className="flex items-center p-2 space-x-2 text-gray-500 rounded-lg hover:bg-indigo-50 dark:hover:bg-gray-800">
+            <NavLink to={MvRoutes.ADMIN.PROFILE_EDIT} className="flex items-center p-2 space-x-2 text-gray-500 rounded-lg hover:bg-indigo-50 dark:hover:bg-gray-800">
               <FiSettings className="w-4 h-4" />
-              <span className="text-sm">Preferences</span>
-            </div>
-            <div className="flex items-center p-2 space-x-2 text-gray-500 rounded-lg hover:bg-indigo-50 dark:hover:bg-gray-800">
-              <FiLock className="w-4 h-4" />
-              <span className="text-sm">Security</span>
-            </div>
+              <span className="text-sm">Profile</span>
+            </NavLink>
+           
             <div
               className="flex items-center p-2 space-x-2 text-red-500 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20"
               onClick={handleLogout}
