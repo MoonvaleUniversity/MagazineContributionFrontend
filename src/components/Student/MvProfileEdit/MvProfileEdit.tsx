@@ -51,7 +51,7 @@ export const MvProfileEdit: React.FC = () => {
 
     try {
       // Basic validation
-      if (!name || !email || !facultyId || !password || !confirmPassword) {
+      if (!name || !email || !facultyId) {
         setError("Please fill in all required fields.");
       }
 

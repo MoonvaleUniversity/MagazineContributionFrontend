@@ -7,12 +7,15 @@ const MvRoutes = {
   EMAIL_VERIFY: "/email-verification",
   WELCOME_USER: "/welcome-user",
   CANVAS_CORNER: "/canvas-corner",
+  CREATIVE_SPARLS: "/creative-sparks",
   CONTRIBUTION_DETAILS: `/contributions/:id`,
+  PUBLIC_CONTRIBUTION:"published-contributions",
   STUDENTS: {
     DASHBOARD: "/students/dashboard",
     SUBMISSIONS: "/students/submissions",
     CONTRIBUTION_FORM: "/students/contribution-form",
     PROFILE_EDIT: "/students/profile-edit",
+   
   },
   ADMIN: {
     DASHBOARD: "/admin/dashboard",
@@ -22,6 +25,7 @@ const MvRoutes = {
     FACULTY: "/admin/faculty",
     CONTRIBUTION: "/admin/contribution",
     PROFILE_EDIT: "/admin/profile-edit",
+
   },
   MARKET_MANAGER: {
     DASHBOARD: "/mm/dashboard",
@@ -29,20 +33,19 @@ const MvRoutes = {
     USERS:"/mm/users",
     SELECTED_CONTRIBUTIONS: "/mm/selected_contribution",
     PROFILE_EDIT: "/mm/profile-edit",
+    
   },
   MARKET_COORDINATOR: {
-      DASHBOARD: "/mc/dashboard",
+    DASHBOARD: "/mc/dashboard",
     STUDENTS: "/mc/students",
     GUEST: "/mc/guest",
     CONTRIBUTIONS: "/mc/contributions",
     PROFILE_EDIT: "/mc/profile-edit",
+    
   },
   GUEST: {
     DASHBOARD: "/guest/dashboard",
-    STUDENTS: "/mc/students",
-    GUEST: "/mc/guest",
-    CONTRIBUTIONS: "/mc/contributions",
-    PROFILE_EDIT: "/mc/profile-edit",
+   
   },
 
 };

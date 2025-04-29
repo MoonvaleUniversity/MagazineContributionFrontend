@@ -1,4 +1,4 @@
-import { FiHome, FiUsers, FiFile, FiUser, FiSettings, FiChevronDown, FiMenu, FiX, FiLogOut } from "react-icons/fi";
+import { FiHome, FiUsers, FiFile, FiUser,  FiChevronDown, FiMenu, FiX } from "react-icons/fi";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { MvButton } from "../../MvButton";
@@ -90,15 +90,7 @@ const [userData, setUserData] = useState<{ name?: string; email?: string } | nul
             <div className="pl-4 text-gray-600 dark:text-primary-dark-200">
               <div className="p-2 rounded-4xl hover:bg-secondary-200 dark:hover:bg-secondary-dark-700">General</div>
               <div className="p-2 rounded-4xl hover:bg-secondary-200 dark:hover:bg-secondary-dark-700">Account</div>
-              <div
-                className="flex items-center p-2 space-x-2 text-red-500 rounded-4xl hover:bg-secondary-200 dark:hover:bg-secondary-dark-700 cursor-pointer"
-                onClick={() => {
-                  // Handle logout logic if needed
-                }}
-              >
-                <FiLogOut />
-                <span>Logout</span>
-              </div>
+             
             </div>
           )}
         </div>
@@ -115,7 +107,7 @@ const [userData, setUserData] = useState<{ name?: string; email?: string } | nul
               <p className="text-sm font-medium">{userData?.name || 'Unknown User'}</p>
               <p className="text-xs dark:text-primary-dark-200">{userData?.email || 'student@example.com'}</p>
             </div>
-            <FiSettings className="ml-auto text-primary-700 dark:text-primary-dark-500" />
+          
           </div>
         </div>
       </div>

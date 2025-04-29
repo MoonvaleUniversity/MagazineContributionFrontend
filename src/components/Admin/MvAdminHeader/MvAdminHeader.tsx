@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FiBell, FiSearch } from "react-icons/fi";
+import { FiSearch } from "react-icons/fi";
 
 import { MvButton } from "../../MvButton";
 
@@ -34,10 +34,7 @@ export const MvAdminHeader: React.FC = () => {
 
       {/* Icons */}
       <div className="flex items-center space-x-6">
-        <button className="relative">
-          <FiBell className="w-6 h-6" />
-          <span className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full"></span>
-        </button>
+      
 
         <div className="flex items-center space-x-3">
                  <MvButton variant="primary" onClick={()=> {handleLogout()}} ><span className="">Logout</span></MvButton>

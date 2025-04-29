@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { MvButton } from "../../components/MvButton";
-import MvCard from "../../components/MvCard/MvCard";
+
 import MvContributionTable from "../../components/MvTables/MvContributionTable";
 import StudentLayout from "../../layout/StudentLayout";
 import { MvContributionServices } from "../../services/ContributionService";
@@ -9,6 +9,7 @@ import {IContribution } from "../../app/Types/objects/contribution"; // Import t
 import MvRoutes from "../../app/MvRoutes";
 import { MvPagination } from "../../components/MvPlagination/MvPlagination";
 import SearchFilter from "../../components/MvSearchFilter/MvSearchFIlter";
+import { MvCard } from "../../components/MvCard";
 
 
 export const MvStudentSubmissionsView = () => {

@@ -1,13 +1,11 @@
-import { useState, useEffect, ChangeEvent } from "react";
+import { useState,  ChangeEvent } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { logo_dark, logo_light } from "../../app/MvConstants";
-import { ResponseFaculty } from "../../app/MvObjects/faculty";
 import MvRoutes from "../../app/MvRoutes";
 import { MvButton } from "../../components/MvButton";
 import { MvInput, MvPasswordInput, MvCheckbox } from "../../components/MvInput";
 import { MvLoader } from "../../components/MvLoader";
 import { MvThemeToggle } from "../../components/MvThemeToggle";
-import { getAllFaculties } from "../../services/FacultyService";
 import { createGuest } from "../../services/GuestService";
 
 interface RegisterFormData {
@@ -22,7 +20,7 @@ interface RegisterFormData {
 const RegisterGuest: React.FC = () => {
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState(false);
-  const [faculties, setFaculties] = useState<ResponseFaculty[]>([]);
+  
   const [formData, setFormData] = useState<RegisterFormData>({
     name: "",
     email: "",
@@ -33,18 +31,7 @@ const RegisterGuest: React.FC = () => {
   });
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchFaculties = async () => {
-      try {
-        const faculties = await getAllFaculties();
-        setFaculties(faculties);
-      } catch (error) {
-        console.log(error);
-        setError("Failed to load faculties. Please refresh the page.");
-      }
-    };
-    fetchFaculties();
-  }, []);
+ 
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -74,10 +61,7 @@ const RegisterGuest: React.FC = () => {
       setError("You must accept the terms and conditions");
       return;
     }
-    if (!formData.facultyId) {
-      setError("Please select a faculty");
-      return;
-    }
+    
   
     try {
       setLoading(true);
@@ -87,7 +71,7 @@ const RegisterGuest: React.FC = () => {
         email: formData.email,
         password: formData.password,
         password_confirmation: formData.confirmPassword, // Add confirmation
-        faculty_id: formData.facultyId
+        faculty_id: 1
       });
   
     
@@ -157,23 +141,7 @@ const RegisterGuest: React.FC = () => {
             required
           />
 
-          <div className="flex items-center gap-2 min-w-[200px]">
-            <label className="text-sm dark:text-white">Faculty</label>
-            <select
-              name="facultyId"
-              value={formData.facultyId || ""}
-              onChange={handleInputChange}
-              className="border-2 rounded-2xl p-2 border-primary-400 dark:border-primary-dark-500 bg-white dark:bg-secondary-dark-500 flex-1"
-              required
-            >
-              <option value="">Select Faculty</option>
-              {faculties.map(faculty => (
-                <option key={faculty.id} value={faculty.id}>
-                  {faculty.name}
-                </option>
-              ))}
-            </select>
-          </div>
+        
 
           <MvCheckbox
             id="terms"

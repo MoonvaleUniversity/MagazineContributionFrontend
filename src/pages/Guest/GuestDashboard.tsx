@@ -1,9 +1,16 @@
 
-import MvHomeLayout from '../../layout/MvHomeLayout'
+import { MvGlobalContributions } from '../../components/MvContributions/publishedContributions';
+import MvHomeLayout from '../../layout/MvHomeLayout';
 
 const GuestDashboard = () => {
+
   return (
- <MvHomeLayout>   <div>GuestDashboard</div></MvHomeLayout> 
+    <MvHomeLayout>
+     
+
+        <MvGlobalContributions/>
+    
+    </MvHomeLayout>
   )
 }
 

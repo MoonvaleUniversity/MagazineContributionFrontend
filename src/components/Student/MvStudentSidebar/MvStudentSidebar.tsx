@@ -1,4 +1,4 @@
-import { FiHome, FiFile, FiCheckCircle,  FiSettings, FiChevronDown, FiMenu, FiX } from 'react-icons/fi';
+import { FiHome, FiFile, FiCheckCircle,   FiChevronDown, FiMenu, FiX } from 'react-icons/fi';
 import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { MvButton } from '../../MvButton';
@@ -15,14 +15,13 @@ export const MvStudentSidebar: React.FC<MvStudentSidebarProps> = ({ isSidebarOpe
   const [userData, setUserData] = useState<{ name?: string; email?: string } | null>(null);
 
   useEffect(() => {
-     setUserData(getUserData())
+     setUserData(getUserData()) 
   }, []);
 
   const navItems = [
     { icon: <FiHome />, label: 'Dashboard', to: '/students/dashboard' },
     { icon: <FiFile />, label: 'My Submissions', to: '/students/submissions' },
     { icon: <FiCheckCircle />, label: 'Submit Contribution', to: '/students/contribution-form' },
-    // { icon: <FiUser />, label: 'Profile', to: '/students/profile-edit' },
   ];
 
   
@@ -54,7 +53,7 @@ export const MvStudentSidebar: React.FC<MvStudentSidebarProps> = ({ isSidebarOpe
               key={index}
               to={item.to}
               className={({ isActive }) =>
-                `flex items-center space-x-4 p-2 rounded-4xl ${
+                `flex items-center space-x-4 p-2 rounded-2xl ${
                   isActive
                     ? 'bg-secondary-600 text-black font-bold'
                     : 'text-primary-800 hover:bg-secondary-600 dark:text-secondary-dark-200 dark:hover:bg-secondary-dark-700'
@@ -81,8 +80,9 @@ export const MvStudentSidebar: React.FC<MvStudentSidebarProps> = ({ isSidebarOpe
           </div>
           {isDropdownOpen && (
             <div className="pl-4 flex flex-col text-gray-600 dark:text-primary-dark-200">
-              <NavLink to={MvRoutes.CANVAS_CORNER} className="p-2 w-full rounded-4xl hover:bg-secondary-200 dark:hover:bg-secondary-dark-700">Canvas Corner</NavLink>
-              <NavLink to={MvRoutes.STUDENTS.PROFILE_EDIT} className="p-2 w-full rounded-4xl hover:bg-secondary-200 dark:hover:bg-secondary-dark-700">Account</NavLink>
+              <NavLink to={MvRoutes.CANVAS_CORNER} className="p-2 w-full rounded-2xl hover:bg-secondary-200 dark:hover:bg-secondary-dark-700">Canvas Corner</NavLink>
+              <NavLink to={MvRoutes.CANVAS_CORNER} className="p-2 w-full rounded-2xl hover:bg-secondary-200 dark:hover:bg-secondary-dark-700">Canvas Corner</NavLink>
+              <NavLink to={MvRoutes.STUDENTS.PROFILE_EDIT} className="p-2 w-full rounded-2xl hover:bg-secondary-200 dark:hover:bg-secondary-dark-700">Account</NavLink>
              
             </div>
           )}
@@ -99,7 +99,6 @@ export const MvStudentSidebar: React.FC<MvStudentSidebarProps> = ({ isSidebarOpe
               <p className="text-sm font-medium">{userData?.name || 'Unknown User'}</p>
               <p className="text-xs dark:text-primary-dark-200">{userData?.email || 'student@example.com'}</p>
             </div>
-            <FiSettings className="ml-auto text-primary-700 dark:text-primary-dark-500" />
           </div>
         </div>
       </div>

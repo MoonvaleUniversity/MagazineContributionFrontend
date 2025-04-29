@@ -80,7 +80,7 @@ const Login: React.FC = () => {
             
           ); // Example route for Student
         } else {
-          navigate(MvRoutes.DASHBOARD); // Default route
+          navigate(MvRoutes.GUEST.DASHBOARD); // Default route
         }
       } 
 

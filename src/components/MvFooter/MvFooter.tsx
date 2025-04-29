@@ -3,7 +3,7 @@ import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
 
 export const MvFooter: React.FC = () => {
   return (
-    <footer className="fixed bottom-0 left-0 right-0 py-4 text-center bg-secondary-100 dark:bg-secondary-dark-800">
+    <footer className="p-4 text-center bg-secondary-100 dark:bg-secondary-dark-800">
       <div className="container mx-auto">
         <div className="flex justify-center mb-2 space-x-4">
           <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">

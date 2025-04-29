@@ -5,9 +5,12 @@ import { MvUrl } from "../app/MvUrl";
 import { IUser } from "../app/Types/objects/user";
 
 export const getAllGuest = async (): Promise<User[]> => {
-    const response = await getData(MvUrl.GUESTS.INDEX);
+
+  const queryParams = new URLSearchParams();
+  queryParams.append("noPagination", "1");
+    const response = await getData(`${MvUrl.GUESTS.INDEX}?${queryParams.toString()}`);
     console.log(response);
-    return response.data.users.data.map((userData: IUser) => User.fromJSON(userData));
+    return response.data.guests.map((userData: IUser) => User.fromJSON(userData));
   };
 
   export const createGuest = async (userData: {
@@ -18,7 +21,7 @@ export const getAllGuest = async (): Promise<User[]> => {
     faculty_id: number;
   }) => {
     try {
-      const response = await postData(MvUrl.GUESTS.STORE, userData);
+      const response = await postData(MvUrl.REGISTER, userData);
       return response.data; 
     } catch (error) {
       console.error(error);

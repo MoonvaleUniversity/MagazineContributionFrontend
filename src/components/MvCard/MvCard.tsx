@@ -1,17 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import { AiOutlineLike,  AiOutlineMessage, AiOutlineEllipsis } from "react-icons/ai";
 import { FaBookmark, FaEye, FaFilePdf, FaFileWord, FaImage, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { IContribution } from "../../app/Types/objects/contribution";
-import { getClosureDateById } from "../../services/ClosureDateService";
-import { IClosureDate } from "../../app/MvObjects/clousuredate";
-import { MvLoader } from "../MvLoader";
+
 
 interface MvCardProps {
   contribution: IContribution;
   onStatusChange?: (newStatus: 1 | 2) => void; // Updated to match API status codes
   isMarketingCoordinator?: boolean;
-  onDelete: () => void;
+  onDelete?: () => void;
 }
 
 const statusStyles = {
@@ -20,40 +18,25 @@ const statusStyles = {
   2: "bg-red-100 text-red-800 dark:bg-red-800/30 dark:text-red-500"
 };
 
-const MvCard: React.FC<MvCardProps> = ({ 
+export const MvCard: React.FC<MvCardProps> = ({ 
   contribution, 
-  onDelete, 
+  onDelete = () => {}, 
   onStatusChange,
   isMarketingCoordinator = false  
 }) => {
   const navigate = useNavigate();
-  const [closureDate, setClosureDate] = useState<IClosureDate | null>(null);
-  const [loading, setLoading] = useState(true);
+ 
   const [showMenu, setShowMenu] = useState(false);
 
   // Get first image URL
-  const imageUrl = contribution.image_url[0]?.image_url || "/default-image.jpg";
+  const imageUrl = contribution.image_url[0]?.image_url || "/src/Assets/images/404.jpeg";
 
   const getFileType = (url: string) => {
     const extension = url.split('.').pop()?.toLowerCase();
     return extension === 'pdf' ? 'PDF' : 'DOC';
   };
   
-  useEffect(() => {
-    const fetchClosureDate = async () => {
-      try {
-        const date = await getClosureDateById(contribution.closure_date_id);
-        setClosureDate(date);
-      } catch (error) {
-        console.error('Error fetching closure date:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchClosureDate();
-  }, [contribution.closure_date_id]);
-
+ 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleString("en-US", {
@@ -65,9 +48,8 @@ const MvCard: React.FC<MvCardProps> = ({
   };
 
   return (
-    <div className="relative max-w-xs p-4 bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+    <div className="relative place-self-center max-w-xs p-4 bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
       {/* Context Menu */}
-      {loading ? <MvLoader/>: ""}
       <div className="absolute top-2 right-2 ">
         <button 
           onClick={(e) => {
@@ -116,6 +98,7 @@ const MvCard: React.FC<MvCardProps> = ({
           src={imageUrl}
           alt={contribution.name}
           className="w-full aspect-4/3 object-cover transition-transform duration-300 mt- hover:scale-105"
+          onError={src => (src.currentTarget.src = "/src/Assets/images/404.jpeg")}
         />
         <div className="absolute bottom-2 right-2 bg-black/50 text-white px-2 py-1 rounded-full text-sm flex items-center">
           <FaImage className="mr-1" />
@@ -136,7 +119,6 @@ const MvCard: React.FC<MvCardProps> = ({
             <FaFileWord className="mr-2 text-blue-500" />
           )}
           <span>{contribution.user.faculty.name} </span>
-          <span>{closureDate?.final_closure_date}</span>
         </div>
 
         <div className="flex justify-between items-center text-sm">
@@ -184,4 +166,3 @@ const MvCard: React.FC<MvCardProps> = ({
   );
 };
 
-export default MvCard;

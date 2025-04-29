@@ -30,6 +30,8 @@ import { AdminDashboard } from "./pages/Admin/AdminDashboard";
 import MvContributionDetailsPage from "./pages/Card Details/MvContributionDetails";
 import { McDashboard } from "./pages/Marketing Coordinator/McDashboard";
 import { AdminProfileEdit } from "./pages/Admin/AdminProfile";
+import GuestDashboard from "./pages/Guest/GuestDashboard";
+import { MvGlobalContributions } from "./components/MvContributions/publishedContributions";
 
 
 
@@ -52,8 +54,16 @@ function App() {
         <Route 
   path={MvRoutes.CONTRIBUTION_DETAILS} 
   element={
-    <ProtectedRoute roles={['Student', 'Admin', 'Marketing Coordinator', 'Marketing Manager']}>
+    <ProtectedRoute roles={['Student',"Guest", 'Admin', 'Marketing Coordinator', 'Marketing Manager']}>
       <MvContributionDetailsPage />
+    </ProtectedRoute>
+  }
+/>
+        <Route 
+  path={MvRoutes.PUBLIC_CONTRIBUTION} 
+  element={
+    <ProtectedRoute roles={['Student',"Guest", 'Admin', 'Marketing Coordinator', 'Marketing Manager']}>
+       <MvGlobalContributions/>
     </ProtectedRoute>
   }
 />
@@ -171,8 +181,8 @@ function App() {
         } />
          {/* Guest-specific routes */}
         <Route path={MvRoutes.GUEST.DASHBOARD} element={
-          <ProtectedRoute roles={['Marketing Coordinator']}>
-        <McProfileEdit/>
+          <ProtectedRoute roles={['Guest']}>
+            <GuestDashboard/>
           </ProtectedRoute>
         } />
 

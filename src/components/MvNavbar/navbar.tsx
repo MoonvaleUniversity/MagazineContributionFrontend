@@ -52,25 +52,25 @@ export const MvNavbar: React.FC = () => {
       <div className={`flex-col md:flex md:flex-row md:space-x-8 transition-opacity duration-300 ease-in-out ${isMenuOpen ? "flex absolute top-14 left-0 right-0 bg-opacity-60 bg-secondary-200 dark:bg-secondary-dark-700 p-4" : "hidden md:flex"}`}>
         <Link
           to="/"
-          className={`p-2 m-2 font-bold text-center transition-all duration-300 rounded-4xl hover:text-background-800 dark:hover:text-background-700 ${isMenuOpen ? 'shadow-sm bg-secondary-400 dark:bg-secondary-dark-500 dark:shadow-secondary-500 font-title-medium hover:bg-secondary-500 dark:hover:bg-secondary-dark-400 hover:shadow-md' : 'bg-none'}`}
+          className={`p-2 m-2 font-bold text-center transition-all duration-300 rounded-2xl hover:text-background-800 dark:hover:text-background-700 ${isMenuOpen ? 'shadow-sm bg-secondary-400 dark:bg-secondary-dark-500 dark:shadow-secondary-500 font-title-medium hover:bg-secondary-500 dark:hover:bg-secondary-dark-400 hover:shadow-md' : 'bg-none'}`}
         >
           Home
         </Link>
         <Link
           to="/about"
-          className={`p-2 m-2 font-bold text-center transition-all duration-300 rounded-4xl hover:text-background-800 dark:hover:text-background-700 ${isMenuOpen ? 'shadow-sm bg-secondary-400 dark:bg-secondary-dark-500 dark:shadow-secondary-500 font-title-medium hover:bg-secondary-500 dark:hover:bg-secondary-dark-400 hover:shadow-md' : 'bg-none'}`}
+          className={`p-2 m-2 font-bold text-center transition-all duration-300 rounded-2xl hover:text-background-800 dark:hover:text-background-700 ${isMenuOpen ? 'shadow-sm bg-secondary-400 dark:bg-secondary-dark-500 dark:shadow-secondary-500 font-title-medium hover:bg-secondary-500 dark:hover:bg-secondary-dark-400 hover:shadow-md' : 'bg-none'}`}
         >
           About
         </Link>
         <Link
           to="/services"
-          className={`p-2 m-2 font-bold text-center transition-all duration-300 rounded-4xl hover:text-background-800 dark:hover:text-background-700 ${isMenuOpen ? 'shadow-sm bg-secondary-400 dark:bg-secondary-dark-500 dark:shadow-secondary-500 font-title-medium hover:bg-secondary-500 dark:hover:bg-secondary-dark-400 hover:shadow-md' : 'bg-none'}`}
+          className={`p-2 m-2 font-bold text-center transition-all duration-300 rounded-2xl hover:text-background-800 dark:hover:text-background-700 ${isMenuOpen ? 'shadow-sm bg-secondary-400 dark:bg-secondary-dark-500 dark:shadow-secondary-500 font-title-medium hover:bg-secondary-500 dark:hover:bg-secondary-dark-400 hover:shadow-md' : 'bg-none'}`}
         >
           Services
         </Link>
         <Link
           to="/contact"
-          className={`p-2 m-2 font-bold text-center transition-all duration-300 rounded-4xl hover:text-background-800 dark:hover:text-background-700 ${isMenuOpen ? 'shadow-sm bg-secondary-400 dark:bg-secondary-dark-500 dark:shadow-secondary-500 font-title-medium hover:bg-secondary-500 dark:hover:bg-secondary-dark-400 hover:shadow-md' : 'bg-none'}`}
+          className={`p-2 m-2 font-bold text-center transition-all duration-300 rounded-2xl hover:text-background-800 dark:hover:text-background-700 ${isMenuOpen ? 'shadow-sm bg-secondary-400 dark:bg-secondary-dark-500 dark:shadow-secondary-500 font-title-medium hover:bg-secondary-500 dark:hover:bg-secondary-dark-400 hover:shadow-md' : 'bg-none'}`}
         >
           Contact
         </Link>

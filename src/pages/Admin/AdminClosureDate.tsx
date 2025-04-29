@@ -10,6 +10,7 @@ import SearchFilter, { Filter } from "../../components/MvSearchFilter/MvSearchFI
 import { MvPagination } from "../../components/MvPlagination/MvPlagination";
 import {  getAllAcademicYears } from "../../services/AcademicYearService";
 import { IAcademicYear } from "./AdminAcademicYear";
+import { MvGlobalContributions } from "../../components/MvContributions/publishedContributions";
 
 export const AdminClosureDates = () => {
     const [closureDates, setClosureDates] = useState<IClosureDate[]>([]);
@@ -293,7 +294,7 @@ const getAcademicYearName = (id: number|string) => {
                 </tbody>
             </table>
             </div>
-
+            <MvGlobalContributions></MvGlobalContributions>
             {/* Pagination */}
             {filteredDates.length > itemsPerPage && (
                 <MvPagination

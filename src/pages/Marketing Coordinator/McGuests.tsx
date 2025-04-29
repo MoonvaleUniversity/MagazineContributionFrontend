@@ -8,8 +8,9 @@ import { MvModal } from "../../components/MvModal";
 import { MvPagination } from "../../components/MvPlagination/MvPlagination";
 
 import MarketingCoordinatorLayout from "../../layout/MarketingCoordinatorLayout";
-import { getAllUsers, updateUser, createUser, deleteUser } from "../../services/userService";
+import {  updateUser, createUser, deleteUser } from "../../services/userService";
 import SearchFilter from "../../components/MvSearchFilter/MvSearchFIlter";
+import { getAllGuest } from "../../services/GuestService";
 
 export const McGuests = () => {
   const [guests, setGuests] = useState<User[]>([]);
@@ -42,10 +43,12 @@ export const McGuests = () => {
   const fetchStudents = async () => {
     try {
       setLoading(true);
-      const data = await getAllUsers();
-      // Filter to only show Students
-      const students = data.filter(user => user.role === "Guest");
-      setGuests(students);
+      const data = await getAllGuest();
+      if (data) {
+        setGuests(data);
+      } else {
+        return;
+      }
     } catch (error) {
       setError(error instanceof Error ? error.message : "Failed to fetch students");
     } finally {

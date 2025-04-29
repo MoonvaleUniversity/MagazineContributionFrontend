@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 import { MvButton } from "../../components/MvButton";
-import MvCard from "../../components/MvCard/MvCard";
+
 import MvContributionTable from "../../components/MvTables/MvContributionTable";
 import MarketingCoordinatorLayout from "../../layout/MarketingCoordinatorLayout";
 import { MvContributionServices } from "../../services/ContributionService";
@@ -10,6 +10,7 @@ import { IContribution } from "../../app/Types/objects/contribution";
 import { MvPagination } from "../../components/MvPlagination/MvPlagination";
 import SearchFilter from "../../components/MvSearchFilter/MvSearchFIlter";
 import { MvStats } from "../../components/MvStats/MvStats";
+import { MvCard } from "../../components/MvCard";
 
 
 export const McSubmissionsView = () => {
@@ -77,13 +78,13 @@ export const McSubmissionsView = () => {
   }, []);
 
   // Status change handler
-  const handleStatusChange = async (id: string, newStatus: 'approved' | 'rejected') => {
+  const handleStatusChange = async (id: string, newStatus: 2 | 1) => {
     try {
       await MvContributionServices.publishContribution(id);
       setAllSubmissions(prev => prev.map(sub => 
         sub.id === id ? { 
           ...sub, 
-          is_selected_for_publication: newStatus === 'approved' ? 1 : 0 
+          is_selected_for_publication: newStatus === 2 ? 2 : 1 
         } : sub
       ));
     } catch (error) {
@@ -189,8 +190,8 @@ export const McSubmissionsView = () => {
         {view === 'table' ? (
           <MvContributionTable
             contributions={currentSubmissions}
-            onDelete={handleDelete}
-            onStatusChange={handleStatusChange}
+            onDelete={()=>handleDelete}
+            onStatusChange={() =>handleStatusChange}
             isMarketingCoordinator
           />
         ) : (
@@ -199,8 +200,8 @@ export const McSubmissionsView = () => {
               <MvCard
                 key={submission.id}
                 contribution={submission}
-                onDelete={() => handleDelete(submission.id)}
-                onStatusChange={(newStatus) => handleStatusChange(submission.id, newStatus)}
+                onDelete={() => handleDelete(submission.id.toString())}
+                onStatusChange={(newStatus) => handleStatusChange(submission.id.toString(), newStatus)}
                 isMarketingCoordinator
               />
             ))}

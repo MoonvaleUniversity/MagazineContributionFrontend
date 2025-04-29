@@ -14,7 +14,7 @@ export const MvContributionServices = {
       if (options?.facultyId) queryParams.append("faculty_id", options.facultyId);
       queryParams.append("noPagination", "1");
 
-      // Corrected to use INDEX endpoint
+      //  Corrected to use INDEX endpoint
       const url = `${MvUrl.CONTRIBUTIONS.INDEX}?${queryParams.toString()}`;
 
       const response = await getData(url);

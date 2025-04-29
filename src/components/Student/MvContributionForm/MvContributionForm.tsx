@@ -5,6 +5,7 @@ import { MvModal } from "../../MvModal";
 import { MvContributionServices } from "../../../services/ContributionService";
 import { getUserData } from "../../../services/AuthService";
 import { MvLoader } from "../../MvLoader";
+import { MvTermsAndConditions } from "../../MvToC";
 
 export const MvContributionForm: React.FC = () => {
   const [title, setTitle] = useState("");
@@ -14,7 +15,7 @@ export const MvContributionForm: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [showTermsModal, setShowTermsModal] = useState(false);
   // Document preview modal state
   const [isDocModalOpen, setIsDocModalOpen] = useState(false);
   const [docPreviewContent, setDocPreviewContent] = useState<string | null>(null);
@@ -170,21 +171,36 @@ const handleFilesSelect = (selectedFiles: File[]) => {
           </ul>
         </div>
         
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-2">
           <MvCheckbox
             id="terms"
-            label="I agree to the Terms and Conditions"
             checked={termsAccepted}
             onChange={(e) => setTermsAccepted(e.target.checked)}
-            className="w-4 h-4 border-gray-300 rounded text-primary-600 focus:ring-primary-500"
+            label="I agree to"
           />
+          <button
+            type="button"
+            onClick={() => setShowTermsModal(true)}
+            className="text-primary-600 hover:underline"
+          >
+            Terms and Conditions
+          </button>
         </div>
+
 
         <MvButton type="submit" className="w-full bg-purple-600 hover:bg-purple-700 hover:dark:bg-purple-400 dark:bg-purple-500 dark:text-white" disabled={isSubmitting}>
           {isSubmitting ? "Submitting..." : "Submit"}
         </MvButton>
       </form>
-
+       {/* Terms and Conditions Modal */}
+       <MvTermsAndConditions
+        isOpen={showTermsModal}
+        onClose={() => setShowTermsModal(false)}
+        onAccept={() => {
+          setTermsAccepted(true);
+          setShowTermsModal(false);
+        }}
+      />
       <MvModal
         isOpen={isDocModalOpen}
         onClose={() => setIsDocModalOpen(false)}

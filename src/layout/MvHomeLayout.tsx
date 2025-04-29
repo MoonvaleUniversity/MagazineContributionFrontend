@@ -12,7 +12,7 @@ const MvHomeLayout: React.FC<HomeLayoutProps> = ({ children }) => {
     <div className="flex flex-col min-h-screen ">
       
       <MvNavbar />
-      <main className="absolute flex-grow p-4 top-16">
+      <main className=" flex-grow  w-screen top-16">
         {children}
       </main>
       

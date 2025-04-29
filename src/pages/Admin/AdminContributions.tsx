@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { MvButton } from "../../components/MvButton";
-import MvCard from "../../components/MvCard/MvCard";
 import MvContributionTable from "../../components/MvTables/MvContributionTable";
 import AdminLayout from "../../layout/AdminLayout";
 import { MvContributionServices } from "../../services/ContributionService";
@@ -8,6 +7,8 @@ import { IContribution } from "../../app/Types/objects/contribution";
 import { MvPagination } from "../../components/MvPlagination/MvPlagination";
 import SearchFilter from "../../components/MvSearchFilter/MvSearchFIlter";
 import { MvStats } from "../../components/MvStats/MvStats";
+import { MvCard } from "../../components/MvCard";
+
 
 export const AdminSubmissionsView = () => {
   const [allSubmissions, setAllSubmissions] = useState<IContribution[]>([]);
@@ -124,6 +125,7 @@ export const AdminSubmissionsView = () => {
 
   return (
     <AdminLayout>
+    
       <div className="max-w-6xl mx-auto p-4">
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
@@ -172,7 +174,7 @@ export const AdminSubmissionsView = () => {
         {view === 'table' ? (
           <MvContributionTable
             contributions={currentSubmissions}
-            onDelete={handleDelete}
+           
              isAdmin
         
           />
@@ -182,7 +184,7 @@ export const AdminSubmissionsView = () => {
               <MvCard
                 key={submission.id}
                 contribution={submission}
-                onDelete={() => handleDelete(submission.id)}
+                onDelete={() => handleDelete(submission.id.toString())}
                
               
                 
