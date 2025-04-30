@@ -31,7 +31,6 @@ const RegisterGuest: React.FC = () => {
     facultyId: null,
     termsAccepted: false,
   });
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchFaculties = async () => {
@@ -88,7 +87,7 @@ const RegisterGuest: React.FC = () => {
         email: formData.email,
         password: formData.password,
         password_confirmation: formData.confirmPassword, // Add confirmation
-        faculty_id: 1
+        faculty_id: formData.facultyId, // Add faculty ID
       });
   
     
@@ -97,12 +96,12 @@ const RegisterGuest: React.FC = () => {
       const backendError = "Registration failed. Please try again.";
       setError(backendError);
     } finally {
-      navigate(MvRoutes.LOGIN, { 
-        state: { 
-          registrationSuccess: true,
-          message: "Guest registration successful! Please check your email."
-        } 
-      });
+      // navigate(MvRoutes.LOGIN, { 
+      //   state: { 
+      //     registrationSuccess: true,
+      //     message: "Guest registration successful! Please check your email."
+      //   } 
+      // });
       setLoading(false);
     }
   };

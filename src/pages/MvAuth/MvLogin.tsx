@@ -108,8 +108,14 @@ const Login: React.FC = () => {
       else if (error?.message === "Request failed with status code 500") {
         setError({message: "Please check your email and try again"});
       }
+      
       else if (error?.message === "Request failed with status code 401"){
+         if (error?.response.data.message === "Your account isn't approved yet.") {
+          setError({message: "Your account isn't approved yet. Please wait for approval email."});
+        }
+        else{
         setError({message: "The credentials you provided is incorrect. Please try again"});     
+        }
       }
       
       else if (error?.message === "Request failed with status code 422"){

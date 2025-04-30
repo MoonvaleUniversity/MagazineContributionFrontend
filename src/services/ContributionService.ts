@@ -172,4 +172,128 @@ getContributionById: async (id: string): Promise<IContribution> => {
       throw error;
     }
   },
+ // Comment features
+ addComment: async (
+  contributionId: number,
+  userId: number,
+  content: string
+): Promise<any> => {
+  try {
+    const response = await postData(
+      MvUrl.CONTRIBUTIONS.COMMENT(contributionId),
+      { user_id: userId, content }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error adding comment:", error);
+    throw error;
+  }
+},
+
+deleteComment: async (
+  contributionId: number,
+  userId: number
+): Promise<void> => {
+  try {
+    await deleteData(
+      `${MvUrl.CONTRIBUTIONS.DELETE_COMMENT(contributionId)}?user_id=${userId}`
+    );
+  } catch (error) {
+    console.error("Error deleting comment:", error);
+    throw error;
+  }
+},
+
+getComments: async (
+  contributionId: number
+): Promise<any[]> => {
+  try {
+    const response = await getData(
+      MvUrl.CONTRIBUTIONS.GET_COMMENT(contributionId)
+    );
+    return response?.data?.comments || [];
+  } catch (error) {
+    console.error("Error fetching comments:", error);
+    throw error;
+  }
+},
+
+// Voting system
+addVote: async (
+  contributionId: number,
+  userId: number,
+  voteType: 'upvote' | 'downvote'
+): Promise<any> => {
+  try {
+    const response = await postData(
+      MvUrl.CONTRIBUTIONS.VOTE(contributionId),
+      { user_id: userId, type: voteType }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error adding vote:", error);
+    throw error;
+  }
+},
+
+// Save/Bookmark feature
+toggleSave: async (
+  contributionId: number,
+  userId: number
+): Promise<any> => {
+  try {
+    const response = await postData(
+      MvUrl.CONTRIBUTIONS.SAVE(contributionId),
+      { user_id: userId }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error toggling save:", error);
+    throw error;
+  }
+},
+
+// Email automation trigger
+triggerEmailAuto: async (): Promise<void> => {
+  try {
+    await postData(MvUrl.CONTRIBUTIONS.EMAIL_AUTO, {});
+  } catch (error) {
+    console.error("Error triggering email automation:", error);
+    throw error;
+  }
+},
+
+// Review system (assuming JSON response)
+submitReview: async (
+  contributionId: number,
+  reviewData: { userId: number; content: string; rating: number }
+): Promise<any> => {
+  try {
+    const response = await postData(
+      MvUrl.CONTRIBUTIONS.REVIEW(contributionId),
+      reviewData
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error submitting review:", error);
+    throw error;
+  }
+},
+
+// Update existing contribution
+updateContribution: async (
+  id: number,
+  updateData: Partial<IContribution>
+): Promise<IContribution> => {
+  try {
+    const response = await postData<{ data: IContribution }>(
+      MvUrl.CONTRIBUTIONS.UPDATE(id),
+      updateData
+    );
+    return response.data.data;
+  } catch (error) {
+    console.error(`Error updating contribution ${id}:`, error);
+    throw error;
+  }
+}
 };

@@ -78,3 +78,27 @@ export interface ApiContributionResponses {
     status: number;
   };
 }
+// Add to your Types/objects/contribution.ts
+export interface IComment {
+  id: number;
+  content: string;
+  user_id: number;
+  contribution_id: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface IVote {
+  id: number;
+  type: 'upvote' | 'downvote';
+  user_id: number;
+  contribution_id: number;
+}
+
+export interface IReview {
+  id: number;
+  rating: number;
+  content: string;
+  user_id: number;
+  contribution_id: number;
+}

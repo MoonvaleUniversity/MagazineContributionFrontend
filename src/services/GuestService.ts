@@ -21,7 +21,7 @@ export const getAllGuest = async (): Promise<User[]> => {
     faculty_id: number;
   }) => {
     try {
-      const response = await postData(MvUrl.REGISTER, userData);
+      const response = await postData(MvUrl.GUESTS.STORE, userData);
       return response.data; 
     } catch (error) {
       console.error(error);
@@ -37,3 +37,9 @@ export const getAllGuest = async (): Promise<User[]> => {
 export const deleteGuest = async (id: number): Promise<void> => {
   await deleteData(MvUrl.GUESTS.DESTROY(id));
 };
+
+export const approveGuest = async (id: number): Promise<void> => {
+  await postData(MvUrl.GUESTS.APPROVE(id), {});
+};
+
+

@@ -27,8 +27,21 @@ export const MvUrl = {
     DOWNLOAD: (id: number) => `${API_BASE_URL}/download/${id}`,
     PUBLISH: (id: number) => `${API_BASE_URL}/published/${id}`,
     EMAIL_AUTO: `${API_BASE_URL}/emailAuto`,
+    COMMENT: (id: number) => `${API_BASE_URL}/contributions/${id}/comment`,
+    DELETE_COMMENT: (id: number) => `${API_BASE_URL}/contributions/${id}/delete-comment`,
+    GET_COMMENT: (id: number) => `${API_BASE_URL}/contributions/${id}/get-comment`,
+    REVIEW: (id: number) => `${API_BASE_URL}/contributions/${id}/review`,
+    SAVE: (id: number) => `${API_BASE_URL}/contributions/${id}/save`,
+    VOTE: (id: number) => `${API_BASE_URL}/contributions/${id}/vote`,
   },
-
+ // Add new Creative Sparks section
+ CREATIVE_SPARKS: {
+  INDEX: `${API_BASE_URL}/creative-sparks`,
+  STORE: `${API_BASE_URL}/creative-sparks`,
+  SHOW: (id: number) => `${API_BASE_URL}/creative-sparks/${id}`,
+  UPDATE: (id: number) => `${API_BASE_URL}/creative-sparks/${id}`,
+  DESTROY: (id: number) => `${API_BASE_URL}/creative-sparks/${id}`,
+},
 
   // Academic Year endpoints
   GET_ACADEMIC_YEARS: `${API_BASE_URL}/academic-years`,    // Get all academic years
@@ -90,6 +103,7 @@ export const MvUrl = {
     SHOW: (id: number) => `${API_BASE_URL}/guests/${id}`,
     UPDATE: (id: number) => `${API_BASE_URL}/guests/${id}`,
     DESTROY: (id: number) => `${API_BASE_URL}/guests/${id}`,
+    APPROVE: (id: number) => `${API_BASE_URL}/guests/${id}/approve`,
   },
 
 };

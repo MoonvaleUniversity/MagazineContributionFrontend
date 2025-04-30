@@ -10,7 +10,7 @@ import { MvPagination } from "../../components/MvPlagination/MvPlagination";
 import MarketingCoordinatorLayout from "../../layout/MarketingCoordinatorLayout";
 import {  updateUser, createUser, deleteUser } from "../../services/userService";
 import SearchFilter from "../../components/MvSearchFilter/MvSearchFIlter";
-import { getAllGuest } from "../../services/GuestService";
+import { approveGuest, getAllGuest } from "../../services/GuestService";
 
 export const McGuests = () => {
   const [guests, setGuests] = useState<User[]>([]);
@@ -95,6 +95,17 @@ export const McGuests = () => {
     }
   };
 
+  const handleApprove = async (id: number) => {
+    if (window.confirm("Approve this student?")) {
+      try {
+        await approveGuest(id);
+        await fetchStudents();
+      } catch (error) {
+        setError(error instanceof Error ? error.message : "Approval failed");
+      }
+    }
+  };
+
   // Modal management
   const openModal = (student?: User) => {
     setEditingStudent(student || null);
@@ -151,7 +162,7 @@ export const McGuests = () => {
                 <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300  tracking-wider">{guest.email}</td>
                 <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300  tracking-wider">{guest.faculty_id || "N/A"}</td>
                 <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300  tracking-wider flex gap-2">
-                  <MvButton onClick={() => openModal(guest)}>Approve</MvButton>
+                  <MvButton onClick={() => handleApprove(guest.id)}>Approve</MvButton>
                   <MvButton 
                     onClick={() => handleDelete(guest.id)}
                     className="bg-red-500 dark:bg-red-300"
