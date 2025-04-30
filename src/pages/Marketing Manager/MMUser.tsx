@@ -78,6 +78,7 @@ const getFacultyName = (facultyId: number | string | null): string => {
       name: string;
       email: string;
       password?: string;
+      confirmPassword?: string;
       faculty_id?: string;
       role: string;
     }) => {

@@ -17,7 +17,7 @@ interface AccountCreationFormProps {
     name: string;
     email: string;
     password?: string;
-    confirmPassword?: string;
+    password_confirmation?: string;
     faculty_id?: string; // String type for form submission
     academic_year_id?: string
     role: string;
@@ -26,7 +26,7 @@ interface AccountCreationFormProps {
     name: string;
     email: string;
     password?: string;
-    confirmPassword?: string;
+    password_confirmation?: string;
     faculty_id?: string; 
     academic_year_id?: string;
   };
@@ -86,7 +86,7 @@ useEffect(() => {
       name,
       email,
       password: isEditMode ? undefined : password,
-      confirmPassword: isEditMode ? undefined : confirmPassword,
+      password_confirmation: isEditMode ? undefined : confirmPassword,
       faculty_id: isFaculty ? facultyId : undefined, 
       academic_year_id: isAcademicYear ? academicYearId : undefined,
       role: fixedRole,
