@@ -6,6 +6,7 @@ import { MvContributionServices } from "../../../services/ContributionService";
 import { getUserData } from "../../../services/AuthService";
 import { MvLoader } from "../../MvLoader";
 import { MvTermsAndConditions } from "../../MvToC";
+import { getClosureDatebyAcademicYear } from "../../../services/ClosureDateService";
 
 export const MvContributionForm: React.FC = () => {
   const [title, setTitle] = useState("");
@@ -82,7 +83,7 @@ const handleFilesSelect = (selectedFiles: File[]) => {
     setIsSubmitting(true);
     try {
       
-      const closureDateId = 1;
+      let closureDateId = 0;
       let userId = 0;
       let academicId = 0;
       const userData = getUserData();
@@ -92,6 +93,8 @@ const handleFilesSelect = (selectedFiles: File[]) => {
           
           userId = userData?.id || 0;
           academicId = userData?.academic_year_id|| 0;
+          const closuredata = await getClosureDatebyAcademicYear(academicId.toString());
+          closureDateId = closuredata[0]?.id || 0;
           console.log(academicId);
         } catch (error) {
           console.error('Error parsing userData:', error);

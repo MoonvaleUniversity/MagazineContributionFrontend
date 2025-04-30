@@ -6,9 +6,11 @@ import { MvUrl } from "../app/MvUrl";
 import { IUser } from "../app/Types/objects/user";
 
 export const getAllUsers = async (): Promise<User[]> => {
-    const response = await getData(MvUrl.GET_USERS);
+  const queryParams = new URLSearchParams();
+  queryParams.append("noPagination", "1");
+    const response = await getData(`${MvUrl.GET_USERS}?${queryParams.toString()}`);
     console.log(response);
-    return response.data.users.data.map((userData: IUser) => User.fromJSON(userData));
+    return response.data.users.map((userData: IUser) => User.fromJSON(userData));
   };
 
   export const createUser = async (userData: Partial<User>) => {

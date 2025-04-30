@@ -14,6 +14,13 @@ export const getAllClosureDates = async (): Promise<IClosureDate[]> => {
     return response.data.closure_dates;
 };
 
+
+export const getClosureDatebyAcademicYear = async (academic_year: string): Promise<IClosureDate[]> => {
+    const queryParams = new URLSearchParams();
+    queryParams.append("academic_year_id", academic_year);
+    const response: AxiosResponse<{ closure_dates: IClosureDate[] }> = await await getData(`${MvUrl.GET_CLOSURE}?${queryParams.toString()}`);
+    return response.data.closure_dates;
+}
 /**
  * Fetch a closure date by ID.
  */

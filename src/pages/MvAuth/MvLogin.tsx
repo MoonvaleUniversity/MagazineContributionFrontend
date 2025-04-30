@@ -57,6 +57,14 @@ const Login: React.FC = () => {
 
       // Check if the response message is "Login success."
       if (response.success) {
+          
+           const isNewUser = document.cookie.includes('newuser=true');
+        
+          
+           if (isNewUser) {
+             document.cookie = 'newuser=; max-age=0';
+           }
+   
         if (rememberMe) {
           localStorage.setItem("userToken", response.data.token);
           localStorage.setItem("userData", JSON.stringify(response.data.user));
@@ -67,8 +75,11 @@ const Login: React.FC = () => {
             JSON.stringify(response.data.user)
           );
         }
-
-        const userRole = response.data.user.role;  // Assuming role is in response data
+       
+        const userRole = response.data.user.role;
+        if (isNewUser) {
+          navigate(MvRoutes.WELCOME_USER);
+        } else {  // Assuming role is in response data
         if (userRole === "Admin") {
           navigate(MvRoutes.ADMIN.DASHBOARD); // Example route for Admin
         } else if (userRole === "Student") {
@@ -82,6 +93,7 @@ const Login: React.FC = () => {
         } else {
           navigate(MvRoutes.GUEST.DASHBOARD); // Default route
         }
+      }
       } 
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

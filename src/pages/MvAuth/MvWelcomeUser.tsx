@@ -128,12 +128,7 @@ export const WelcomeUser = () => {
                 </span>
               </div>
               
-              <div className="flex justify-between p-4 bg-green-50 dark:bg-gray-600 rounded-lg">
-                <span className="text-gray-600 dark:text-gray-300">Account Created:</span>
-                <span className="font-medium text-purple-600 dark:text-purple-300">
-                  {new Date(user.createdAt).toLocaleDateString()}
-                </span>
-              </div>
+          
             </div>
 
             <Link to={getDashboardRoute()} className="w-full max-w-md mt-8">

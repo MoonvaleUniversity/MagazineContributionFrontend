@@ -16,7 +16,7 @@ import StudentLayout from "../../layout/StudentLayout";
 export const MvGlobalContributions = () => {
   const [contributions, setContributions] = useState<IContribution[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(9);
+  const [itemsPerPage] = useState(8);
   const [searchQuery, setSearchQuery] = useState("");
   const [Layout, setLayout] = useState(() => StudentLayout);
 
@@ -77,7 +77,7 @@ export const MvGlobalContributions = () => {
 
   return (
     <Layout>
-    <div className="w-screen  ">
+    <div className="max-w-screen">
       {/* Page Header */}
      
         <section className="relative h-96 bg-gradient-to-r from-purple-600 to-blue-600">

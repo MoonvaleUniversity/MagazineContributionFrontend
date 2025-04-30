@@ -1,202 +1,215 @@
-// pages/AdminDashboard.tsx
-import AdminLayout from "../../layout/AdminLayout";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell, LineChart, Line, ResponsiveContainer } from "recharts";
+import { useState, useEffect } from "react";
+import { ResponsiveContainer, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Line, BarChart, Bar,} from "recharts";
+
+import { MvLoader } from "../../components/MvLoader";
 import { MvStats } from "../../components/MvStats/MvStats";
-// import { MvLoader } from "../../components/MvLoader";
-// import SearchFilter from "../../components/MvSearchFilter/MvSearchFIlter";
+import AdminLayout from "../../layout/AdminLayout";
+import { MvContributionServices } from "../../services/ContributionService";
+import { getAllUsers } from "../../services/userService";
+import { getAllFaculties } from "../../services/FacultyService";
 
-// Mock data
-const mockData = {
-  systemUsage: {
-    pageViews: [
-      { page: 'Submissions', views: 2345 },
-      { page: 'Publications', views: 1800 },
-      { page: 'Dashboard', views: 1500 },
-    ],
-    activeUsers: [
-      { user: 'John Doe', activities: 42 },
-      { user: 'Jane Smith', activities: 38 },
-      { user: 'Mike Johnson', activities: 29 },
-    ],
-    browserUsage: [
-      { name: 'Chrome', value: 65 },
-      { name: 'Safari', value: 15 },
-      { name: 'Firefox', value: 10 },
-      { name: 'Edge', value: 10 },
-    ]
-  },
-  contributions: [
-    { faculty: 'Business', submissions: 45, approved: 35 },
-    { faculty: 'Computing', submissions: 38, approved: 28 },
-    { faculty: 'Engineering', submissions: 52, approved: 40 },
-  ],
-  trends: [
-    { month: 'Jan', submissions: 65 },
-    { month: 'Feb', submissions: 59 },
-    { month: 'Mar', submissions: 80 },
-    { month: 'Apr', submissions: 81 },
-  ]
-};
+// const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+interface ProcessedData {
+  totalUsers: number;
+  totalContributions: number;
+  approvalRate: number;
+  pendingReviews: number;
+  activeGuests: number;
+  facultyContributions: Array<{ 
+    faculty: string; 
+    total: number;
+    approved: number;
+    pending: number;
+  }>;
+  monthlyTrends: Array<{ 
+    month: string; 
+    contributions: number;
+    approvals: number;
+  }>;
+}
 
 export const AdminDashboard = () => {
-//   const [academicYears, setAcademicYears] = useState<IAcademicYear[]>([]);
-//   const [faculties, setFaculties] = useState<IFaculty[]>([]);
-//   const [searchQuery, setSearchQuery] = useState('');
-//   const [selectedYear, setSelectedYear] = useState('');
-//   const [selectedFaculty, setSelectedFaculty] = useState('');
-//   const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [processedData, setProcessedData] = useState<ProcessedData>({
+    totalUsers: 0,
+    totalContributions: 0,
+    approvalRate: 0,
+    pendingReviews: 0,
+    activeGuests: 0,
+    facultyContributions: [],
+    monthlyTrends: []
+  });
 
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       try {
-//         const [years, faculties] = await Promise.all([
-//           getAllAcademicYears(),
-//           getAllFaculties()
-//         ]);
-//         setAcademicYears(years);
-//         setFaculties(faculties);
-//       } catch (error) {
-//         console.error("Error loading data:", error);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-//     fetchData();
-//   }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [contributions, users, faculties] = await Promise.all([
+          MvContributionServices.getContributions(),
+          getAllUsers(),
+          getAllFaculties()
+        ]);
 
-//   const handleSearch = (query: string) => {
-//     setSearchQuery(query);
-//     // Add your search logic here
-//   };
+        // Calculate basic stats
+        const approvedContributions = contributions.filter(c => c.is_selected_for_publication).length;
+        const totalContributions = contributions.length;
+        
+        // Process faculty data
+        const facultyStats = faculties.map(faculty => {
+          const facultyContribs = contributions.filter(c => 
+            c.user.faculty.id === faculty.id
+          );
+          
+          return {
+            faculty: faculty.name,
+            total: facultyContribs.length,
+            approved: facultyContribs.filter(c => c.is_selected_for_publication).length,
+            pending: facultyContribs.filter(c => !c.is_selected_for_publication).length
+          };
+        });
 
-//   const handleFilterChange = (filterName: string, value: string) => {
-//     if (filterName === 'year') {
-//       setSelectedYear(value);
-//     }
-//     if (filterName === 'faculty') {
-//       setSelectedFaculty(value);
-//     }
-//   };
+        // Process monthly trends
+        const monthlyData = Array.from({ length: 6 }, (_, i) => {
+          const date = new Date();
+          date.setMonth(date.getMonth() - i);
+          return {
+            month: `${date.toLocaleString('default', { month: 'short' })} ${date.getFullYear()}`,
+            contributions: 0,
+            approvals: 0
+          };
+        }).reverse();
 
-  
+        contributions.forEach(contrib => {
+          const contribDate = new Date(contrib.created_at);
+          const monthStr = `${contribDate.toLocaleString('default', { month: 'short' })} ${contribDate.getFullYear()}`;
+          const monthEntry = monthlyData.find(m => m.month === monthStr);
+          
+          if (monthEntry) {
+            monthEntry.contributions++;
+            if (contrib.is_selected_for_publication) monthEntry.approvals++;
+          }
+        });
 
-//   if (loading) return <MvLoader />;
+        setProcessedData({
+          totalUsers: users.length,
+          totalContributions,
+          approvalRate: totalContributions > 0 
+            ? Math.round((approvedContributions / totalContributions) * 100)
+            : 0,
+          pendingReviews: totalContributions - approvedContributions,
+          activeGuests: users.filter(user => user.role === 'Guest').length,
+          facultyContributions: facultyStats,
+          monthlyTrends: monthlyData
+        });
+
+      } catch (error) {
+        console.error("Error loading data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchData();
+  }, []);
+
+  if (loading) return <MvLoader />;
 
   return (
     <AdminLayout>
       <div className="max-w-7xl mx-auto px-4 py-6">
-        
-
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
-          <MvStats title="Total Users" value="1,234" trend="positive" />
-          <MvStats title="Total Contributions" value="589" trend="neutral" />
-          <MvStats title="Approval Rate" value="82%" trend="positive" />
-          <MvStats title="Pending Reviews" value="45" trend="negative" />
-          <MvStats title="Active Guests" value="89" trend="neutral" />
+          <MvStats title="Total Users" value={processedData.totalUsers} trend="neutral" />
+          <MvStats title="Total Contributions" value={processedData.totalContributions} trend="neutral" />
+          <MvStats title="Approval Rate" value={`${processedData.approvalRate}%`} trend="positive" />
+          <MvStats title="Pending Reviews" value={processedData.pendingReviews} trend="negative" />
+          <MvStats title="Active Guests" value={processedData.activeGuests} trend="neutral" />
         </div>
 
         {/* Charts Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Contribution Trends */}
           <div className="bg-white p-4 rounded-lg shadow dark:bg-gray-800">
-            <h3 className="text-lg font-semibold mb-4 dark:text-white">Contribution Trends</h3>
+            <h3 className="text-lg font-semibold mb-4 dark:text-white">Monthly Contribution Trends</h3>
             <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={mockData.trends}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                <XAxis dataKey="month" stroke="#666" />
-                <YAxis stroke="#666" />
+              <LineChart data={processedData.monthlyTrends}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
                 <Tooltip />
                 <Legend />
                 <Line 
                   type="monotone" 
-                  dataKey="submissions" 
+                  dataKey="contributions" 
+                  name="Total Contributions"
                   stroke="#8884d8" 
+                  strokeWidth={2}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="approvals" 
+                  name="Approved Contributions"
+                  stroke="#82ca9d" 
                   strokeWidth={2}
                 />
               </LineChart>
             </ResponsiveContainer>
           </div>
 
-          {/* Faculty Comparison */}
+          {/* Faculty Contributions */}
           <div className="bg-white p-4 rounded-lg shadow dark:bg-gray-800">
             <h3 className="text-lg font-semibold mb-4 dark:text-white">Faculty Contributions</h3>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={mockData.contributions}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                <XAxis dataKey="faculty" stroke="#666" />
-                <YAxis stroke="#666" />
+              <BarChart data={processedData.facultyContributions}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="faculty" />
+                <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="submissions" fill="#8884d8" />
-                <Bar dataKey="approved" fill="#82ca9d" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* Browser Usage */}
-          <div className="bg-white p-4 rounded-lg shadow dark:bg-gray-800">
-            <h3 className="text-lg font-semibold mb-4 dark:text-white">Browser Usage</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={mockData.systemUsage.browserUsage}
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={80}
-                  dataKey="value"
-                  label
-                >
-                  {mockData.systemUsage.browserUsage.map((_, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* Active Users */}
-          <div className="bg-white p-4 rounded-lg shadow dark:bg-gray-800">
-            <h3 className="text-lg font-semibold mb-4 dark:text-white">Most Active Users</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={mockData.systemUsage.activeUsers}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                <XAxis dataKey="user" stroke="#666" />
-                <YAxis stroke="#666" />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="activities" fill="#8884d8" />
+                <Bar dataKey="total" name="Total Contributions" fill="#8884d8" />
+                <Bar dataKey="approved" name="Approved Contributions" fill="#82ca9d" />
+                <Bar dataKey="pending" name="Pending Contributions" fill="#ffc658" />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Exception Reports */}
-        <div className="mt-8 bg-white p-4 rounded-lg shadow dark:bg-gray-800">
-          <h3 className="text-lg font-semibold mb-4 dark:text-white">Exception Reports</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <h4 className="font-medium mb-2 dark:text-gray-300">Contributions Without Comments (14+ Days)</h4>
-              <ul className="list-disc pl-5 dark:text-gray-400">
-                <li className="py-2">Business Faculty: 5 contributions</li>
-                <li className="py-2">Computing Faculty: 3 contributions</li>
-                <li className="py-2">Engineering Faculty: 2 contributions</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-medium mb-2 dark:text-gray-300">Most Viewed Pages</h4>
-              <ul className="list-disc pl-5 dark:text-gray-400">
-                {mockData.systemUsage.pageViews.map((page) => (
-                  <li key={page.page} className="py-2">
-                    {page.page}: {page.views.toLocaleString()} views
-                  </li>
+        {/* Faculty Contribution Table */}
+        <div className="mt-8 bg-white rounded-lg shadow dark:bg-gray-800">
+          <h3 className="text-lg font-semibold p-4 border-b dark:border-gray-700">
+            Detailed Faculty Statistics
+          </h3>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50 dark:bg-gray-700">
+                <tr>
+                  <th className="px-4 py-2 text-left">Faculty</th>
+                  <th className="px-4 py-2 text-center">Total</th>
+                  <th className="px-4 py-2 text-center">Approved</th>
+                  <th className="px-4 py-2 text-center">Pending</th>
+                  <th className="px-4 py-2 text-center">Approval Rate</th>
+                </tr>
+              </thead>
+              <tbody>
+                {processedData.facultyContributions.map((faculty, index) => (
+                  <tr key={index} className="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <td className="px-4 py-2">{faculty.faculty}</td>
+                    <td className="px-4 py-2 text-center">{faculty.total}</td>
+                    <td className="px-4 py-2 text-center text-green-600 dark:text-green-400">
+                      {faculty.approved}
+                    </td>
+                    <td className="px-4 py-2 text-center text-yellow-600 dark:text-yellow-400">
+                      {faculty.pending}
+                    </td>
+                    <td className="px-4 py-2 text-center">
+                      {faculty.total > 0 
+                        ? `${Math.round((faculty.approved / faculty.total) * 100)}%`
+                        : 'N/A'}
+                    </td>
+                  </tr>
                 ))}
-              </ul>
-            </div>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

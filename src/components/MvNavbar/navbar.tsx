@@ -13,7 +13,19 @@ export const MvNavbar: React.FC = () => {
   const userName = data ? JSON.parse(data).name : "Guest"; 
  
   const [buttonSize, setButtonSize] = useState<"sm" | "md">("md");
-
+  const handleLogout = () => {
+    // Remove user-related data
+    localStorage.removeItem('userData');
+    localStorage.removeItem('userToken');
+    localStorage.removeItem('username');
+  
+    sessionStorage.removeItem('userData');
+    sessionStorage.removeItem('userToken');
+    sessionStorage.removeItem('username');
+  
+    // Redirect to login page
+    window.location.href = '/';
+  };
   // Function to update button size based on screen width
   useEffect(() => {
     const updateButtonSize = () => {
@@ -89,7 +101,10 @@ export const MvNavbar: React.FC = () => {
           {isMenuOpen ? <FaTimes className="text-black dark:text-gray-300" /> : <FaBars className="text-black dark:text-gray-300" />}
         </button>
       </div>
-         
+      <div className="flex items-center space-x-3">
+                 <MvButton variant="primary" onClick={()=> {handleLogout()}} ><span className="">Logout</span></MvButton>
+               
+               </div>
         </div>
       </div>
        

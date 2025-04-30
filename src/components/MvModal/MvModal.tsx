@@ -7,6 +7,7 @@ interface MvModelProps {
   title: string;
   children: React.ReactNode;
   className?: string;
+  hideCloseButton?: boolean;
 }
 
 export const MvModal: React.FC<MvModelProps> = ({
@@ -15,6 +16,7 @@ export const MvModal: React.FC<MvModelProps> = ({
   title,
   children,
   className,
+  hideCloseButton = false,
 }) => {
   if (!isOpen) return null;
 
@@ -26,12 +28,14 @@ export const MvModal: React.FC<MvModelProps> = ({
           className
         )}
       >
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-primary-600 dark:text-primary-dark-50 hover:text-red-500"
-        >
-          &#10005;
-        </button>
+        {!hideCloseButton && (
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 text-primary-600 dark:text-primary-dark-50 hover:text-red-500"
+          >
+            &#10005;
+          </button>
+        )}
         <h2 className="mb-4 text-lg font-semibold text-primary-600 dark:text-primary-dark-50">
           {title}
         </h2>

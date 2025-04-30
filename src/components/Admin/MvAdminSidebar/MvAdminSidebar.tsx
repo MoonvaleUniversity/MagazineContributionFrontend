@@ -4,8 +4,8 @@ import { MvButton } from '../../MvButton';
 import { NavLink } from 'react-router-dom';
 import MvRoutes from '../../../app/MvRoutes';
 import {   FaChalkboardTeacher, FaRegCalendarAlt, FaUserCog } from 'react-icons/fa';
-import {AiOutlineStop } from 'react-icons/ai';
-import { FiX, FiMenu, FiChevronDown, FiLogOut, FiSettings, FiHome} from 'react-icons/fi';
+import {AiFillBook,  AiOutlineStop } from 'react-icons/ai';
+import { FiX, FiMenu, FiChevronDown,  FiSettings, FiHome,  FiEdit3} from 'react-icons/fi';
 import { getUserData } from '../../../services/AuthService';
 import clsx from 'clsx';
 
@@ -30,11 +30,6 @@ const [userData, setUserData] = useState<{ name?: string; email?: string } | nul
     { icon: <AiOutlineStop />, label: 'Closure Dates', to:MvRoutes.ADMIN.CLOSURE_DATES },
   ];
 
-  const handleLogout = () => {
-    // Perform logout logic (e.g., clear local storage and redirect to login page)
-    localStorage.removeItem('username');
-    window.location.href = '/login';
-  };
 
   return (
     <div className="relative">
@@ -102,8 +97,8 @@ const [userData, setUserData] = useState<{ name?: string; email?: string } | nul
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         >
           <div className="flex items-center space-x-3">
-            <FiSettings className="w-5 h-5 text-indigo-500 dark:text-purple-400" />
-            <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Settings</span>
+            <FiEdit3 className="w-5 h-5 text-indigo-500 dark:text-purple-400" />
+            <span className="text-sm font-medium text-gray-600 dark:text-gray-300">More</span>
           </div>
           <FiChevronDown className={`text-gray-400 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
         </div>
@@ -114,14 +109,13 @@ const [userData, setUserData] = useState<{ name?: string; email?: string } | nul
               <FiSettings className="w-4 h-4" />
               <span className="text-sm">Profile</span>
             </NavLink>
+            <NavLink to={MvRoutes.CREATIVE_SPARKS} className="flex items-center p-2 space-x-2 text-gray-500 rounded-lg hover:bg-indigo-50 dark:hover:bg-gray-800">
+              <AiFillBook className="w-4 h-4" />
+              <span className="text-sm">Creative Sparks</span>
+            </NavLink>
            
-            <div
-              className="flex items-center p-2 space-x-2 text-red-500 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20"
-              onClick={handleLogout}
-            >
-              <FiLogOut className="w-4 h-4" />
-              <span className="text-sm">Logout</span>
-            </div>
+           
+          
           </div>
         )}
       </div>

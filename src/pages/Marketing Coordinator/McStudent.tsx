@@ -10,10 +10,10 @@ import { MvPagination } from "../../components/MvPlagination/MvPlagination";
 import MarketingCoordinatorLayout from "../../layout/MarketingCoordinatorLayout";
 
 import SearchFilter from "../../components/MvSearchFilter/MvSearchFIlter";
-import { createStudents,  getAllStudents, updateStudents } from "../../services/StudentServices";
+import {   getAllStudents, updateStudents } from "../../services/StudentServices";
 import { getUserData } from "../../services/AuthService";
 import { IUser } from "../../app/Types/objects/user";
-import { deleteUser } from "../../services/userService";
+import { createUser, deleteUser } from "../../services/userService";
 
 export const McStudents  = () => {
   const [students, setStudents] = useState<User[]>([]);
@@ -61,6 +61,7 @@ export const McStudents  = () => {
     name: string;
     email: string;
     password?: string;
+    comfirmPassword?: string;
     role: string;
   }) => {
     const userData: IUser | null = getUserData();
@@ -76,7 +77,8 @@ export const McStudents  = () => {
         });
       } else {
         if (userData) {
-        await createStudents({ 
+          console.log("userData", userData , formData );
+        await createUser({ 
           ...formData, 
           faculty_id: String(userData.faculty_id),
           role: 'student' // Force role

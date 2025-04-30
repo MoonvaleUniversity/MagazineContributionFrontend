@@ -27,6 +27,7 @@ const MvEmailVerify: React.FC = () => {
       const response = await sendVerification(location.state.email);
       console.log(response);
       setMessage("Verification email sent! Check your inbox.");
+      document.cookie = "newuser=true; max-age=86400"; // 24 hours
     } catch (err) {
       console.error(err);
       setError("Failed to send verification email. Please try again.");

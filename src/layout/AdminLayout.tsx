@@ -3,6 +3,7 @@ import { useState, ReactNode } from "react";
 import { MvThemeToggle } from "../components/MvThemeToggle";
 import { MvAdminHeader } from "../components/Admin/MvAdminHeader";
 import { MvAdminSidebar } from "../components/Admin/MvAdminSidebar/MvAdminSidebar";
+import { CookieConsentModal } from "../components/MvCookieConsent/MvCookieConsent";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -29,6 +30,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         </main>
         <MvThemeToggle/>
       </div>
+      <CookieConsentModal />
     </div>
   );
 };

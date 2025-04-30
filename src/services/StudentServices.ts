@@ -12,7 +12,7 @@ export const getAllStudents = async (): Promise<User[]> => {
 
   export const createStudents = async (userData: Partial<User>) => {
     try {
-      const response = await postData(MvUrl.STUDENTS.STORE, userData);
+      const response = await postData(MvUrl.POST_USER, userData);
       return response.data; 
     } catch (error) {
       console.error(error);

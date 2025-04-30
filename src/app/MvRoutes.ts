@@ -7,7 +7,7 @@ const MvRoutes = {
   EMAIL_VERIFY: "/email-verification",
   WELCOME_USER: "/welcome-user",
   CANVAS_CORNER: "/canvas-corner",
-  CREATIVE_SPARLS: "/creative-sparks",
+  CREATIVE_SPARKS: "/creative-sparks",
   CONTRIBUTION_DETAILS: `/contributions/:id`,
   PUBLIC_CONTRIBUTION:"published-contributions",
   STUDENTS: {

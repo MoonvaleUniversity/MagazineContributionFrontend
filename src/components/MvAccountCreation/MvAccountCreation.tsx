@@ -17,6 +17,7 @@ interface AccountCreationFormProps {
     name: string;
     email: string;
     password?: string;
+    confirmPassword?: string;
     faculty_id?: string; // String type for form submission
     academic_year_id?: string
     role: string;
@@ -78,16 +79,14 @@ useEffect(() => {
         setFormError("Passwords do not match");
         return;
       }
-      if (!termsAccepted) {
-        setFormError("You must accept the terms and conditions");
-        return;
-      }
+     
     }
 
     onSubmit({
       name,
       email,
       password: isEditMode ? undefined : password,
+      confirmPassword: isEditMode ? undefined : confirmPassword,
       faculty_id: isFaculty ? facultyId : undefined, 
       academic_year_id: isAcademicYear ? academicYearId : undefined,
       role: fixedRole,
@@ -147,9 +146,9 @@ useEffect(() => {
             value: ay.id.toString(),
             label: ay.year_name
           }))}
-          value={academicYearId}
+          value={1}
           onChange={(e) => setAcademicYearId(e.target.value)}
-          required
+          
         />
       ): ""}
        {isFaculty && (

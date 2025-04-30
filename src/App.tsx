@@ -32,6 +32,7 @@ import { McDashboard } from "./pages/Marketing Coordinator/McDashboard";
 import { AdminProfileEdit } from "./pages/Admin/AdminProfile";
 import GuestDashboard from "./pages/Guest/GuestDashboard";
 import { MvGlobalContributions } from "./components/MvContributions/publishedContributions";
+import { MvCreativeSparksPage } from "./pages/CreativeSparks";
 
 
 
@@ -64,6 +65,14 @@ function App() {
   element={
     <ProtectedRoute roles={['Student',"Guest", 'Admin', 'Marketing Coordinator', 'Marketing Manager']}>
        <MvGlobalContributions/>
+    </ProtectedRoute>
+  }
+/>
+        <Route 
+  path={MvRoutes.CREATIVE_SPARKS} 
+  element={
+    <ProtectedRoute roles={['Student',"Guest", 'Admin', 'Marketing Coordinator', 'Marketing Manager']}>
+      <MvCreativeSparksPage/>
     </ProtectedRoute>
   }
 />

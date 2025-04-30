@@ -81,7 +81,7 @@ export const MvStudentSidebar: React.FC<MvStudentSidebarProps> = ({ isSidebarOpe
           {isDropdownOpen && (
             <div className="pl-4 flex flex-col text-gray-600 dark:text-primary-dark-200">
               <NavLink to={MvRoutes.CANVAS_CORNER} className="p-2 w-full rounded-2xl hover:bg-secondary-200 dark:hover:bg-secondary-dark-700">Canvas Corner</NavLink>
-              <NavLink to={MvRoutes.CANVAS_CORNER} className="p-2 w-full rounded-2xl hover:bg-secondary-200 dark:hover:bg-secondary-dark-700">Canvas Corner</NavLink>
+              <NavLink to={MvRoutes.CREATIVE_SPARKS} className="p-2 w-full rounded-2xl hover:bg-secondary-200 dark:hover:bg-secondary-dark-700">Creative Sparks</NavLink>
               <NavLink to={MvRoutes.STUDENTS.PROFILE_EDIT} className="p-2 w-full rounded-2xl hover:bg-secondary-200 dark:hover:bg-secondary-dark-700">Account</NavLink>
              
             </div>
