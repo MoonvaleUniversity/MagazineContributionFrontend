@@ -8,39 +8,39 @@ import { MvModal } from "../../components/MvModal";
 import { MvPagination } from "../../components/MvPlagination/MvPlagination";
 
 import MarketingCoordinatorLayout from "../../layout/MarketingCoordinatorLayout";
-import {  updateUser, createUser, deleteUser } from "../../services/userService";
+import { updateUser, createUser, deleteUser } from "../../services/userService";
 import SearchFilter from "../../components/MvSearchFilter/MvSearchFIlter";
 import { approveGuest, getAllGuest } from "../../services/GuestService";
 
 export const McGuests = () => {
   const [guests, setGuests] = useState<User[]>([]);
-  const [filteredStudents, setFilteredStudents] = useState<User[]>([]);
+  const [filteredGuests, setFilteredGuests] = useState<User[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingStudent, setEditingStudent] = useState<User | null>(null);
+  const [editingGuest, setEditingGuest] = useState<User | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Fetch students with role filter
+  // Fetch guests
   useEffect(() => { 
-    fetchStudents();
+    fetchGuests();
   }, []);
 
-  // Filter students
+  // Filter guests
   useEffect(() => {
     const filtered = guests.filter(guest => {
       const searchMatch = [guest.name, guest.email].some(field => 
         field.toLowerCase().includes(searchQuery.toLowerCase()))
       return searchMatch && guest.role === "Guest";
     });
-    setFilteredStudents(filtered);
+    setFilteredGuests(filtered);
     setCurrentPage(1);
   }, [searchQuery, guests]);
 
-  const fetchStudents = async () => {
+  const fetchGuests = async () => {
     try {
       setLoading(true);
       const data = await getAllGuest();
@@ -50,13 +50,13 @@ export const McGuests = () => {
         return;
       }
     } catch (error) {
-      setError(error instanceof Error ? error.message : "Failed to fetch students");
+      setError(error instanceof Error ? error.message : "Failed to fetch guests");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleStudentAction = async (formData: {
+  const handleGuestAction = async (formData: {
     name: string;
     email: string;
     password?: string;
@@ -64,19 +64,19 @@ export const McGuests = () => {
   }) => {
     setIsSubmitting(true);
     try {
-      if (editingStudent) {
-        await updateUser(editingStudent.id, { 
+      if (editingGuest) {
+        await updateUser(editingGuest.id, { 
           name: formData.name, 
           email: formData.email 
         });
       } else {
         await createUser({ 
           ...formData, 
-          role: 'student' // Force role
+          role: 'guest' // Force role
         });
       }
       closeModal();
-      await fetchStudents();
+      await fetchGuests();
     } catch (error) {
       setError(error instanceof Error ? error.message : "Operation failed");
     } finally {
@@ -85,10 +85,10 @@ export const McGuests = () => {
   };
 
   const handleDelete = async (id: number) => {
-    if (window.confirm("Delete this student?")) {
+    if (window.confirm("Delete this guest?")) {
       try {
         await deleteUser(id);
-        await fetchStudents();
+        await fetchGuests();
       } catch (error) {
         setError(error instanceof Error ? error.message : "Delete failed");
       }
@@ -96,10 +96,10 @@ export const McGuests = () => {
   };
 
   const handleApprove = async (id: number) => {
-    if (window.confirm("Approve this student?")) {
+    if (window.confirm("Approve this guest?")) {
       try {
         await approveGuest(id);
-        await fetchStudents();
+        await fetchGuests();
       } catch (error) {
         setError(error instanceof Error ? error.message : "Approval failed");
       }
@@ -107,22 +107,22 @@ export const McGuests = () => {
   };
 
   // Modal management
-  const openModal = (student?: User) => {
-    setEditingStudent(student || null);
+  const openModal = (guest?: User) => {
+    setEditingGuest(guest || null);
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
-    setEditingStudent(null);
+    setEditingGuest(null);
     setError(null);
   };
 
   // Pagination
-  const indexOfLastStudent = currentPage * itemsPerPage;
-  const currentStudents = filteredStudents.slice(
-    indexOfLastStudent - itemsPerPage, 
-    indexOfLastStudent
+  const indexOfLastGuest = currentPage * itemsPerPage;
+  const currentGuests = filteredGuests.slice(
+    indexOfLastGuest - itemsPerPage, 
+    indexOfLastGuest
   );
 
   return (
@@ -132,7 +132,7 @@ export const McGuests = () => {
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold">Manage Guests</h1>
         <MvButton onClick={() => openModal()}>
-          Add New Student
+          Add New Guest
         </MvButton>
       </div>
 
@@ -143,48 +143,48 @@ export const McGuests = () => {
         onSearch={setSearchQuery}
         className="px-4"
       />
-<div className="rounded-lg border border-gray-200 dark:border-gray-700">
-
-<table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-<thead className="bg-gray-50 dark:bg-primary-800">
-          <tr className="">
-            {["ID", "Name", "Email", "Faculty", "Actions"].map((header, index) => (
-              <th key={index} className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{header}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="bg-white dark:bg-primary-800 divide-y divide-gray-200 dark:divide-gray-700">
-          {currentStudents.length > 0 ? (
-            currentStudents.map(guest => (
-              <tr key={guest.id} >
-                <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300  tracking-wider">{guest.id}</td>
-                <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300  tracking-wider">{guest.name}</td>
-                <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300  tracking-wider">{guest.email}</td>
-                <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300  tracking-wider">{guest.faculty_id || "N/A"}</td>
-                <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300  tracking-wider flex gap-2">
-                  <MvButton onClick={() => handleApprove(guest.id)}>Approve</MvButton>
-                  <MvButton 
-                    onClick={() => handleDelete(guest.id)}
-                    className="bg-red-500 dark:bg-red-300"
-                  >
-                    Delete
-                  </MvButton>
+      <div className="rounded-lg border border-gray-200 dark:border-gray-700">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead className="bg-gray-50 dark:bg-primary-800">
+            <tr>
+              {["ID", "Name", "Email", "Faculty", "Actions"].map((header, index) => (
+                <th key={index} className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{header}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="bg-white dark:bg-primary-800 divide-y divide-gray-200 dark:divide-gray-700">
+            {currentGuests.length > 0 ? (
+              currentGuests.map(guest => (
+                <tr key={guest.id}>
+                  <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider">{guest.id}</td>
+                  <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider">{guest.name}</td>
+                  <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider">{guest.email}</td>
+                  <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider">{guest.faculty_id || "N/A"}</td>
+                  <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider flex gap-2">
+                    <MvButton onClick={() => handleApprove(guest.id)}>Approve</MvButton>
+                    <MvButton 
+                      onClick={() => handleDelete(guest.id)}
+                      className="bg-red-500 dark:bg-red-300"
+                    >
+                      Delete
+                    </MvButton>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={5} className="text-center p-4">
+                  {guests.length === 0 ? "No Guests found" : "No matching Guests"}
                 </td>
               </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={5} className="text-center p-4">
-                {guests.length === 0 ? "No Guests found" : "No matching Guests"}
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table> </div>
+            )}
+          </tbody>
+        </table>
+      </div>
 
       <MvPagination
         currentPage={currentPage}
-        totalItems={filteredStudents.length}
+        totalItems={filteredGuests.length}
         itemsPerPage={itemsPerPage}
         onPageChange={setCurrentPage}
         className="mt-4"
@@ -193,16 +193,16 @@ export const McGuests = () => {
       <MvModal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title={editingStudent ? "Edit Guest" : "Create New Guest"}
+        title={editingGuest ? "Edit Guest" : "Create New Guest"}
       >
         <AccountCreationForm
-          fixedRole="Student"
-          onSubmit={handleStudentAction}
+          fixedRole="Guest"
+          onSubmit={handleGuestAction}
           {...(error ? { error } : {})} 
           isSubmitting={isSubmitting}
-          initialValues={editingStudent ? {
-            name: editingStudent.name,
-            email: editingStudent.email
+          initialValues={editingGuest ? {
+            name: editingGuest.name,
+            email: editingGuest.email
           } : undefined}
         />
       </MvModal>

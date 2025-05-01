@@ -57,6 +57,7 @@ export const MMFaculty : React.FC = () => {
 
   const prepareFormData = (): FormData => {
     const data = new FormData();
+    
     if(editingId) {
       data.append("_method", 'PATCH');
     }

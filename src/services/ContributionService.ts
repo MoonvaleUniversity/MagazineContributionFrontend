@@ -6,12 +6,13 @@ import { IContribution, ApiContributionResponse } from "../app/Types/objects/con
 export const MvContributionServices = {
   // Fetch contributions
   getContributions: async (
-    options?: { userId?: string; facultyId?: string; }
+    options?: { userId?: string; facultyId?: string; published?: boolean; }
   ): Promise<IContribution[]> => {
     try {
       const queryParams = new URLSearchParams();
       if (options?.userId) queryParams.append("user_id", options.userId);
       if (options?.facultyId) queryParams.append("faculty_id", options.facultyId);
+      if (options?.published) queryParams.append("is_selected_for_publication", "1");
       queryParams.append("noPagination", "1");
 
       //  Corrected to use INDEX endpoint
@@ -69,20 +70,19 @@ export const MvContributionServices = {
   },
 
   // Publish contribution
-  publishContribution: async (id: string): Promise<IContribution> => {
+  publishContribution: async (id: string) : Promise<boolean>=> {
     try {
       // Use postData since your route is POST api/v1/published/{id}
-      const response = await postData<{ data: IContribution }>(
+      const response = await postData<{message: string , success : boolean}>(
         MvUrl.CONTRIBUTIONS.PUBLISH(Number(id)),{}
       );
 
-      if (!response.data?.data) {
-        throw new Error("Invalid publish response format");
-      }
-
-      const item = response.data.data;
-      
-      return item;
+     console.log("Publish response:", response.data);
+     if (!response.data ) {
+        console.error("Failed to publish contribution:", response.data);
+        return false;
+     }
+     return true;
     } catch (error) {
       console.error(`Error publishing contribution ${id}:`, error);
       throw new Error(`Publishing failed: ${(error as Error).message}`);
@@ -266,7 +266,7 @@ triggerEmailAuto: async (): Promise<void> => {
 // Review system (assuming JSON response)
 submitReview: async (
   contributionId: number,
-  reviewData: { userId: number; content: string; rating: number }
+  reviewData: { review: string},
 ): Promise<any> => {
   try {
     const response = await postData(

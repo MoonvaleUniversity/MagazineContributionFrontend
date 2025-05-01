@@ -3,6 +3,7 @@ import { useState, ReactNode } from "react";
 import { MvThemeToggle } from "../components/MvThemeToggle";
 import { MvStudentHeader } from "../components/Student/MvStudentHeader";
 import { MvStudentSidebar } from "../components/Student/MvStudentSidebar";
+import { CookieConsentModal } from "../components/MvCookieConsent/MvCookieConsent";
 
 interface StudentLayoutProps {
   children: ReactNode;
@@ -29,6 +30,7 @@ const StudentLayout: React.FC<StudentLayoutProps> = ({ children }) => {
         </main>
         <MvThemeToggle/>
       </div>
+      <CookieConsentModal />
     </div>
   );
 };

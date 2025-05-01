@@ -3,7 +3,7 @@ import clsx from "clsx";
 import { FaUpload, FaTimes } from "react-icons/fa";
 
 interface MvImageUploadProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  onUpload?: (Blob: File | File []| null) => void;
+  onUpload?: (File: File | null) => void;
 }
 
 export const MvImageUpload = forwardRef<HTMLInputElement, MvImageUploadProps>(

@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react';
 import { MvNavbar } from '../components/MvNavbar';
 import { MvThemeToggle } from '../components/MvThemeToggle';
 import { MvFooter } from '../components/MvFooter';
+import { CookieConsentModal } from '../components/MvCookieConsent/MvCookieConsent';
 
 interface HomeLayoutProps {
   children: ReactNode;
@@ -18,6 +19,7 @@ const MvHomeLayout: React.FC<HomeLayoutProps> = ({ children }) => {
       
       <MvFooter />
       <MvThemeToggle />
+      <CookieConsentModal />
     </div>
   );
 };

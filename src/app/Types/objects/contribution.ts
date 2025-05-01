@@ -66,18 +66,18 @@ export interface IContribution {
   user: IUser;
 }
 
-export interface ApiContributionResponses {
-  success: boolean;
-  message: string;
-  data: {
-    contributions: IContribution;
-  };
-  errors: unknown[];
-  meta: {
-    timestamp: string;
-    status: number;
-  };
-}
+  export interface ApiContributionResponses {
+    success: boolean;
+    message: string;
+    data: {
+      contributions: IContribution;
+    };
+    errors: unknown[];
+    meta: {
+      timestamp: string;
+      status: number;
+    };
+  }
 // Add to your Types/objects/contribution.ts
 export interface IComment {
   id: number;

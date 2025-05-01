@@ -2,6 +2,7 @@ import { useState, ReactNode } from "react";
 import { MvThemeToggle } from "../components/MvThemeToggle";
 import { MvMarketingCoordinatorSidebar } from "../components/MarketingCoordinator/MarketingCoordinatorsidebar/MarketingCoordinatorsidebar";
 import { MvMarketingCoordinatorHeader } from "../components/MarketingCoordinator/MarketingCoordinatorheader/MarketingCoordinatorheader";
+import { CookieConsentModal } from "../components/MvCookieConsent/MvCookieConsent";
 
 interface MarketingCoordinatorLayoutProps {
   children: ReactNode;
@@ -25,6 +26,7 @@ const MarketingCoordinatorLayout: React.FC<MarketingCoordinatorLayoutProps> = ({
           {children}
         </main>
         <MvThemeToggle />
+        <CookieConsentModal />
       </div>
     </div>
   );

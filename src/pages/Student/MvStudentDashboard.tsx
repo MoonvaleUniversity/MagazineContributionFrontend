@@ -122,7 +122,7 @@ export const MvStudentDashboard = () => {
           </button>
 
           <button
-            onClick={() => navigate('/public-submissions')}
+          onClick={() => navigate(MvRoutes.PUBLIC_CONTRIBUTION)}
             className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all"
           >
             <div className="flex items-center gap-3">
@@ -132,7 +132,7 @@ export const MvStudentDashboard = () => {
           </button>
 
           <button
-            onClick={() => navigate('/my-submissions')}
+            onClick={() => navigate(MvRoutes.STUDENTS.SUBMISSIONS)}
             className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all"
           >
             <div className="flex items-center gap-3">
@@ -181,6 +181,7 @@ export const MvStudentDashboard = () => {
             {recentSubmissions.map((submission) => (
               <div 
               key={submission.id}
+              onClick={() => navigate("/contributions/"+submission.id)}
               className="flex gap-4 p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow"
             >
               {/* Image Section */}

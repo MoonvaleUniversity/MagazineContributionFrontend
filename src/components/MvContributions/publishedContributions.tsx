@@ -19,6 +19,7 @@ export const MvGlobalContributions = () => {
   const [itemsPerPage] = useState(8);
   const [searchQuery, setSearchQuery] = useState("");
   const [Layout, setLayout] = useState(() => StudentLayout);
+  const [facultyId, setFacultyId] = useState<string |number | null>(null);
 
   useEffect(() => {
     // Get user data and set layout
@@ -41,13 +42,16 @@ export const MvGlobalContributions = () => {
         default:
           setLayout(() => StudentLayout);
       }
+      if (userData.faculty_id) {
+        setFacultyId(userData.faculty_id);
+      }
     }
   }, []);
   // Fetch all contributions
   useEffect(() => {
     const fetchContributions = async () => {
       try {
-        const data = await MvContributionServices.getContributions();
+        const data = await MvContributionServices.getContributions(facultyId ? { facultyId: facultyId.toString() , published : true } : { published : true});  
         setContributions(data);
       } catch (error) {
         console.error("Error loading contributions:", error);

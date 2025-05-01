@@ -3,16 +3,18 @@ import { CreativeSpark } from "../app/MvObjects/creativesparks";
 import { MvButton } from "../components/MvButton";
 import { MvInput } from "../components/MvInput";
 import { MvLoader } from "../components/MvLoader";
-import { deleteData, getData,  putData, uploadMultimedia } from "../app/MvApi";
+import { CreativeService } from "../services/CreativeService";
 
 export const MvCreativeSparksPage = () => {
   const [sparks, setSparks] = useState<CreativeSpark[]>([]);
+  const [filteredSparks, setFilteredSparks] = useState<CreativeSpark[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [formData, setFormData] = useState({
-    title: '',
-    content: '',
-    image: null as File | null
+    title: "",
+    content: "",
+    image: null as File | null,
   });
   const [editMode, setEditMode] = useState(false);
   const [currentId, setCurrentId] = useState<string | null>(null);
@@ -20,32 +22,34 @@ export const MvCreativeSparksPage = () => {
   const fetchSparks = async () => {
     try {
       setLoading(true);
-      const response = await getData('http://localhost:8000/api/v1/creative-sparks');
-      console.log(response);
-      setSparks(response.data.creative_sparks.data);
+      const response = await CreativeService.fetchSparks();
+      setSparks(response);
+      setFilteredSparks(response);
     } catch (err) {
-        console.error(err);
+      console.error(err);
       setError(`Failed to load creative sparks`);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => { fetchSparks(); }, []);
+  useEffect(() => {
+    fetchSparks();
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleFileChange = (files: File | File[] | null) => {
     const file = Array.isArray(files) ? files[0] : files;
-    setFormData(prev => ({ ...prev, image: file instanceof File ? file : null }));
+    setFormData((prev) => ({ ...prev, image: file instanceof File ? file : null }));
   };
 
   const validateForm = () => {
-    if (!formData.title.trim()) return 'Title is required';
-    if (!formData.content.trim()) return 'Content is required';
-    if (!editMode && !formData.image) return 'Image is required for new entries';
+    if (!formData.title.trim()) return "Title is required";
+    if (!formData.content.trim()) return "Content is required";
+    if (!editMode && !formData.image) return "Image is required for new entries";
     return null;
   };
 
@@ -55,24 +59,24 @@ export const MvCreativeSparksPage = () => {
     if (validationError) return setError(validationError);
 
     const data = new FormData();
-    data.append('title', formData.title);
-    data.append('content', formData.content);
-    if (formData.image) data.append('image', formData.image); // Ensure this line is executed
+    data.append("title", formData.title);
+    data.append("content", formData.content);
+    if (formData.image) data.append("image", formData.image);
 
     try {
       setLoading(true);
       setError(null);
 
       if (editMode && currentId) {
-        await putData(`http://localhost:8000/api/v1/creative-sparks/${currentId}`, data);
+        await CreativeService.updateSpark(data, currentId);
       } else {
-        await uploadMultimedia('http://localhost:8000/api/v1/creative-sparks', data);
+        await CreativeService.createSpark(data);
       }
 
       await fetchSparks();
       resetForm();
     } catch (err) {
-      setError(`${editMode ? 'Update failed' : 'Creation failed'}: ${err}`);
+      setError(`${editMode ? "Update failed" : "Creation failed"}: ${err}`);
     } finally {
       setLoading(false);
     }
@@ -82,18 +86,18 @@ export const MvCreativeSparksPage = () => {
     setFormData({
       title: spark.title,
       content: spark.content,
-      image: null // Reset image for edit - user must upload new file
+      image: null,
     });
     setEditMode(true);
     setCurrentId(spark.id);
   };
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this spark?')) return;
-    
+    if (!window.confirm("Are you sure you want to delete this spark?")) return;
+
     try {
       setLoading(true);
-      await deleteData(`/creative-sparks/${id}`);
+      await CreativeService.deleteSpark(id);
       await fetchSparks();
     } catch (err) {
       setError(`Deletion failed: ${err}`);
@@ -103,26 +107,50 @@ export const MvCreativeSparksPage = () => {
   };
 
   const resetForm = () => {
-    setFormData({ title: '', content: '', image: null });
+    setFormData({ title: "", content: "", image: null });
     setEditMode(false);
     setCurrentId(null);
   };
 
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+    setFilteredSparks(
+      sparks.filter(
+        (spark) =>
+          spark.title.toLowerCase().includes(query) ||
+          spark.content.toLowerCase().includes(query)
+      )
+    );
+  };
+
   return (
     <div className="max-w-7xl mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-8">Creative Sparks</h1>
+      <h1 className="text-3xl font-bold mb-8 text-gray-800 dark:text-gray-100">Creative Sparks</h1>
+
+      {/* Search Bar */}
+      <div className="mb-6">
+        <MvInput
+          label="Search sparks..."
+          value={searchQuery}
+          onChange={handleSearch}
+         
+        />
+      </div>
 
       {/* Submission Form */}
-      <form onSubmit={handleSubmit} className="mb-8 p-6 bg-white rounded-lg shadow-md">
+      <form onSubmit={handleSubmit} className="mb-8 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
         <MvInput
           label="Title *"
           name="title"
           value={formData.title}
           onChange={handleInputChange}
         />
-        
+
         <div className="mb-4">
-          <label className="block text-sm font-medium mb-2">Content *</label>
+          <label className="block text-sm font-medium mb-2 text-gray-800 dark:text-gray-100">
+            Content *
+          </label>
           <textarea
             name="content"
             value={formData.content}
@@ -131,21 +159,26 @@ export const MvCreativeSparksPage = () => {
             rows={4}
             required
           />
-        <div className="mb-4"></div>
-            <label className="block text-sm font-medium mb-2">Image {editMode ? '' : '*'}</label>
-            <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => handleFileChange(e.target.files ? e.target.files[0] : null)}
-                className="w-full p-2 border rounded-md"
-                required={!editMode}
-            />
         </div>
+
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-2 text-gray-800 dark:text-gray-100">
+            Image {editMode ? "" : "*"}
+          </label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => handleFileChange(e.target.files ? e.target.files[0] : null)}
+            className="w-full p-2 border rounded-md"
+            required={!editMode}
+          />
+        </div>
+
         {error && <div className="mt-4 p-3 bg-red-100 text-red-700 rounded">{error}</div>}
 
         <div className="flex gap-4 mt-6">
           <MvButton type="submit" variant="primary" disabled={loading}>
-            {editMode ? 'Update Spark' : 'Create Spark'}
+            {editMode ? "Update Spark" : "Create Spark"}
           </MvButton>
           {editMode && (
             <MvButton type="button" onClick={resetForm} variant="secondary">
@@ -158,31 +191,34 @@ export const MvCreativeSparksPage = () => {
       {/* Sparks Grid */}
       {loading ? (
         <MvLoader />
-      ) : sparks.length === 0 ? (
+      ) : filteredSparks.length === 0 ? (
         <div className="text-center py-12 text-gray-500">
           No creative sparks found. Create your first one!
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {sparks.map((spark) => (
-            <div key={spark.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+          {filteredSparks.map((spark) => (
+            <div
+              key={spark.id}
+              className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden"
+            >
               <img
                 src={spark.image_url}
                 alt={spark.title}
                 className="w-full h-48 object-cover bg-gray-100"
                 onError={(e) => {
-                  (e.target as HTMLImageElement).src = '/fallback-image.jpg';
+                  (e.target as HTMLImageElement).src = "/fallback-image.jpg";
                 }}
               />
               <div className="p-4">
-                <h3 className="text-xl font-semibold mb-2">{spark.title}</h3>
-                <p className="text-gray-600 mb-4 line-clamp-3">{spark.content}</p>
+                <h3 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-100">
+                  {spark.title}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
+                  {spark.content}
+                </p>
                 <div className="flex gap-2">
-                  <MvButton 
-                    onClick={() => handleEdit(spark)}
-                    variant="secondary"
-                    size="sm"
-                  >
+                  <MvButton onClick={() => handleEdit(spark)} variant="secondary" size="sm">
                     Edit
                   </MvButton>
                   <MvButton

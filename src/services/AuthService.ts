@@ -92,6 +92,6 @@ export const checkAuthAndRedirect = (navigate: NavigateFunction) => {
       navigate(MvRoutes.MARKET_COORDINATOR.STUDENTS);
       break;
     default:
-      navigate(MvRoutes.DASHBOARD);
+      navigate(MvRoutes.GUEST.DASHBOARD);
   }
 };  
