@@ -131,8 +131,9 @@ export const updateMultimedia = async <T>(url: string, data: FormData): Promise<
     console.log('Bearer Token:', token);
   
     try {
-      const response = await axios.post(url, data, {
+      const response = await axios.put(url, data, {
         headers: {
+            'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${token}`
         },
       });
