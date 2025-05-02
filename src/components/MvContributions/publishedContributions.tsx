@@ -37,14 +37,15 @@ export const MvGlobalContributions = () => {
           setLayout(() => MarketingManagerLayout);
           break;
         case 'guest':
+          setFacultyId(userData.faculty_id);
           setLayout(() => MvHomeLayout);
           break;
         default:
           setLayout(() => StudentLayout);
       }
-      if (userData.faculty_id) {
-        setFacultyId(userData.faculty_id);
-      }
+     
+        
+      
     }
   }, []);
   // Fetch all contributions

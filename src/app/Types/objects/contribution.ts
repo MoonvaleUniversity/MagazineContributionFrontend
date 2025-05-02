@@ -46,8 +46,10 @@ export interface IUserRole {
 export interface IUser {
   id: number;
   name: string;
-  faculty: IFaculty;
-  roles: IUserRole[];
+  faculty?: IFaculty;
+  faculty_id?: number | null;
+  role: string;
+  roles?: IUserRole[];
 }
 
 export interface IContribution {
@@ -64,6 +66,8 @@ export interface IContribution {
   updated_at?: string;
   image_url: IContributionImage[];
   user: IUser;
+  comments?: IComment[];
+  votes?: IVote[];
 }
 
   export interface ApiContributionResponses {
@@ -83,9 +87,10 @@ export interface IComment {
   id: number;
   content: string;
   user_id: number;
+  user: IUser;
   contribution_id: number;
   created_at: string;
-  updated_at: string;
+  updated_at?: string;
 }
 
 export interface IVote {

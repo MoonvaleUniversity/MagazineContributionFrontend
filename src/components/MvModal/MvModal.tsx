@@ -24,7 +24,7 @@ export const MvModal: React.FC<MvModelProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50 bg-black/50">
       <div
         className={clsx(
-          "bg-white dark:bg-secondary-dark-500 rounded-4xl shadow-lg p-6 w-full max-w-fit relative transition-all duration-300 max-h-[90vh] overflow-y-auto",
+          "bg-white dark:bg-secondary-dark-500 rounded-2xl shadow-lg p-6 w-full max-w-fit relative transition-all duration-300 max-h-[90vh] overflow-y-auto",
           className
         )}
       >

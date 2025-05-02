@@ -4,6 +4,12 @@ import { MvButton } from "../components/MvButton";
 import { MvInput } from "../components/MvInput";
 import { MvLoader } from "../components/MvLoader";
 import { CreativeService } from "../services/CreativeService";
+import StudentLayout from "../layout/StudentLayout";
+import { getUserData } from "../services/AuthService";
+import AdminLayout from "../layout/AdminLayout";
+import MarketingCoordinatorLayout from "../layout/MarketingCoordinatorLayout";
+import MarketingManagerLayout from "../layout/MarketingManagerLayout";
+import MvHomeLayout from "../layout/MvHomeLayout";
 
 export const MvCreativeSparksPage = () => {
   const [sparks, setSparks] = useState<CreativeSpark[]>([]);
@@ -11,6 +17,7 @@ export const MvCreativeSparksPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [Layout, setLayout] = useState(() => StudentLayout);
   const [formData, setFormData] = useState({
     title: "",
     content: "",
@@ -34,7 +41,29 @@ export const MvCreativeSparksPage = () => {
   };
 
   useEffect(() => {
-    fetchSparks();
+    // Get user data and set layout
+    const userData = getUserData();
+    if (userData) {
+    
+      switch(userData.role.toLowerCase()) {
+        case 'marketing coordinator':
+          setLayout(() => MarketingCoordinatorLayout);
+          break;
+        case 'admin':
+          setLayout(() => AdminLayout);
+          break;
+        case 'marketing manager':
+          setLayout(() => MarketingManagerLayout);
+          break;
+        case 'guest':
+         
+          setLayout(() => MvHomeLayout);
+          break;
+        default:
+          setLayout(() => StudentLayout);
+      }
+    }
+      fetchSparks();
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -124,8 +153,8 @@ export const MvCreativeSparksPage = () => {
     );
   };
 
-  return (
-    <div className="max-w-7xl mx-auto p-4">
+  return (<Layout>
+    <div className="max-w-7xl mx-auto p-4"> 
       <h1 className="text-3xl font-bold mb-8 text-gray-800 dark:text-gray-100">Creative Sparks</h1>
 
       {/* Search Bar */}
@@ -234,6 +263,6 @@ export const MvCreativeSparksPage = () => {
           ))}
         </div>
       )}
-    </div>
+    </div></Layout>
   );
 };

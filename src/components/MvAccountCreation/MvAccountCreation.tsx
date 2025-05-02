@@ -1,6 +1,6 @@
 // components/MvAccountCreation/MvAccountCreation.tsx
 import { useState, FormEvent, useEffect } from "react";
-import { MvCheckbox, MvDropdown, MvInput, MvPasswordInput } from "../../components/MvInput";
+import { MvDropdown, MvInput, MvPasswordInput} from "../../components/MvInput";
 import { MvButton } from "../../components/MvButton";
 import { getAllFaculties } from "../../services/FacultyService";
 import { getAllAcademicYears } from "../../services/AcademicYearService";
@@ -45,7 +45,6 @@ const AccountCreationForm: React.FC<AccountCreationFormProps> = ({
   const [email, setEmail] = useState(initialValues?.email || "");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [termsAccepted, setTermsAccepted] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [faculties, setFaculties] = useState<Array<{ id: number; name: string }>>([]);
   const [facultyId, setFacultyId] = useState( initialValues?.faculty_id?.toString() || "");
@@ -96,7 +95,7 @@ useEffect(() => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-11/12 max-sm:w-11/12 p-6 mx-auto space-y-4 shadow-lg bg-background-100/40 dark:bg-secondary-dark-700 rounded-2xl"
+      className=" w-xl max-sm:w-full p-6 mx-auto space-y-4  bg-background-100/40 dark:bg-secondary-dark-700 rounded-2xl"
     >
       <h2 className="text-xl text-center font-semibold text-primary-600 dark:text-primary-dark-200">
         {isEditMode ? `Edit User` : `Create ${fixedRole}`}
@@ -125,14 +124,14 @@ useEffect(() => {
         <>
           <MvPasswordInput
             label="Password"
-            type="password"
+          
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
           <MvPasswordInput
             label="Confirm Password"
-            type="password"
+         
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
@@ -160,18 +159,7 @@ useEffect(() => {
               required
             />
             )}
-      {!isEditMode && (
-        <div className="flex items-center space-x-2">
-          <MvCheckbox
-            id="terms"
-            label="I agree to the Terms and Conditions"
-            checked={termsAccepted}
-            onChange={(e) => setTermsAccepted(e.target.checked)}
-            className="w-4 h-4 border-gray-300 rounded text-primary-600 focus:ring-primary-500"
-          />
-        </div>
-      )}
-     
+ 
       <MvButton type="submit" className="w-full" disabled={isSubmitting}>
         {isSubmitting 
           ? `${isEditMode ? "Updating..." : "Creating..."}` 

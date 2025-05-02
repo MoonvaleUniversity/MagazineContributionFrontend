@@ -8,10 +8,8 @@ import { IContribution } from "../../app/Types/objects/contribution";
 
 import { MvPagination } from "../../components/MvPlagination/MvPlagination";
 import SearchFilter from "../../components/MvSearchFilter/MvSearchFIlter";
-import { IClosureDate } from "../../app/MvObjects/clousuredate";
-import { getClosureDateById } from "../../services/ClosureDateService";
 import { MvStats } from "../../components/MvStats/MvStats";
-
+import { getAllFaculties } from "../../services/FacultyService";
 
 export const MmSubmissionsView = () => {
   const [allSubmissions, setAllSubmissions] = useState<IContribution[]>([]);
@@ -19,47 +17,33 @@ export const MmSubmissionsView = () => {
   const [itemsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [closureFilter, setClosureFilter] = useState<string>("all");
-  const [closureDates, setClosureDates] = useState<{[key: string]: IClosureDate}>({});
- // Fetch closure dates for all contributions
- useEffect(() => {
-    const fetchClosureDates = async () => {
-      const dates: {[key: string]: IClosureDate} = {};
-      const uniqueIds = [...new Set(allSubmissions.map(c => c.closure_date_id))];
-      
-      await Promise.all(uniqueIds.map(async (id) => {
-        try {
-          const date = await getClosureDateById(id);
-          dates[id] = date;
-        } catch (error) {
-          console.error(`Error fetching closure date ${id}:`, error);
-        }
-      }));
-      
-      setClosureDates(dates);
+  const [facultyFilter, setFacultyFilter] = useState<string>("all"); // Add faculty filter state
+  const [faculties, setFaculties] = useState<Array<{ id: number; name: string }>>([]); // Add faculties state
+
+  // Fetch faculties on component mount
+  useEffect(() => {
+    const fetchFaculties = async () => {
+      try {
+        const facultiesData = await getAllFaculties();
+        setFaculties(facultiesData);
+      } catch (error) {
+        console.error("Failed to load faculties:", error);
+      }
     };
+    fetchFaculties();
+  }, []);
 
-    if (allSubmissions.length > 0) {
-      fetchClosureDates();
-    }
-  }, [allSubmissions]);
-  // Calculate open/closed status
-   const isContributionOpen = (contribution: IContribution) => {
-    const closureDate = closureDates[contribution.closure_date_id]?.final_closure_date;
-    if (!closureDate) return false;
-    return new Date(closureDate) > new Date();
-  };
-
-  // Filter submissions
-  const filteredSubmissions = allSubmissions.filter(submission => {
+  const filteredSubmissions = allSubmissions.filter((submission) => {
     const matchesSearch = submission.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === "all" || 
-      (statusFilter === "approved" ? submission.is_selected_for_publication : 
-       !submission.is_selected_for_publication);
-    const matchesClosure = closureFilter === "all" || 
-      (closureFilter === "open" ? isContributionOpen(submission) : !isContributionOpen(submission));
+    const matchesStatus =
+      statusFilter === "all" ||
+      (statusFilter === "approved"
+        ? submission.is_selected_for_publication
+        : !submission.is_selected_for_publication);
+    const matchesFaculty =
+      facultyFilter === "all" || submission.user.faculty_id?.toString() === facultyFilter;
 
-    return matchesSearch && matchesStatus && matchesClosure;
+    return matchesSearch && matchesStatus && matchesFaculty;
   });
 
   // Pagination
@@ -86,19 +70,21 @@ export const MmSubmissionsView = () => {
     setSearchQuery(query);
     setCurrentPage(1);
   };
-  
+
   const handleFilterChange = (filterName: string, value: string) => {
-    if (filterName === "status") {
-      setStatusFilter(value);
-    } else if (filterName === "closure") {
-      setClosureFilter(value);
+    switch (filterName) {
+      case "status":
+        setStatusFilter(value);
+        break;
+      case "faculty":
+        setFacultyFilter(value);
+        break;
     }
     setCurrentPage(1);
   };
 
   const handleDownloadZip = async () => {
-  
-    console.log("");
+    console.log("Download ZIP functionality");
   };
 
   return (
@@ -117,9 +103,10 @@ export const MmSubmissionsView = () => {
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <MvStats title="Total" value={allSubmissions.length} />
-          <MvStats title="Approved" value={allSubmissions.filter(s => s.is_selected_for_publication).length} />
-          <MvStats title="Open" value={allSubmissions.filter(isContributionOpen).length} />
-          <MvStats title="Closed" value={allSubmissions.filter(s => !isContributionOpen(s)).length} />
+          <MvStats
+            title="Approved"
+            value={allSubmissions.filter((s) => s.is_selected_for_publication).length}
+          />
         </div>
 
         {/* Search and Filters */}
@@ -134,31 +121,28 @@ export const MmSubmissionsView = () => {
               options: [
                 { value: "all", label: "All Statuses" },
                 { value: "approved", label: "Approved" },
-                { value: "pending", label: "Pending" }
-              ]
+                { value: "pending", label: "Pending" },
+              ],
             },
             {
-              name: "closure",
-              label: "Closure",
+              name: "faculty",
+              label: "Faculty",
               options: [
-                { value: "all", label: "All" },
-                { value: "open", label: "Open" },
-                { value: "closed", label: "Closed" }
-              ]
-            }
+                { value: "all", label: "All Faculties" },
+                ...faculties.map((f) => ({ value: f.id.toString(), label: f.name })),
+              ],
+            },
           ]}
           className="my-4"
         />
 
         {/* Contribution Table */}
-        
         <MvContributionTable
-  contributions={currentSubmissions}
-  closureDates={closureDates}
- 
-  onDownloadZip={handleDownloadZip}
-  isMarketingManager
-/>
+          contributions={currentSubmissions}
+          onDownloadZip={handleDownloadZip}
+          isMarketingManager
+        />
+
         {/* Pagination */}
         <MvPagination
           currentPage={currentPage}

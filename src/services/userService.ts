@@ -32,3 +32,7 @@ export const getAllUsers = async (): Promise<User[]> => {
 export const deleteUser = async (id: number): Promise<void> => {
   await deleteData(MvUrl.DELETE_USER(id));
 };
+export const getUser = async (id: number): Promise<IUser> => {
+  const response = await getData(MvUrl.SHOW_USER(id));
+  return response.data.user as IUser;
+};

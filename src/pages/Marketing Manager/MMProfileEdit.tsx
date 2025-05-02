@@ -49,10 +49,7 @@ export const MmProfileEdit: React.FC = () => {
             
             {/* Info Grid */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-              <div className="space-y-1">
-                <label className="text-xs font-medium text-gray-500 dark:text-gray-400">Faculty</label>
-                <p className="text-sm text-gray-900 dark:text-white">{userData?.faculty_id}</p>
-              </div>
+             
               <div className="space-y-1">
                 <label className="text-xs font-medium text-gray-500 dark:text-gray-400">Academic Year</label>
                 <p className="text-sm text-gray-900 dark:text-white">2023-2024</p>
