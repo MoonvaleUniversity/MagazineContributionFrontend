@@ -1,4 +1,4 @@
-import { FiHome, FiFileText, FiCheckCircle, FiUser, FiUsers, FiSettings, FiChevronDown, FiMenu, FiX} from "react-icons/fi";
+import { FiHome, FiFileText, FiCheckCircle, FiUser, FiUsers, FiChevronDown, FiMenu, FiX} from "react-icons/fi";
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { MvButton } from "../../MvButton";
@@ -105,8 +105,11 @@ export const MvMarketingCoordinatorSidebar: React.FC<MarketingCoordinatorSidebar
             <div>
               <p className="text-sm font-medium">{userData?.name || 'Unknown User'}</p>
               <p className="text-xs dark:text-primary-dark-200">{userData?.email || 'student@example.com'}</p>
+              <p className="text-xs text-gray-500 dark:text-primary-dark-300">
+              Last login: 
+              </p>
             </div>
-            <FiSettings className="ml-auto text-primary-700 dark:text-primary-dark-500" />
+         
           </div>
         </div>
       </div>

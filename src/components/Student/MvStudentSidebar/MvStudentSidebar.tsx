@@ -98,6 +98,9 @@ export const MvStudentSidebar: React.FC<MvStudentSidebarProps> = ({ isSidebarOpe
             <div>
               <p className="text-sm font-medium">{userData?.name || 'Unknown User'}</p>
               <p className="text-xs dark:text-primary-dark-200">{userData?.email || 'student@example.com'}</p>
+              <p className="text-xs text-gray-500 dark:text-primary-dark-300">
+              Last login: 
+              </p>
             </div>
           </div>
         </div>

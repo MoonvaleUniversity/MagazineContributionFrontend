@@ -137,8 +137,10 @@ const [userData, setUserData] = useState<{ name?: string; email?: string } | nul
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
               {userData?.email || 'admin@example.com'}
-            </p>
-          </div>
+              </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Last login: <span className="font-medium text-gray-700 dark:text-gray-300">2 days ago</span>
+            </p> </div>
         </div>
       </div>
     </div>
