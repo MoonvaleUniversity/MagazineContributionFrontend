@@ -90,6 +90,7 @@ export const MvCreativeSparksPage = () => {
     const data = new FormData();
     data.append("title", formData.title);
     data.append("content", formData.content);
+    data.append("_method","PUT");
     if (formData.image) data.append("image", formData.image);
 
     try {

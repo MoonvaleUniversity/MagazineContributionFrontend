@@ -137,7 +137,23 @@ const Login: React.FC = () => {
         className="text-green-700 bg-green-100 dark:bg-green-900 dark:text-green-100"
       >
         <div className="text-center p-4">
-          Your account has been created successfully. Please log in.
+          <div className="flex justify-center mb-4">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-16 h-16 text-green-500"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </div>
+          Your account has been created successfully.<br/> Please wait for approval email. And login to your account.
         </div>
       </MvModal>
     <div className="flex items-center justify-center min-h-screen">
