@@ -2,33 +2,12 @@ import React from "react";
 import { MvButton } from "../../components/MvButton";
 import { MvThemeToggle } from "../../components/MvThemeToggle";
 import { useNavigate } from "react-router-dom";
-import MvRoutes from "../../app/MvRoutes";
 
 const MvNotFound: React.FC = () => {
   const navigate = useNavigate();
 
   const handleGoHome = () => {
-    const userData = localStorage.getItem("userData") || sessionStorage.getItem("userData");
-    const parsedUserData = userData ? JSON.parse(userData) : null;
-    const userRole = parsedUserData?.role || "";
-  
-    // Redirect based on role
-    switch (userRole) {
-      case "Admin":
-        navigate(MvRoutes.ADMIN.ACADEMIC_YEAR);
-        break;
-      case "Student":
-        navigate(MvRoutes.STUDENTS.DASHBOARD);
-        break;
-      case "Marketing Manager":
-        navigate(MvRoutes.DASHBOARD);
-        break;
-      case "Marketing Coordinator":
-        navigate(MvRoutes.DASHBOARD);
-        break;
-      default:
-        navigate(MvRoutes.DASHBOARD); // Default dashboard
-    }
+   navigate(-1); // Go back to the previous page
   };
 
   return (

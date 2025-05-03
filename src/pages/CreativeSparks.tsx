@@ -90,7 +90,7 @@ export const MvCreativeSparksPage = () => {
     const data = new FormData();
     data.append("title", formData.title);
     data.append("content", formData.content);
-    data.append("_method","PUT");
+   
     if (formData.image) data.append("image", formData.image);
 
     try {
@@ -98,6 +98,7 @@ export const MvCreativeSparksPage = () => {
       setError(null);
 
       if (editMode && currentId) {
+        data.append("_method","PUT");
         await CreativeService.updateSpark(data, currentId);
       } else {
         await CreativeService.createSpark(data);

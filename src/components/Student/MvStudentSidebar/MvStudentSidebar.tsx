@@ -44,7 +44,7 @@ export const MvStudentSidebar: React.FC<MvStudentSidebarProps> = ({ isSidebarOpe
         } lg:block`}
       >
         <div className="flex justify-center mb-8">
-          <span className="text-xl font-bold">Moonvale University</span>
+          <span className="text-xl font-bold">Student Dashboard</span>
         </div>
 
         <nav className="space-y-2">

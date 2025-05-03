@@ -184,7 +184,7 @@ const handleFilesSelect = (selectedFiles: File[]) => {
           <button
             type="button"
             onClick={() => setShowTermsModal(true)}
-            className="text-primary-600 dark:primary-dark-300 hover:underline"
+            className="text-primary-600 dark:bg-primary-dark-300 hover:underline"
           >
             Terms and Conditions
           </button>
