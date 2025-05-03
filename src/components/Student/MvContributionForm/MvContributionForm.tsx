@@ -110,7 +110,7 @@ const handleFilesSelect = (selectedFiles: File[]) => {
       );
 
       alert("Contribution submitted successfully!");
-
+      
       // Reset form
       setTitle("");
     

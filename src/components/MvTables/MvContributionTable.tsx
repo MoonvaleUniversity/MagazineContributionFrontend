@@ -1,14 +1,15 @@
   import React from "react";
   import { IContribution } from "../../app/Types/objects/contribution";
   import { useNavigate } from "react-router-dom";
-  import { FaFilePdf, FaFileWord, FaImage, FaTrash, FaEye, FaLock, FaComment } from "react-icons/fa";
+  import { FaFilePdf, FaFileWord, FaImage, FaTrash, FaEye, FaLock, FaComment, FaCheck } from "react-icons/fa";
   import { IClosureDate } from "../../app/MvObjects/clousuredate";
+import { MvButton } from "../MvButton";
 
   interface MvContributionTableProps {
     contributions: IContribution[];
     closureDates?: Record<number, IClosureDate>; // Changed to number keys
     onDelete?: (id: number) => void;
-    onStatusChange?: (id: number, newStatus: 1 | 2) => void; // Updated to match API status codes
+    onStatusChange?: (id: number, newStatus: 1 ) => void; // Updated to match API status codes
     onReview?: (id: string) => void;
     onDownloadZip?: (id: number) => void;
     isMarketingCoordinator?: boolean;
@@ -60,7 +61,7 @@
 
     return (
       <div className="rounded-lg border overflow-x-scroll max-w-full border-gray-200 dark:border-gray-700">
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+        <table className="min-w-full  divide-y divide-gray-200 dark:divide-gray-700">
           {/* Table Header */}
           <thead className="bg-gray-50 dark:bg-primary-800">
             <tr>
@@ -159,32 +160,27 @@
 
                     {/* Status */}
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {isMarketingCoordinator ? (
-                        <select
-                          value={contribution.is_selected_for_publication}
-                          onChange={(e) => onStatusChange?.(Number(contribution.id), Number(e.target.value) as 1 | 2)}
-                          className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                            contribution.is_selected_for_publication === 1 
-                              ? "bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100"
-                              : "bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100"
-                          } cursor-pointer`}
-                        >
-                          <option value={1}>Approve</option>
-                          <option value={2}>Reject</option>
-                        </select>
-                      ) : (
-                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                          contribution.is_selected_for_publication === 1 
-                            ? "bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100"
-                            : contribution.is_selected_for_publication === 2
-                            ? "bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100"
-                            : contribution.is_selected_for_publication === 0
-                            ? "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-100"
-                            : "bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100"
-                        }`}>
-                          {status}
-                        </span>
-                      )}
+                    {status === "Approved" ? (
+    <div className="flex items-center text-green-600 dark:text-green-400">
+      <FaCheck className="mr-1" />
+      Approved
+    </div>
+  ) : (
+  
+    isMarketingCoordinator ? (
+      <MvButton
+        onClick={(e) => {
+          e.stopPropagation();
+          onStatusChange?.(Number(contribution.id), 1);
+        }}
+       variant="accent"  size="sm"    >
+        Approve
+      </MvButton>
+    ) : (
+      <span className="px-3 py-1 text-sm font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-800/30 dark:text-yellow-400 rounded-full">Pending </span>
+)
+  )}
+  
                     </td>
 
                     {/* Action Buttons */}

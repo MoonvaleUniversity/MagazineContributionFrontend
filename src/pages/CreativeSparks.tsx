@@ -5,11 +5,11 @@ import { MvInput } from "../components/MvInput";
 import { MvLoader } from "../components/MvLoader";
 import { CreativeService } from "../services/CreativeService";
 import StudentLayout from "../layout/StudentLayout";
-import { getUserData } from "../services/AuthService";
 import AdminLayout from "../layout/AdminLayout";
 import MarketingCoordinatorLayout from "../layout/MarketingCoordinatorLayout";
 import MarketingManagerLayout from "../layout/MarketingManagerLayout";
 import MvHomeLayout from "../layout/MvHomeLayout";
+import { FiAlertCircle, FiX } from "react-icons/fi";
 
 export const MvCreativeSparksPage = () => {
   const [sparks, setSparks] = useState<CreativeSpark[]>([]);
@@ -25,6 +25,9 @@ export const MvCreativeSparksPage = () => {
   });
   const [editMode, setEditMode] = useState(false);
   const [currentId, setCurrentId] = useState<string | null>(null);
+  const [selectedSpark, setSelectedSpark] = useState<CreativeSpark | null>(null);
+  const [userRole, setUserRole] = useState("");
+  
 
   const fetchSparks = async () => {
     try {
@@ -41,29 +44,38 @@ export const MvCreativeSparksPage = () => {
   };
 
   useEffect(() => {
-    // Get user data and set layout
-    const userData = getUserData();
-    if (userData) {
-    
-      switch(userData.role.toLowerCase()) {
-        case 'marketing coordinator':
-          setLayout(() => MarketingCoordinatorLayout);
-          break;
-        case 'admin':
-          setLayout(() => AdminLayout);
-          break;
-        case 'marketing manager':
-          setLayout(() => MarketingManagerLayout);
-          break;
-        case 'guest':
+    const fetchUserData = () => {
+      try {
+        const storedUser = localStorage.getItem("userData") || sessionStorage.getItem("userData");
+        if (storedUser) {
+          const user = JSON.parse(storedUser);
          
-          setLayout(() => MvHomeLayout);
-          break;
-        default:
-          setLayout(() => StudentLayout);
+          setUserRole(user.role.toLowerCase());
+          console.log(user.role.toLowerCase());
+          switch(user.role.toLowerCase()) {
+            case 'marketing coordinator':
+              setLayout(() => MarketingCoordinatorLayout);
+              break;
+            case 'admin':
+              setLayout(() => AdminLayout);
+              break;
+            case 'marketing manager':
+              setLayout(() => MarketingManagerLayout);
+              break;
+            case 'guest':
+              setLayout(() => MvHomeLayout);
+              break;
+            default:
+              setLayout(() => StudentLayout);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
       }
-    }
-      fetchSparks();
+    };
+
+    fetchUserData();
+    fetchSparks();
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -90,7 +102,6 @@ export const MvCreativeSparksPage = () => {
     const data = new FormData();
     data.append("title", formData.title);
     data.append("content", formData.content);
-   
     if (formData.image) data.append("image", formData.image);
 
     try {
@@ -98,7 +109,7 @@ export const MvCreativeSparksPage = () => {
       setError(null);
 
       if (editMode && currentId) {
-        data.append("_method","PUT");
+        data.append("_method", "PUT");
         await CreativeService.updateSpark(data, currentId);
       } else {
         await CreativeService.createSpark(data);
@@ -155,116 +166,257 @@ export const MvCreativeSparksPage = () => {
     );
   };
 
-  return (<Layout>
-    <div className="max-w-7xl mx-auto p-4"> 
-      <h1 className="text-3xl font-bold mb-8 text-gray-800 dark:text-gray-100">Creative Sparks</h1>
+  const handleCardClick = (spark: CreativeSpark) => {
+    setSelectedSpark(spark);
+  };
 
-      {/* Search Bar */}
-      <div className="mb-6">
-        <MvInput
-          label="Search sparks..."
-          value={searchQuery}
-          onChange={handleSearch}
-         
+  return (
+    <Layout>
+       {/* Hero Section */}
+  <div className="relative isolate overflow-hidden pt-24 pb-16 sm:py-32 rounded-2xl bg-gradient-to-br from-indigo-200 to-purple-300 dark:from-indigo-500 dark:to-purple-800">
+    {/* Animated background pattern */}
+    <div 
+      className="absolute inset-0 -z-10 opacity-20 dark:opacity-10"
+      style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.4'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+      }}
+    ></div>
+
+    {/* Floating grid animation */}
+    <div className="absolute inset-0 before:absolute before:left-1/2 before:top-0 before:h-[400px] before:w-[600px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-blue-200 before:to-transparent before:blur-3xl before:content-[''] dark:before:from-blue-900/30"></div>
+
+    <div className="mx-auto max-w-3xl text-center relative z-10">
+      {/* Main title with gradient text */}
+      <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-6xl">
+        Ignite Your <span className="bg-gradient-to-r from-blue-600 to-purple-600 dark:text-black bg-clip-text text-transparent">Creative Sparks</span>
+      </h1>
+      
+      {/* Description */}
+      <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
+        Share, explore, and collaborate on brilliant ideas that light up our community. 
+        Discover innovative concepts and contribute your own flashes of inspiration.
+      </p>
+
+      {/* CTA Buttons */}
+      <div className="mt-10 flex items-center justify-center gap-x-6">
+        {userRole === "Admin" && (
+          <MvButton
+            variant="primary"
+            onClick={() => document.getElementById('spark-form')?.scrollIntoView({ behavior: 'smooth' })}
+            className="group transition-all"
+          >
+            Create New Spark
+            <span className="ml-2 opacity-70 group-hover:opacity-100 transition-opacity">✨</span>
+          </MvButton>
+        )}
+        
+        <MvButton
+          variant="secondary"
+          onClick={() => document.getElementById('sparks-grid')?.scrollIntoView({ behavior: 'smooth' })}
+        >
+          Explore Ideas
+          <span className="ml-2">→</span>
+        </MvButton>
+      </div>
+    </div>
+ </div>
+
+ {userRole === "admin" && (
+  <form 
+    onSubmit={handleSubmit} 
+    className="mb-8 p-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700"
+    id="spark-form"
+  >
+    <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-gray-100">
+      {editMode ? "Edit Spark" : "Create New Spark"}
+    </h2>
+
+    <div className="space-y-6">
+      <MvInput
+        label="Title *"
+        name="title"
+        value={formData.title}
+        onChange={handleInputChange}
+        className="bg-gray-50 dark:bg-gray-700/50"
+      />
+
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Content *
+        </label>
+        <textarea
+          name="content"
+          value={formData.content}
+          onChange={handleInputChange}
+          className="w-full p-3 border border-gray-200 dark:border-gray-600 rounded-lg 
+                    bg-gray-50 dark:bg-gray-700/50 focus:ring-2 focus:ring-primary/50
+                    focus:border-primary placeholder-gray-400 dark:placeholder-gray-500
+                    text-gray-900 dark:text-gray-100 resize-none transition-all"
+          rows={5}
+          placeholder="Share your creative ideas..."
+          required
         />
       </div>
 
-      {/* Submission Form */}
-      <form onSubmit={handleSubmit} className="mb-8 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-        <MvInput
-          label="Title *"
-          name="title"
-          value={formData.title}
-          onChange={handleInputChange}
-        />
-
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-2 text-gray-800 dark:text-gray-100">
-            Content *
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Image {editMode ? "(Optional)" : "*"}
+        </label>
+        <div className="flex items-center gap-4">
+          <label className="flex-1 cursor-pointer">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => handleFileChange(e.target.files ? e.target.files[0] : null)}
+              className="w-full text-sm text-gray-600 dark:text-gray-400
+                        file:mr-4 file:py-2 file:px-4 file:rounded-lg
+                        file:border-0 file:text-sm file:font-medium
+                        file:bg-primary/10 file:text-primary hover:file:bg-primary/20
+                        dark:file:bg-primary/20 dark:file:text-primary-light
+                        transition-colors"
+              required={!editMode}
+            />
           </label>
-          <textarea
-            name="content"
-            value={formData.content}
-            onChange={handleInputChange}
-            className="w-full p-2 border rounded-md"
-            rows={4}
-            required
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-2 text-gray-800 dark:text-gray-100">
-            Image {editMode ? "" : "*"}
-          </label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => handleFileChange(e.target.files ? e.target.files[0] : null)}
-            className="w-full p-2 border rounded-md"
-            required={!editMode}
-          />
-        </div>
-
-        {error && <div className="mt-4 p-3 bg-red-100 text-red-700 rounded">{error}</div>}
-
-        <div className="flex gap-4 mt-6">
-          <MvButton type="submit" variant="primary" disabled={loading}>
-            {editMode ? "Update Spark" : "Create Spark"}
-          </MvButton>
-          {editMode && (
-            <MvButton type="button" onClick={resetForm} variant="secondary">
-              Cancel Edit
-            </MvButton>
+          {formData.image && (
+            <span className="text-sm text-gray-500 dark:text-gray-400">
+              {formData.image.name}
+            </span>
           )}
         </div>
-      </form>
+      </div>
 
-      {/* Sparks Grid */}
-      {loading ? (
-        <MvLoader />
-      ) : filteredSparks.length === 0 ? (
-        <div className="text-center py-12 text-gray-500">
-          No creative sparks found. Create your first one!
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredSparks.map((spark) => (
-            <div
-              key={spark.id}
-              className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden"
-            >
-              <img
-                src={spark.image_url}
-                alt={spark.title}
-                className="w-full h-48 object-cover bg-gray-100"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = "/fallback-image.jpg";
-                }}
-              />
-              <div className="p-4">
-                <h3 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-100">
-                  {spark.title}
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
-                  {spark.content}
-                </p>
-                <div className="flex gap-2">
-                  <MvButton onClick={() => handleEdit(spark)} variant="secondary" size="sm">
-                    Edit
-                  </MvButton>
-                  <MvButton
-                    onClick={() => handleDelete(spark.id)}
-                    className="bg-red-500 text-white"
-                    size="sm"
-                  >
-                    Delete
-                  </MvButton>
-                </div>
-              </div>
-            </div>
-          ))}
+      {error && (
+        <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30 rounded-lg flex items-center gap-3 text-red-700 dark:text-red-300">
+          <FiAlertCircle className="flex-shrink-0 w-5 h-5" />
+          <span className="text-sm">{error}</span>
         </div>
       )}
-    </div></Layout>
+
+      <div className="flex gap-4 pt-4">
+        <MvButton 
+          type="submit" 
+          variant="primary" 
+          disabled={loading}
+          className="flex-1 justify-center py-3"
+        >
+          {loading ? (
+            <MvLoader/>
+          ) : editMode ? (
+            "Update Spark"
+          ) : (
+            "Create Spark"
+          )}
+        </MvButton>
+        
+        {editMode && (
+          <MvButton 
+            type="button" 
+            onClick={resetForm}
+            variant="secondary"
+            className="flex-1 justify-center py-3"
+          >
+            Cancel
+          </MvButton>
+        )}
+      </div>
+    </div>
+  </form>
+)}
+        {selectedSpark && (
+          <div className="fixed max-h-[100vh] overflow-y-scroll inset-y-0 right-0 w-full max-w-xl bg-white dark:bg-gray-800 shadow-2xl p-6 transform transition-transform duration-300 translate-x-0 z-50">
+            <div className="flex justify-between max-sm:pt-10  items-center mb-6">
+              <h2 className="text-2xl font-bold dark:text-gray-100">{selectedSpark.title}</h2>
+              <button
+                onClick={() => setSelectedSpark(null)}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full text-gray-600 dark:text-gray-300"
+              >
+                <FiX className="w-6 h-6" />
+              </button>
+            </div>
+            <img
+              src={selectedSpark.image_url}
+              alt={selectedSpark.title}
+              className="w-full h-64 object-cover mb-6 rounded-lg bg-gray-100"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = "/fallback-image.jpg";
+              }}
+            />
+            <div className="prose  dark:prose-invert max-w-none text-gray-800 dark:text-gray-200">
+              {selectedSpark.content}
+            </div>
+          </div>
+        )}
+
+        <div className="my-6">
+
+          <MvInput
+            label="Search sparks..."
+            value={searchQuery}
+            onChange={handleSearch}
+          />
+        </div>
+
+        {loading ? (
+          <MvLoader />
+        ) : filteredSparks.length === 0 ? (
+          <div className="text-center py-12 text-gray-500">
+            No creative sparks found. {userRole === "admin" && "Create your first one!"}
+          </div>
+        ) : (
+          <div className="sparks-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredSparks.map((spark) => (
+              <div
+                key={spark.id}
+                className={`bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden cursor-pointer transition-transform hover:scale-105 ${
+                  selectedSpark?.id === spark.id ? "ring-2 ring-primary" : ""
+                }`}
+                onClick={() => handleCardClick(spark)}
+              >
+                <img
+                  src={spark.image_url}
+                  alt={spark.title}
+                  className="w-full h-48 object-cover bg-gray-100"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = "/fallback-image.jpg";
+                  }}
+                />
+                <div className="p-4">
+                  <h3 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-100">
+                    {spark.title}
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
+                    {spark.content}
+                  </p>
+                  {userRole === "admin" && (
+                    <div className="flex gap-2">
+                      <MvButton
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEdit(spark);
+                        }}
+                        variant="secondary"
+                        size="sm"
+                      >
+                        Edit
+                      </MvButton>
+                      <MvButton
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(spark.id);
+                        }}
+                        className="bg-red-500 hover:bg-red-600 text-white"
+                        size="sm"
+                      >
+                        Delete
+                      </MvButton>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      
+    </Layout>
   );
 };
