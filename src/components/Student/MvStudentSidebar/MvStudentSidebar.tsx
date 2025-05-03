@@ -1,105 +1,173 @@
-import { FiHome, FiFile, FiCheckCircle,   FiChevronDown, FiMenu, FiX } from 'react-icons/fi';
-import { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import { MvButton } from '../../MvButton';
+import { NavLink } from 'react-router-dom';
 import MvRoutes from '../../../app/MvRoutes';
+import { FiHome, FiFile, FiPlusCircle, FiChevronDown, FiMenu, FiX, FiBook, FiZap, FiUser } from 'react-icons/fi';
 import { getUserData } from '../../../services/AuthService';
+import { IFaculty } from '../../../app/MvObjects/faculty';
+import { IUser } from '../../../app/Types/objects/user';
+import { getFacultyById } from '../../../services/FacultyService';
+import clsx from 'clsx';
+import { FaGrinStars } from 'react-icons/fa';
 
 interface MvStudentSidebarProps {
   isSidebarOpen: boolean;
   setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const MvStudentSidebar: React.FC<MvStudentSidebarProps> = ({ isSidebarOpen, setIsSidebarOpen }) => {
+export const MvStudentSidebar: React.FC<MvStudentSidebarProps> = ({ 
+  isSidebarOpen, 
+  setIsSidebarOpen 
+}) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [userData, setUserData] = useState<{ name?: string; email?: string } | null>(null);
+  const [userData, setUserData] = useState<IUser | null>(null);
+  const [facultyData, setFacultyData] = useState<IFaculty | null>(null);
 
   useEffect(() => {
-     setUserData(getUserData()) 
+    const fetchFacultyData = async () => {
+      const user = getUserData();
+      setUserData(user);
+      if (user?.faculty_id) {
+        const faculty = await getFacultyById(user.faculty_id);
+        setFacultyData(faculty);
+      }
+    };
+    fetchFacultyData();
   }, []);
 
   const navItems = [
-    { icon: <FiHome />, label: 'Dashboard', to: '/students/dashboard' },
-    { icon: <FiFile />, label: 'My Submissions', to: '/students/submissions' },
-    { icon: <FiCheckCircle />, label: 'Submit Contribution', to: '/students/contribution-form' },
+    { icon: <FiHome />, label: 'Dashboard', to: MvRoutes.STUDENTS.DASHBOARD },
+    { icon: <FiFile />, label: 'My Submissions', to: MvRoutes.STUDENTS.SUBMISSIONS },
+    { icon: <FiPlusCircle />, label: 'New Contribution', to: MvRoutes.STUDENTS.CONTRIBUTION_FORM },
+    { icon: <FaGrinStars />, label: 'Explore Contributions', to: MvRoutes.PUBLIC_CONTRIBUTION },
   ];
 
-  
-  
   return (
     <div className="relative">
+      {/* Mobile Toggle Button */}
       <MvButton
         size="sm"
-        className="fixed py-3 z-50 text-white transition-all left-2 rounded-4xl top-2 lg:hidden"
-        variant="secondary"
+        className="fixed z-50 pt-2 text-white transition-all shadow-lg lg:hidden left-4 top-4 rounded-4xl"
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        aria-label="Toggle sidebar"
       >
-        {isSidebarOpen ? <FiX className="w-6 h-6" /> : <FiMenu className="w-6 h-6" />}
+        {isSidebarOpen ? <FiX className="w-5 h-5" /> : <FiMenu className="w-5 h-5" />}
       </MvButton>
 
+      {/* Sidebar Container */}
       <div
-        className={`absolute top-0 left-0 w-64 h-screen p-4 text-black dark:text-white border-r border-primary-500 bg-secondary-400 dark:bg-secondary-dark-600 dark:border-primary-dark-500 transition-transform duration-300 ease-in-out z-30 ${
-          isSidebarOpen ? 'transform-none' : 'max-lg:hidden'
-        } lg:block`}
+        className={clsx(
+          "fixed top-0 left-0 w-64 h-screen p-6 bg-gradient-to-b",
+          "from-secondary-300 to-indigo-200 dark:from-secondary-dark-500 dark:to-gray-800",
+          "border-r border-indigo-100 dark:border-gray-700 shadow-xl transition-all duration-300 z-40",
+          isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        )}
       >
-        <div className="flex justify-center mb-8">
-          <span className="text-xl font-bold">Student Dashboard</span>
+        {/* Logo Section */}
+        <div className="flex items-center justify-center mb-12 space-x-3">
+          <div className="p-2 bg-indigo-600 rounded-lg shadow-md">
+            <FiBook className="w-6 h-6 text-white" />
+          </div>
+          <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            Student Portal
+          </span>
         </div>
 
-        <nav className="space-y-2">
+        {/* Main Navigation */}
+        <nav className="space-y-1.5">
           {navItems.map((item, index) => (
             <NavLink
               key={index}
               to={item.to}
               className={({ isActive }) =>
-                `flex items-center space-x-4 p-2 rounded-2xl ${
+                clsx(
+                  "flex items-center space-x-4 p-3 rounded-2xl transition-all",
+                  "hover:bg-white hover:shadow-md dark:hover:bg-gray-800",
                   isActive
-                    ? 'bg-secondary-600 text-black font-bold'
-                    : 'text-primary-800 hover:bg-secondary-600 dark:text-secondary-dark-200 dark:hover:bg-secondary-dark-700'
-                }`
+                    ? "bg-white shadow-md dark:bg-gray-800 text-indigo-600 dark:text-purple-400"
+                    : "text-gray-600 dark:text-gray-300"
+                )
               }
             >
-              <span className="text-lg">{item.icon}</span>
-              <span className="text-md">{item.label}</span>
+              <span className={clsx(
+                "text-lg",
+                "text-indigo-500 dark:text-purple-400"
+              )}>
+                {item.icon}
+              </span>
+              <span className="text-sm font-medium">{item.label}</span>
             </NavLink>
           ))}
         </nav>
 
-        <div className="pt-4 mt-8 border-t border-primary-500 dark:border-primary-dark-500">
+        {/* Additional Pages Dropdown */}
+        <div className="pt-6 mt-8 border-t border-indigo-100 dark:border-gray-700">
           <div
-            className="flex items-center justify-between p-3 text-primary-800 dark:text-primary-dark-200 cursor-pointer"
+            className="flex items-center justify-between p-3 rounded-xl cursor-pointer hover:bg-white dark:hover:bg-gray-800 transition-colors"
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
           >
-            <span>More Pages</span>
-            <FiChevronDown
-              className={`text-primary-800 font-bold dark:text-primary-dark-500 transition-transform ${
-                isDropdownOpen ? 'rotate-180' : ''
-              }`}
-            />
+            <div className="flex items-center space-x-3">
+              <FiZap className="w-5 h-5 text-indigo-500 dark:text-purple-400" />
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-300">More</span>
+            </div>
+            <FiChevronDown className={`text-gray-400 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
           </div>
+          
           {isDropdownOpen && (
-            <div className="pl-4 flex flex-col text-gray-600 dark:text-primary-dark-200">
-              <NavLink to={MvRoutes.CANVAS_CORNER} className="p-2 w-full rounded-2xl hover:bg-secondary-200 dark:hover:bg-secondary-dark-700">Canvas Corner</NavLink>
-              <NavLink to={MvRoutes.CREATIVE_SPARKS} className="p-2 w-full rounded-2xl hover:bg-secondary-200 dark:hover:bg-secondary-dark-700">Creative Sparks</NavLink>
-              <NavLink to={MvRoutes.STUDENTS.PROFILE_EDIT} className="p-2 w-full rounded-2xl hover:bg-secondary-200 dark:hover:bg-secondary-dark-700">Account</NavLink>
-             
+            <div className="pl-9 mt-2 space-y-2 animate-fade-in">
+              <NavLink 
+                to={MvRoutes.CANVAS_CORNER} 
+                className="flex items-center p-2 space-x-2 text-gray-500 rounded-lg hover:bg-indigo-50 dark:hover:bg-gray-800"
+              >
+                <FiBook className="w-4 h-4" />
+                <span className="text-sm">Canvas Corner</span>
+              </NavLink>
+              <NavLink 
+                to={MvRoutes.CREATIVE_SPARKS} 
+                className="flex items-center p-2 space-x-2 text-gray-500 rounded-lg hover:bg-indigo-50 dark:hover:bg-gray-800"
+              >
+                <FiZap className="w-4 h-4" />
+                <span className="text-sm">Creative Sparks</span>
+              </NavLink>
+              <NavLink 
+                to={MvRoutes.STUDENTS.PROFILE_EDIT} 
+                className="flex items-center p-2 space-x-2 text-gray-500 rounded-lg hover:bg-indigo-50 dark:hover:bg-gray-800"
+              >
+                <FiUser className="w-4 h-4" />
+                <span className="text-sm">Profile Settings</span>
+              </NavLink>
+            
             </div>
           )}
         </div>
 
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-300 dark:border-primary-dark-500">
+        {/* User Profile Section */}
+        <div className="absolute bottom-0 left-0 right-0 p-6 bg-indigo-100 dark:bg-gray-800 border-t border-indigo-100 dark:border-gray-700">
           <div className="flex items-center space-x-3">
-            <img
-              src="/src/Assets/images/404.jpeg"
-              alt="Student avatar"
-              className="w-10 h-10 rounded-full"
-            />
-            <div>
-              <p className="text-sm font-medium">{userData?.name || 'Unknown User'}</p>
-              <p className="text-xs dark:text-primary-dark-200">{userData?.email || 'student@example.com'}</p>
-              <p className="text-xs text-gray-500 dark:text-primary-dark-300">
-              Last login: 
+            <div className="relative">
+              <img
+                src={facultyData?.image_url instanceof File ? URL.createObjectURL(facultyData.image_url) : facultyData?.image_url || "/src/Assets/images/404.jpeg"}
+                onError={src => (src.currentTarget.src = "/src/Assets/images/404.jpeg")}
+                alt="Faculty"
+                className="w-10 h-10 rounded-full border-2 border-indigo-100 dark:border-gray-700"
+              />
+              <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white"></div>
+            </div>
+            <div className="flex-1">
+              <p className="text-md font-medium text-gray-700 dark:text-gray-200 truncate">
+                {userData?.name || 'Student User'}
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                {userData?.email || 'student@example.com'}
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                Faculty: <span className="font-medium text-gray-700 dark:text-gray-300">
+                  {facultyData?.name || 'Unknown Faculty'}
+                </span>
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                Last Login Time: <span className="font-medium text-gray-700 dark:text-gray-300">
+                 
+                </span>
               </p>
             </div>
           </div>

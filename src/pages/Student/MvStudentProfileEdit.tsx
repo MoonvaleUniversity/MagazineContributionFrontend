@@ -8,24 +8,10 @@ import { IUser } from '../../app/Types/objects/user';
 export const MvStudentProfileEdit: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'profile' | 'contributions'>('profile');
   const userData:IUser |null = getUserData();
-  // Mock data - replace with actual API calls
-  const savedContributions = [
-    {
-      id: 1,
-      title: "AI in Modern Education",
-      date: "2024-03-15",
-      status: "Draft",
-      faculty: "Computer Science"
-    },
-    {
-      id: 2,
-      title: "Sustainable Campus Initiatives",
-      date: "2024-03-10",
-      status: "Submitted",
-      faculty: "Environmental Science"
-    }
-  ];
+  
+ const savedContributions = userData?.saved_contributions || [];
 
+ 
   return (
     <StudentLayout>
       {/* ... existing header code ... */}

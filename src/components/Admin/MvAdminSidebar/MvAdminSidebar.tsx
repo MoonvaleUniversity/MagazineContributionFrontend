@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { MvButton } from '../../MvButton';
 import { NavLink } from 'react-router-dom';
 import MvRoutes from '../../../app/MvRoutes';
-import {   FaChalkboardTeacher, FaRegCalendarAlt, FaUserCog } from 'react-icons/fa';
+import {   FaChalkboardTeacher, FaGrinStars, FaRegCalendarAlt, FaStickyNote, FaUserCog } from 'react-icons/fa';
 import {AiFillBook,  AiOutlineStop } from 'react-icons/ai';
 import { FiX, FiMenu, FiChevronDown,  FiSettings, FiHome,  FiEdit3} from 'react-icons/fi';
 import { getUserData } from '../../../services/AuthService';
@@ -25,9 +25,11 @@ const [userData, setUserData] = useState<{ name?: string; email?: string } | nul
     { icon: <FiHome/>, label: 'Dashboard', to: MvRoutes.ADMIN.DASHBOARD},
     { icon: <FaUserCog  />, label: 'User Management', to: MvRoutes.ADMIN.USERS},
     { icon: <FaChalkboardTeacher />, label: 'Faculty' , to:MvRoutes.ADMIN.FACULTY},
-    { icon: <FaChalkboardTeacher />, label: 'Contributions' , to:MvRoutes.ADMIN.CONTRIBUTION},
+    { icon: <FaStickyNote />, label: 'Contributions' , to:MvRoutes.ADMIN.CONTRIBUTION},
     { icon: <FaRegCalendarAlt />, label: 'Academic Year', to:MvRoutes.ADMIN.ACADEMIC_YEAR },
     { icon: <AiOutlineStop />, label: 'Closure Dates', to:MvRoutes.ADMIN.CLOSURE_DATES },
+    { icon: <FaGrinStars />, label: 'Explore Contributions', to: MvRoutes.PUBLIC_CONTRIBUTION },
+
   ];
 
 
@@ -52,9 +54,9 @@ const [userData, setUserData] = useState<{ name?: string; email?: string } | nul
       <div className="flex items-center justify-between mb-12">
         <div className="flex items-center space-x-3">
           <div className="p-2 bg-indigo-600 rounded-lg shadow-md">
-            <FiSettings className="w-6 h-6 text-white" />
+            <FiSettings className="w-4 h-4 text-white" />
           </div>
-          <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+          <span className="text-l font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
             Admin Portal
           </span>
         </div>
@@ -91,7 +93,7 @@ const [userData, setUserData] = useState<{ name?: string; email?: string } | nul
       </nav>
 
       {/* Settings Dropdown */}
-      <div className="pt-6 mt-8 border-t  border-indigo-100 dark:border-gray-700">
+      <div className="pt-2 mt-4 border-t  border-indigo-100 dark:border-gray-700">
         <div
           className="flex items-center justify-between p-3 rounded-xl cursor-pointer hover:bg-white dark:hover:bg-gray-800 transition-colors"
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}

@@ -46,10 +46,12 @@ export const McStudents  = () => {
   const fetchStudents = async () => {
     try {
       setLoading(true);
-      const data = await getAllStudents();
-      // Filter to only show Students
-      const students = data.filter(user => user.role === "Student");
-      setStudents(students);
+      const userData = getUserData();
+      if (userData?.faculty_id) {
+      const data = await getAllStudents({facultyId: String(userData.faculty_id)});
+ 
+      setStudents(data);
+      }
     } catch (error) {
       setError(error instanceof Error ? error.message : "Failed to fetch students");
     } finally {
@@ -66,29 +68,39 @@ export const McStudents  = () => {
   }) => {
     const userData: IUser | null = getUserData();
 
-
     setIsSubmitting(true);
     try {
       if (editingStudent) {
         await updateStudents(editingStudent.id, { 
           name: formData.name, 
           email: formData.email,
-          
         });
       } else {
         if (userData) {
-          console.log("userData", userData , formData );
-        await createUser({ 
-          ...formData, 
-          faculty_id: String(userData.faculty_id),
-          role: 'student' // Force role
-        });
+          console.log("userData", userData, formData);
+          await createUser({ 
+            ...formData, 
+            faculty_id: String(userData.faculty_id),
+            role: 'student' // Force role
+          });
+
+         
         }
       }
       closeModal();
       await fetchStudents();
     } catch (error) {
-      setError(error instanceof Error ? error.message : "Operation failed");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      console.log("Error", (error as any)?.errors?.email?.[0] );
+     
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if ((error as any)?.errors?.email?.[0] == "The email has already been taken.") {
+        setError("Email already exists. Please use a different email.");
+        return; // Don't close the modal
+      }
+      else {
+        setError(error instanceof Error ? error.message : "Operation failed");    
+      }
     } finally {
       setIsSubmitting(false);
     }
