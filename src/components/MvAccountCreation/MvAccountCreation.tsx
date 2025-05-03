@@ -1,11 +1,10 @@
 // components/MvAccountCreation/MvAccountCreation.tsx
 import { useState, FormEvent, useEffect } from "react";
-import { MvDropdown, MvInput, MvPasswordInput} from "../../components/MvInput";
+import { MvDropdown, MvInput, MvPasswordInput } from "../../components/MvInput";
 import { MvButton } from "../../components/MvButton";
 import { getAllFaculties } from "../../services/FacultyService";
 import { getAllAcademicYears } from "../../services/AcademicYearService";
 import { IAcademicYear } from "../../app/MvObjects/academicyear";
-
 
 interface AccountCreationFormProps {
   fixedRole: string;
@@ -18,8 +17,8 @@ interface AccountCreationFormProps {
     email: string;
     password?: string;
     password_confirmation?: string;
-    faculty_id?: string; // String type for form submission
-    academic_year_id?: string
+    faculty_id?: string;
+    academic_year_id?: string;
     role: string;
   }) => void;
   initialValues?: {
@@ -27,7 +26,7 @@ interface AccountCreationFormProps {
     email: string;
     password?: string;
     password_confirmation?: string;
-    faculty_id?: string; 
+    faculty_id?: string;
     academic_year_id?: string;
   };
 }
@@ -47,23 +46,24 @@ const AccountCreationForm: React.FC<AccountCreationFormProps> = ({
   const [confirmPassword, setConfirmPassword] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
   const [faculties, setFaculties] = useState<Array<{ id: number; name: string }>>([]);
-  const [facultyId, setFacultyId] = useState( initialValues?.faculty_id?.toString() || "");
-  const [academicYears, setAcademicYears] = useState<IAcademicYear[]>();
+  const [facultyId, setFacultyId] = useState(initialValues?.faculty_id?.toString() || "");
+  const [academicYears, setAcademicYears] = useState<IAcademicYear[]>([]);
   const [academicYearId, setAcademicYearId] = useState(
     initialValues?.academic_year_id?.toString() || ""
   );
   const isEditMode = !!initialValues;
-useEffect(() => {
+
+  useEffect(() => {
     const loadFaculties = async () => {
       try {
         const [facultiesData, academicYearsData] = await Promise.all([
           getAllFaculties(),
-          getAllAcademicYears(), // Fetch academic years
+          getAllAcademicYears(),
         ]);
         setFaculties(facultiesData);
         setAcademicYears(academicYearsData);
       } catch (error) {
-        console.error("Failed to load faculties:", error);
+        console.error("Failed to load data:", error);
       }
     };
     loadFaculties();
@@ -73,12 +73,9 @@ useEffect(() => {
     e.preventDefault();
     setFormError(null);
 
-    if (!isEditMode) {
-      if (password !== confirmPassword) {
-        setFormError("Passwords do not match");
-        return;
-      }
-     
+    if (!isEditMode && password !== confirmPassword) {
+      setFormError("Passwords do not match");
+      return;
     }
 
     onSubmit({
@@ -86,8 +83,8 @@ useEffect(() => {
       email,
       password: isEditMode ? undefined : password,
       password_confirmation: isEditMode ? undefined : confirmPassword,
-      faculty_id: isFaculty ? facultyId : undefined, 
-      academic_year_id: isAcademicYear ? academicYearId : undefined,
+      faculty_id: isFaculty ? facultyId : undefined,
+      academic_year_id: isAcademicYear ? academicYearId : "0",
       role: fixedRole,
     });
   };
@@ -95,7 +92,7 @@ useEffect(() => {
   return (
     <form
       onSubmit={handleSubmit}
-      className=" w-xl max-sm:w-full p-6 mx-auto space-y-4  bg-background-100/40 dark:bg-secondary-dark-700 rounded-2xl"
+      className="w-xl max-sm:w-full p-6 mx-auto space-y-4 bg-background-100/40 dark:bg-secondary-dark-700 rounded-2xl"
     >
       <h2 className="text-xl text-center font-semibold text-primary-600 dark:text-primary-dark-200">
         {isEditMode ? `Edit User` : `Create ${fixedRole}`}
@@ -124,42 +121,45 @@ useEffect(() => {
         <>
           <MvPasswordInput
             label="Password"
-          
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
           <MvPasswordInput
             label="Confirm Password"
-         
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
           />
         </>
       )}
-    {isAcademicYear && academicYears ? (
+
+      {isAcademicYear && academicYears.length > 0 && (
         <MvDropdown
-        placeholder="Academic Year"
+          placeholder="Academic Year"
           options={academicYears.map(ay => ({
             value: ay.id.toString(),
             label: ay.year_name
           }))}
-          value={1}
-          onChange={(e) => setAcademicYearId(e.target.value)}
-          
+          value={academicYearId}
+          onChange={(value) => setAcademicYearId(value.toString())}
+          required
         />
-      ): ""}
-       {isFaculty && (
-       <MvDropdown
-              
-              options={faculties.map(f => ({ value: f.id, label: f.name }))}
-              value={facultyId}
-              onChange={(e) => setFacultyId(e.target.value)}
-              required
-            />
-            )}
- 
+      )}
+
+      {isFaculty && faculties.length > 0 && (
+        <MvDropdown
+          placeholder="Select Faculty"
+          options={faculties.map(f => ({ 
+            value: f.id.toString(),
+            label: f.name 
+          }))}
+          value={facultyId}
+          onChange={(value) => setFacultyId(value.toString())}
+          required
+        />
+      )}
+
       <MvButton type="submit" className="w-full" disabled={isSubmitting}>
         {isSubmitting 
           ? `${isEditMode ? "Updating..." : "Creating..."}` 

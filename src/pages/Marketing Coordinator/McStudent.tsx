@@ -62,12 +62,13 @@ export const McStudents  = () => {
   const handleStudentAction = async (formData: {
     name: string;
     email: string;
+    academic_year_id?: string;
     password?: string;
     comfirmPassword?: string;
     role: string;
   }) => {
     const userData: IUser | null = getUserData();
-
+    console.log("formdata" ,  formData.academic_year_id);
     setIsSubmitting(true);
     try {
       if (editingStudent) {

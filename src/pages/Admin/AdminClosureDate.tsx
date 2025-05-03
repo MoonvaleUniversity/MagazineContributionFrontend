@@ -235,7 +235,7 @@ const getAcademicYearName = (id: number|string) => {
             <SearchFilter
                 placeholder="Search by academic year or dates..."
                 onSearch={setSearchQuery}
-                onFilterChange={(name, value) => setStatusFilter(value)}
+                onFilterChange={( value) => setStatusFilter(value)}
                 filters={statusOptions}
                 className="px-4"
             />
@@ -315,15 +315,24 @@ const getAcademicYearName = (id: number|string) => {
             >
                 <div className="space-y-4">
                     <div>
-                         <MvDropdown
-                                placeholder="Academic Year"
-                                options={academicYear.map(f => ({ value: f.id, label: f.year_name }))}
-                                value={formData.academic_year_id || ""}
-                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                onChange={(e) => handleInputChange(e as any)} 
-                                required
-                              />
-                       
+                  
+                    <MvDropdown
+  name="academic_year_id"
+  placeholder="Academic Year"
+  options={academicYear.map(f => ({ 
+    value: f.id,  // Ensure this is numeric
+    label: f.year_name 
+  }))}
+  value={formData.academic_year_id ?? ""}
+  onChange={(value) => {
+    setFormData(prev => ({
+      ...prev,
+      academic_year_id: Number(value)
+    }));
+    setErrors(prev => ({ ...prev, academic_year_id: undefined }));
+  }}
+  required
+/>           
                         {errors.academic_year_id && (
                             <p className="text-red-500 text-sm mt-1">{errors.academic_year_id}</p>
                         )}

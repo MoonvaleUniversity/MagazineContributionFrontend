@@ -1,17 +1,26 @@
 import clsx from "clsx";
+import { ChangeEvent } from "react";
 
-interface DropdownProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
+interface DropdownProps {
   options: Array<{ value: string | number; label: string }>;
   className?: string;
-  placeholder?: string; // New placeholder prop
+  placeholder?: string;
+  value?: string | number;
+  onChange?: (value: string | number) => void;
+  name?: string;
+  id?: string;
+  required?: boolean;
 }
 
 export const MvDropdown: React.FC<DropdownProps> = ({
   options,
   className,
   id,
-  placeholder = "Select Faculty", // Default to Faculty but configurable
-  ...props
+  placeholder = "Select Option",
+  value,
+  onChange,
+  name,
+  required,
 }) => {
   const baseClasses = 'w-full pt-4 px-3 pb-2 text-sm border-2 border-primary-600 text-primary-600 rounded-4xl focus:outline-none';
   const variantClasses = "bg-background-50 border-primary-600 text-primary-600 dark:bg-secondary-dark-500 dark:border-primary-dark-50 dark:text-primary-dark-200";
@@ -23,12 +32,25 @@ export const MvDropdown: React.FC<DropdownProps> = ({
     "appearance-none"
   );
 
+  const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const selectedValue = e.target.value;
+    // Preserve numeric values if options contain numbers
+    const numericValue = options.some(opt => typeof opt.value === "number")
+      ? !isNaN(Number(selectedValue)) ? Number(selectedValue) : selectedValue
+      : selectedValue;
+      
+    onChange?.(numericValue);
+  };
+
   return (
     <div className="relative">
       <select
         id={id}
         className={combinedClasses}
-        {...props}
+        value={value}
+        onChange={handleChange}
+        name={name}
+        required={required}
       >
         <option value="">{placeholder}</option>
         {options.map(option => (
