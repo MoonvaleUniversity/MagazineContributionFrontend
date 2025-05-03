@@ -20,34 +20,34 @@ export const McSubmissionsView = () => {
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [selectedSubmission, setSelectedSubmission] = useState<string | null>(null);
   const [reviewContent, setReviewContent] = useState("");
-  const [pendingStatus, setPendingStatus] = useState<1 | 2 | null>(null);
 
-  // Approval Confirmation Modal
-  const handleStatusChange = async (id: string, newStatus: 1 | 2) => {
-    setSelectedSubmission(id);
-    setPendingStatus(newStatus);
-    setShowApprovalModal(true);
-  };
+// Update the handleStatusChange and confirmApproval functions
+const handleStatusChange = async (id: string) => {
+  setSelectedSubmission(id);
+  setShowApprovalModal(true);
+};
 
-  const confirmApproval = async () => {
-    if (!selectedSubmission || !pendingStatus) return;
+const confirmApproval = async () => {
+  if (!selectedSubmission) return;
+  
+  try {
+    // Call the publish endpoint
+    await MvContributionServices.publishContribution(selectedSubmission);
     
-    try {
-      await MvContributionServices.publishContribution(selectedSubmission);
-      setAllSubmissions(prev => prev.map(sub => 
-        sub.id === selectedSubmission ? { 
-          ...sub, 
-          is_selected_for_publication: pendingStatus 
-        } : sub
-      ));
-    } catch (error) {
-      console.error("Error updating status:", error);
-    } finally {
-      setShowApprovalModal(false);
-      setSelectedSubmission(null);
-      setPendingStatus(null);
-    }
-  };
+    // Update local state
+    setAllSubmissions(prev => prev.map(sub => 
+      sub.id.toString() === selectedSubmission ? { 
+        ...sub, 
+        is_selected_for_publication: 1 // Set to approved status
+      } : sub
+    ));
+  } catch (error) {
+    console.error("Error updating status:", error);
+  } finally {
+    setShowApprovalModal(false);
+    setSelectedSubmission(null);
+  }
+};
  // Calculate days since submission
  const getDaysPending = (createdAt: string) => {
   const createdDate = Date.parse(createdAt);
@@ -188,7 +188,7 @@ const calculateStats = () => {
         <MvContributionTable
           contributions={currentSubmissions}
           onDelete={(id) => handleDelete(id.toString())}
-          onStatusChange={(id, status) => handleStatusChange(id.toString(), status)}
+          onStatusChange={(id) => handleStatusChange(id.toString())}
           onReview={handleReviewInit}
           isMarketingCoordinator
         />

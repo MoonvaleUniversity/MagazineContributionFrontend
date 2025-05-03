@@ -9,7 +9,7 @@ import { MvButton } from "../MvButton";
     contributions: IContribution[];
     closureDates?: Record<number, IClosureDate>; // Changed to number keys
     onDelete?: (id: number) => void;
-    onStatusChange?: (id: number, newStatus: 1 ) => void; // Updated to match API status codes
+    onStatusChange?: (id: number) => void; // Updated to match API status codes
     onReview?: (id: string) => void;
     onDownloadZip?: (id: number) => void;
     isMarketingCoordinator?: boolean;
@@ -171,7 +171,7 @@ import { MvButton } from "../MvButton";
       <MvButton
         onClick={(e) => {
           e.stopPropagation();
-          onStatusChange?.(Number(contribution.id), 1);
+          onStatusChange?.(Number(contribution.id));
         }}
        variant="accent"  size="sm"    >
         Approve
