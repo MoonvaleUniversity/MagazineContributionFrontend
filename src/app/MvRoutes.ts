@@ -45,7 +45,7 @@ const MvRoutes = {
   },
   GUEST: {
     DASHBOARD: "/guest/dashboard",
-   
+    PROFILE_EDIT: "/guest/profile-edit",
   },
 
 };

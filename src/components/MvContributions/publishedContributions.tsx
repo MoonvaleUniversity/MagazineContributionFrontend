@@ -94,7 +94,7 @@ export const MvGlobalContributions = () => {
                     Celebrating Student Creativity Across Faculties
                   </p>
                   
-                  <div className="w-full max-w-2xl bg-white rounded-lg p-2 shadow-lg flex items-center">
+                  <div className="w-full max-w-2xl bg-white max-sm:w-11/12 rounded-lg p-2 shadow-lg flex items-center">
                     <FiSearch className="text-gray-400 mx-4" size={20} />
                     <input
                       type="text"

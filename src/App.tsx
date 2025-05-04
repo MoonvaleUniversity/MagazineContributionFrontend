@@ -33,6 +33,7 @@ import { AdminProfileEdit } from "./pages/Admin/AdminProfile";
 import GuestDashboard from "./pages/Guest/GuestDashboard";
 import { MvGlobalContributions } from "./components/MvContributions/publishedContributions";
 import { MvCreativeSparksPage } from "./pages/CreativeSparks";
+import { GuestEdit } from "./pages/Guest/GuestProfileEdit";
 
 
 
@@ -192,6 +193,12 @@ function App() {
         <Route path={MvRoutes.GUEST.DASHBOARD} element={
           <ProtectedRoute roles={['Guest']}>
             <GuestDashboard/>
+          </ProtectedRoute>
+        } />
+         {/* Guest-specific routes */}
+        <Route path={MvRoutes.GUEST.PROFILE_EDIT} element={
+          <ProtectedRoute roles={['Guest']}>
+           <GuestEdit/>
           </ProtectedRoute>
         } />
 

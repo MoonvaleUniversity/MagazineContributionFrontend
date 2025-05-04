@@ -67,7 +67,7 @@ export interface IContribution {
   user_id: number |string;
   closure_date_id: number |string;
   doc_url: string;
-  is_selected_for_publication: 0 | 1 | 2 ;
+  is_selected_for_publication: 0 | 1  ;
   version?: number;
   created_by?: number | null | string;
   updated_by?: number | null;

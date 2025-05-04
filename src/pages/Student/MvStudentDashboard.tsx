@@ -13,13 +13,7 @@ export const MvStudentDashboard = () => {
   const [recentSubmissions, setRecentSubmissions] = useState<IContribution[]>([]);
   const [closureDate, setClosureDate] = useState<string>("");
   const [lastLogin, setLastLogin] = useState<string>("");
-  const getStatus = (contribution: IContribution) => {
-    if (contribution.is_selected_for_publication === 1) return 'approved';
-    const createdAt = new Date(contribution.created_at!);
-    const now = new Date();
-    const diffDays = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 3600 * 24));
-    return diffDays > 3 ? 'rejected' : 'pending';
-  };
+  
   console.log(closureDate);
   const navigate = useNavigate();
   useEffect(() => {
@@ -31,9 +25,10 @@ export const MvStudentDashboard = () => {
         if (userData?.id) {
           // Get ALL submissions
           const submissions = await MvContributionServices.getContributions({ userId: userData.id });
+          
           setAllSubmissions(submissions);
-          // Get first 3 for recent display
-          setRecentSubmissions(submissions.splice(-3));
+          setRecentSubmissions(submissions.slice(-3)); 
+          console.log(recentSubmissions);
           setLastLogin(new Date(userData.last_login).toLocaleString());
         }
 
@@ -46,15 +41,27 @@ export const MvStudentDashboard = () => {
     
     loadData();
   }, []);
+  console.log( allSubmissions.length)
 
-  // Status calculation using ALL submissions
-  const approvedCount = allSubmissions.filter(c => c.is_selected_for_publication === 1).length;
-  const rejectedCount = allSubmissions.filter(c => {
-    const createdAt = new Date(c.created_at!);
-    const diffDays = Math.floor((Date.now() - createdAt.getTime()) / (1000 * 3600 * 24));
-    return diffDays > 3 && c.is_selected_for_publication !== 1;
-  }).length;
+// Fix 2: Improved status calculation
+const getStatus = (contribution: IContribution) => {
+  // First check if explicitly approved/rejected
+  if (contribution.is_selected_for_publication === 1) return 'approved';
+  if (contribution.is_selected_for_publication === 0) return 'rejected';
   
+  // Then check pending status based on days
+  const createdAt = new Date(contribution.created_at!);
+  const now = new Date();
+  const diffDays = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 3600 * 24));
+  return diffDays > 3 ? 'rejected' : 'pending';
+};
+
+// Fix 3: Proper counting logic
+const approvedCount = allSubmissions.filter(c => c.is_selected_for_publication === 1).length;
+const rejectedCount = allSubmissions.filter(c => 
+  c.is_selected_for_publication === 0 || 
+  (c.is_selected_for_publication === null && getStatus(c) === 'rejected')
+).length;
 
   return (
     <StudentLayout>
