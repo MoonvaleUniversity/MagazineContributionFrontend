@@ -107,16 +107,21 @@ export const MvContributionForm: React.FC = () => {
     }
 
     setIsSubmitting(true);
+    const userData = getUserData();
+    if (!userData) throw new Error("Authentication required");
+    
+    const academicId = userData.academic_year_id || 0;
+    const closureData = await getClosureDatebyAcademicYear(academicId.toString());
+    const closureDateId = closureData[0]?.id || 0;
     try {
-      const userData = getUserData();
-      if (!userData) throw new Error("Authentication required");
-
       if (isEditMode && id) {
         await MvContributionServices.updateContribution(
           Number(id),
           {
             name: title,
-            delete_images: imagesToDelete // Send only IDs of images to delete
+            delete_images: imagesToDelete, // Send only IDs of images to delete
+            closure_date_id: closureDateId,
+            user_id: userData.id
           },
           {
             doc: document || undefined,

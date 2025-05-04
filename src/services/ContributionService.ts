@@ -62,6 +62,7 @@ export const MvContributionServices = {
       name?: string;
       closure_date_id?: number;
       delete_images?: number[];
+      user_id: number;
     },
     files?: {
       doc?: File;
@@ -70,8 +71,6 @@ export const MvContributionServices = {
   ) => {
     const formData = new FormData();
     
-    // Append JSON data
-    formData.append('data', JSON.stringify(updateData));
     formData.append("_method", "PUT"); // Corrected to use PUT method
     // Append files
     if (files?.doc) formData.append('doc', files.doc);
@@ -79,6 +78,18 @@ export const MvContributionServices = {
       files.images.forEach(file => 
         formData.append('images[]', file));
     }
+    if(updateData.name !== undefined) {
+      formData.append("name", updateData.name.toString());
+    }
+    if(updateData.closure_date_id !== undefined) {
+      formData.append("closure_date_id", updateData.closure_date_id.toString());
+    }
+    if(updateData.delete_images) {
+      updateData.delete_images.forEach(id => {
+        formData.append("delete_images[]", id.toString());
+      });
+    }
+    formData.append("user_id", updateData.user_id.toString());
   
     try {
       const response = await updateMultimedia(
