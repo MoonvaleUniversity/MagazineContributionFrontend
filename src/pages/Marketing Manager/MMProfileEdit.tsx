@@ -22,7 +22,7 @@ export const MmProfileEdit: React.FC = () => {
           <div className="flex-shrink-0">
             <div className="w-24 h-24 rounded-2xl bg-white dark:bg-gray-700 flex items-center justify-center shadow-md">
               <span className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                BB
+                MV
               </span>
             </div>
           </div>

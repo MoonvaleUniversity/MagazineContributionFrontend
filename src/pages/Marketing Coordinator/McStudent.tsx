@@ -154,8 +154,8 @@ export const McStudents  = () => {
         onSearch={setSearchQuery}
         className="px-4"
       />
-<div className="rounded-lg border border-gray-200 dark:border-gray-700">
-<table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+<div className="rounded-lg border overflow-x-scroll border-gray-200 dark:border-gray-700">
+<table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 ">
 <thead className="bg-gray-50 dark:bg-primary-800">
 <tr className="">
             {["ID", "Name", "Email", "Faculty", "Actions"].map((header, index) => (

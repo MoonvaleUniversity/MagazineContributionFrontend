@@ -12,6 +12,7 @@ import { updateUser, createUser, deleteUser } from "../../services/userService";
 import SearchFilter from "../../components/MvSearchFilter/MvSearchFIlter";
 import { approveGuest, getAllGuest } from "../../services/GuestService";
 import { getUserData } from "../../services/AuthService";
+import { FaCheck, FaClock } from "react-icons/fa";
 
 
 
@@ -154,11 +155,11 @@ export const McGuests = () => {
         onSearch={setSearchQuery}
         className="px-4"
       />
-      <div className="rounded-lg border border-gray-200 dark:border-gray-700">
+      <div className="rounded-lg border overflow-x-scroll border-gray-200 dark:border-gray-700">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-primary-800">
             <tr>
-              {["ID", "Name", "Email", "Faculty", "Actions"].map((header, index) => (
+              {["ID", "Name", "Email", "Faculty", "Status", "Actions"].map((header, index) => (
                 <th key={index} className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{header}</th>
               ))}
             </tr>
@@ -171,8 +172,30 @@ export const McGuests = () => {
                   <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider">{guest.name}</td>
                   <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider">{guest.email}</td>
                   <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider">{guest.faculty_id || "N/A"}</td>
-                  <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider flex gap-2">
-                    <MvButton onClick={() => handleApprove(guest.id)}>Approve</MvButton>
+                  <td className="px-6 py-3 whitespace-nowrap">
+        <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+          guest.isApproved === 1 
+            ? 'bg-green-100 text-green-800 dark:bg-green-800/30 dark:text-green-400'
+            : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800/30 dark:text-yellow-400'
+        }`}>
+          {guest.isApproved === 1 ? (
+            <>
+              <FaCheck className="mr-1.5 h-3 w-3" />
+              Approved
+            </>
+          ) : (
+            <>
+              <FaClock className="mr-1.5 h-3 w-3" />
+              Pending
+            </>
+          )}
+        </div>
+      </td>
+
+      <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider flex gap-2">
+        {guest.isApproved !== 1 && (
+          <MvButton onClick={() => handleApprove(guest.id)}>Approve</MvButton>
+        )}
                     <MvButton 
                       onClick={() => handleDelete(guest.id)}
                       className="bg-red-500 dark:bg-red-300"

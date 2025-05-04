@@ -9,6 +9,7 @@ export interface IUser {
     email: string;
     role: string;
     email_verified_at: string;
+    is_approved?: number
     is_suspended: number;
     version: number;
     saved_contributions: Contribution[];

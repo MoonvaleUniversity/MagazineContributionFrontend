@@ -6,16 +6,19 @@ import { MvButton } from '../../components/MvButton';
 import { MvLoader } from '../../components/MvLoader';
 import { MvContributionServices } from '../../services/ContributionService';
 import { IContribution } from '../../app/Types/objects/contribution';
-import { getAllUsers } from '../../services/userService';
 import { User } from '../../app/MvObjects/user';
 import { useNavigate } from 'react-router-dom';
+import { getAllGuest } from '../../services/GuestService';
+import MvRoutes from '../../app/MvRoutes';
+import { ResponsiveContainer, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Line, PieChart, Pie, Cell, Legend } from 'recharts';
 
 export const McDashboard = () => {
   const [stats, setStats] = useState({
     totalSubmissions: 0,
     pending: 0,
     approved: 0,
-    guests: 0
+    guests: 0,
+    trendData: [] as Array<{ date: string, count: number }>
   });
   const [recentSubmissions, setRecentSubmissions] = useState<IContribution[]>([]);
   const [pendingGuests, setPendingGuests] = useState<User[]>([]);
@@ -33,17 +36,30 @@ export const McDashboard = () => {
         const pending = contributions.filter(c => c.is_selected_for_publication === 0).length;
         
         // Fetch users
-        const users = await getAllUsers();
-        const guests = users.filter(u => u.role === 'Guest' && u.faculty_id === facultyId);
-        const pendingGuests = users.filter(u => u.role === 'Guest' && u.faculty_id === facultyId);
+        const users = await getAllGuest({ facultyId: facultyId });
+        const guests = users;
+        const pendingGuests = users.filter(u =>  u.isApproved === 0);
+        console.log("Pending Guests", guests);
+      
+        // Process data for trend chart
+        const dailyCounts = contributions.reduce((acc, curr) => {
+          const date = new Date(curr.created_at).toLocaleDateString();
+          acc[date] = (acc[date] || 0) + 1;
+          return acc;
+        }, {} as Record<string, number>);
 
+        const trendData = Object.entries(dailyCounts).map(([date, count]) => ({
+          date,
+          count
+        }));
         setStats({
           totalSubmissions: contributions.length,
           pending,
           approved: contributions.length - pending,
-          guests: guests.length
+          guests: guests.length,
+          trendData: trendData 
         });
-
+        
         setRecentSubmissions(contributions.slice(0, 5));
         setPendingGuests(pendingGuests);
       } catch (err) {
@@ -98,20 +114,23 @@ export const McDashboard = () => {
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <MvButton variant="primary" >
-            Review New Submissions
+          <MvButton variant="primary" onClick={()=>navigate(MvRoutes.MARKET_COORDINATOR.CONTRIBUTIONS)} >
+           Students Submissions
           </MvButton>
-          <MvButton variant="secondary" >
-            Manage Students
+          <MvButton variant="secondary" onClick={()=>navigate(MvRoutes.MARKET_COORDINATOR.STUDENTS)} >
+            Manage Student Account
           </MvButton>
-          <MvButton variant="accent" >
+          <MvButton variant="accent" onClick={()=>navigate(MvRoutes.MARKET_COORDINATOR.GUEST)} >
             Manage Guest Accounts
           </MvButton>
-          <MvButton variant="accent" >
+          <MvButton variant="accent" onClick={()=>navigate(MvRoutes.MARKET_COORDINATOR.PROFILE_EDIT)}>
             Update Profile
           </MvButton>
         </div>
-
+     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <SubmissionTrendChart data={stats.trendData || []} />
+        <SubmissionStatusChart approved={stats.approved} pending={stats.pending} />
+      </div>
         {/* Recent Activity */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Pending Submissions */}
@@ -134,6 +153,7 @@ export const McDashboard = () => {
 
           {/* Pending Guest Approvals */}
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+            
             <h2 className="text-xl font-semibold mb-4">Guest Approvals ({pendingGuests.length})</h2>
             {pendingGuests.length > 0 ? (
               <ul className="space-y-3">
@@ -147,9 +167,7 @@ export const McDashboard = () => {
                       <MvButton size="sm" onClick={() => handleApproveGuest()}>
                         Approve
                       </MvButton>
-                      <MvButton size="sm" >
-                        Reject
-                      </MvButton>
+                      
                     </div>
                   </li>
                 ))}
@@ -160,19 +178,97 @@ export const McDashboard = () => {
           </div>
         </div>
 
-        {/* Deadline Reminder */}
-        <div className="mt-8 p-6 bg-blue-50 dark:bg-blue-900 rounded-lg">
-          <div className="flex justify-between items-center">
-            <div>
-              <h2 className="text-xl font-semibold">Next Closure Date</h2>
-              <p className="text-gray-600 dark:text-gray-300">March 15, 2024</p>
-            </div>
-            <MvButton >
-              View All Deadlines
-            </MvButton>
-          </div>
-        </div>
+      
       </div>
     </MarketingCoordinatorLayout>
+
+  );
+
+
+
+
+  
+};
+
+// Add these new components inside the McDashboard component
+
+// Submission Trend Chart
+const SubmissionTrendChart = ({ data }: { data: Array<{ date: string, count: number }> }) => (
+  <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow h-80">
+    <h3 className="text-lg font-semibold mb-4">Submission Trends</h3>
+    <ResponsiveContainer width="100%" height="90%">
+      <LineChart data={data}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="date" />
+        <YAxis />
+        <Tooltip />
+        <Line 
+          type="monotone" 
+          dataKey="count" 
+          stroke="#6366f1" 
+          strokeWidth={2}
+          dot={{ fill: '#6366f1' }}
+        />
+      </LineChart>
+    </ResponsiveContainer>
+  </div>
+);
+const SubmissionStatusChart = ({ approved, pending }: { approved: number, pending: number }) => {
+  const data = [
+    { name: 'Approved', value: approved },
+    { name: 'Pending', value: pending },
+  ];
+  
+  const COLORS = ['#10b981', '#f59e0b'];
+
+  return (
+    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow h-80">
+      <h3 className="text-lg font-semibold mb-4">Status Distribution</h3>
+      <ResponsiveContainer width="100%" height="90%">
+        <PieChart>
+          <Pie
+            data={data}
+            cx="50%"
+            cy="50%"
+            innerRadius={60}
+            outerRadius={80}
+            paddingAngle={5}
+            dataKey="value"
+            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+            labelLine={false}
+          >
+            {data.map((entry, index) => (
+              <Cell 
+                key={`cell-${index}`} 
+                fill={COLORS[index % COLORS.length]}
+              />
+            ))}
+          </Pie>
+          <Tooltip 
+            contentStyle={{ 
+              background: '#fff',
+              border: 'none',
+              borderRadius: '8px',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+            }}
+            formatter={(value: number, name: string) => [
+              value, 
+              name,
+              `${((value / (approved + pending)) * 100).toFixed(1)}%`
+            ]}
+          />
+          {/* Add legend */}
+          <Legend 
+            verticalAlign="bottom" 
+            height={36}
+            formatter={(value) => (
+              <span className="text-sm text-gray-700 dark:text-gray-300">
+                {value}
+              </span>
+            )}
+          />
+        </PieChart>
+      </ResponsiveContainer>
+    </div>
   );
 };

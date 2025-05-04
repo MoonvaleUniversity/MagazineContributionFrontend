@@ -84,7 +84,7 @@ const AccountCreationForm: React.FC<AccountCreationFormProps> = ({
       password: isEditMode ? undefined : password,
       password_confirmation: isEditMode ? undefined : confirmPassword,
       faculty_id: isFaculty ? facultyId : undefined,
-      academic_year_id: isAcademicYear ? academicYearId : "0",
+      ...(isAcademicYear && { academic_year_id: academicYearId }),
       role: fixedRole,
     });
   };
