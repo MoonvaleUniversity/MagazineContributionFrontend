@@ -7,7 +7,6 @@ import { getClosureDateById } from "../../services/ClosureDateService";
 import { MvContributionServices } from "../../services/ContributionService";
 import { useNavigate } from "react-router-dom";
 import { MvButton } from "../../components/MvButton";
-
 import { detect } from "detect-browser";
 import { createBrowser } from "../../services/userService";
 import { getUserData } from "../../services/AuthService";
@@ -78,13 +77,7 @@ export const MvStudentDashboard = () => {
       }
     }, [browser, users?.id]);
 
-  // Status calculation using ALL submissions
-  const approvedCount = allSubmissions.filter(c => c.is_selected_for_publication === 1).length;
-  const rejectedCount = allSubmissions.filter(c => {
-    const createdAt = new Date(c.created_at!);
-    const diffDays = Math.floor((Date.now() - createdAt.getTime()) / (1000 * 3600 * 24));
-    return diffDays > 3 && c.is_selected_for_publication !== 1;
-  }).length;
+
 // Fix 2: Improved status calculation
 const getStatus = (contribution: IContribution) => {
   // First check if explicitly approved/rejected

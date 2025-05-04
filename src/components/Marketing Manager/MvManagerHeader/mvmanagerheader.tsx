@@ -7,7 +7,7 @@ import { MvUrl } from "../../../app/MvUrl";
 // Header Component for Marketing Manager (styled like Student)
 export const MvMarketingManagerHeader: React.FC = () => {
 
-  const [searchTerm, setSearchTerm] = useState<string>("");
+
   const handleLogout = async () => {
     try{
       await getLogout(MvUrl.LOGOUT); 

@@ -1,8 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { FiThumbsUp ,FiBookmark, FiTrash, FiMessageSquare, FiThumbsDown } from "react-icons/fi";
 import { IContribution } from "../../app/Types/objects/contribution";
-
+import { detect } from "detect-browser";
+import { createBrowser } from "../../services/userService";
 import { getUserData } from "../../services/AuthService";
+import { useEffect } from "react";
+
 
 interface MvCardProps {
   contribution: IContribution;
@@ -16,6 +19,7 @@ const statusStyles = {
   2: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
 };
 
+
 export const MvCard: React.FC<MvCardProps> = ({ contribution, onDelete }) => {
   const navigate = useNavigate();
   const userData = getUserData();
@@ -23,7 +27,35 @@ export const MvCard: React.FC<MvCardProps> = ({ contribution, onDelete }) => {
   const imageUrl = contribution.image_url[0]?.image_url || "/src/Assets/images/404.jpeg";
 
   const handleCardClick = () => navigate(`/contributions/${contribution.id}`);
+  const browser = detect();
+  const users = getUserData();
 
+  useEffect(() => {
+    // Check if we've already recorded this browser info
+    const storageKey = "browserTracked";
+    const alreadyTracked = sessionStorage.getItem(storageKey);
+
+    if (browser && users?.id && !alreadyTracked) {
+      createBrowser({
+        user_id: users?.id,
+        browser_name: browser?.name,
+        browser_version: browser?.version,
+        os: browser?.os,
+      })
+        .then((res) => {
+          console.log("View recorded successfully:", res);
+          // Set a flag in localStorage to indicate we've tracked this browser
+          sessionStorage.setItem(storageKey, "true");
+        })
+        .catch((err) => {
+          console.error("Failed to record view:", err);
+        });
+    } else if (alreadyTracked) {
+      console.log("Browser already tracked for this user");
+    } else {
+      console.log("Could not detect browser.");
+    }
+  }, [browser, users?.id]);
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleString("en-US", {
@@ -55,28 +87,6 @@ export const MvCard: React.FC<MvCardProps> = ({ contribution, onDelete }) => {
         </div>
       </div>
 
-
-      {/* Content */}
-      <div className="mt-4 space-y-2">
-        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-          {contribution.name}
-        </h3>
-        
-        <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-          {getFileType(contribution.doc_url) === "PDF" ? (
-            <FaFilePdf className="mr-2 text-red-500" />
-          ) : (
-            <FaFileWord className="mr-2 text-blue-500" />
-          )}
-          <span>{contribution.user.faculty?.name} </span>
-        </div>
-
-        <div className="flex justify-between items-center text-sm">
-          <span className="text-gray-500 dark:text-gray-400">
-            {formatDate(contribution.created_at)}
-          </span>
-          <span className={`px-2 py-1 text-xs font-medium rounded-full ${statusStyles[contribution.is_selected_for_publication]}`}>
-
       {/* Content Section */}
       <div className="p-4 space-y-3">
         {/* Header */}
@@ -92,9 +102,7 @@ export const MvCard: React.FC<MvCardProps> = ({ contribution, onDelete }) => {
           
           <span className={`px-2.5 py-1 text-xs font-medium rounded-full 
                           ${statusStyles[contribution.is_selected_for_publication]}`}>
-
-            {contribution.is_selected_for_publication === 1 ? 'Approved' : 
-             contribution.is_selected_for_publication === 2 ? 'Rejected' : 'Pending'}
+            {contribution.is_selected_for_publication === 1 ? 'Approved' :  'Pending' }
           </span>
         </div>
 

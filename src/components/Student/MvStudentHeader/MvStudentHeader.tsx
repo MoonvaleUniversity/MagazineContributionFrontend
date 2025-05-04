@@ -6,7 +6,6 @@ import { MvUrl } from "../../../app/MvUrl";
 // Header Component for Student
 export const MvStudentHeader: React.FC = () => {
 
-  const [searchTerm, setSearchTerm] = useState<string>("");
   const handleLogout = async () => {
     
    try{

@@ -83,42 +83,13 @@ export const MvAdminSidebar: React.FC<MvAdminSidebarProps> = ({
       to: MvRoutes.ADMIN.MOST_ACTIVE_USER,
     },
 
-    { icon: <FiHome/>, label: 'Dashboard', to: MvRoutes.ADMIN.DASHBOARD},
-    { icon: <FaUserCog  />, label: 'User Management', to: MvRoutes.ADMIN.USERS},
-    { icon: <FaChalkboardTeacher />, label: 'Faculty' , to:MvRoutes.ADMIN.FACULTY},
-    { icon: <FaStickyNote />, label: 'Contributions' , to:MvRoutes.ADMIN.CONTRIBUTION},
-    { icon: <FaRegCalendarAlt />, label: 'Academic Year', to:MvRoutes.ADMIN.ACADEMIC_YEAR },
-    { icon: <AiOutlineStop />, label: 'Closure Dates', to:MvRoutes.ADMIN.CLOSURE_DATES },
-    { icon: <FaGrinStars />, label: 'Explore Contributions', to: MvRoutes.PUBLIC_CONTRIBUTION },
+   
 
   ];
 
   return (
     <div className="relative">
-
-      {/* Toggle Button */}
-      <MvButton
-        size="sm"
-        className="fixed z-50 pt-2 text-white transition-all shadow-lg lg:hidden left-4 top-4 rounded-4xl "
-        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-      >
-        {isSidebarOpen ? (
-          <FiX className="w-5 h-5" />
-        ) : (
-          <FiMenu className="w-5 h-5" />
-        )}
-      </MvButton>
-
-      {/* Sidebar Container */}
-      <div
-        className={`fixed top-0 left-0 w-64 h-screen p-6 bg-gradient-to-b from-secondary-300 to-indigo-200 dark:from-secondary-dark-500 dark:to-gray-800 border-r border-indigo-100 dark:border-gray-700 shadow-xl transition-all duration-300 z-40 ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
-        }`}
-      >
-        {/* Logo Section */}
-        <div className="flex items-center justify-between mb-12">
-
-    {/* Toggle Button */}
+{/* Toggle Button */}
     <MvButton
       size="sm"
       className="fixed z-50 pt-2 text-white transition-all shadow-lg lg:hidden left-4 top-4 rounded-4xl "
@@ -126,8 +97,8 @@ export const MvAdminSidebar: React.FC<MvAdminSidebarProps> = ({
     >
       {isSidebarOpen ? <FiX className="w-5 h-5" /> : <FiMenu className="w-5 h-5" />}
     </MvButton>
-
-    {/* Sidebar Container */}
+ 
+     {/* Sidebar Container */}
     <div
       className={`fixed top-0 left-0 w-64 h-screen p-6 bg-gradient-to-b from-secondary-300 to-indigo-200 dark:from-secondary-dark-500 dark:to-gray-800 border-r border-indigo-100 dark:border-gray-700 shadow-xl transition-all duration-300 z-40 ${
         isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
@@ -174,57 +145,6 @@ export const MvAdminSidebar: React.FC<MvAdminSidebarProps> = ({
        </NavLink>
         ))}
       </nav>
-
-      {/* Settings Dropdown */}
-      <div className="pt-2 mt-4 border-t  border-indigo-100 dark:border-gray-700">
-        <div
-          className="flex items-center justify-between p-3 rounded-xl cursor-pointer hover:bg-white dark:hover:bg-gray-800 transition-colors"
-          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-        >
-
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-indigo-600 rounded-lg shadow-md">
-              <FiSettings className="w-4 h-4 text-white" />
-            </div>
-            <span className="text-l font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              Admin Portal
-            </span>
-          </div>
-        </div>
-
-        {/* Navigation Menu */}
-        <nav className="space-y-1.5">
-          {navItems.map((item, index, isActive) => (
-            <NavLink
-              key={index}
-              to={item.to}
-              className={(
-                { isActive } // Destructure here
-              ) =>
-                clsx(
-                  "flex items-center space-x-4 p-3 rounded-2xl transition-all",
-                  "hover:bg-white hover:shadow-md dark:hover:bg-gray-800",
-                  isActive
-                    ? "bg-white shadow-md dark:bg-gray-800 text-indigo-600 dark:text-purple-400"
-                    : "text-gray-600 dark:text-gray-300"
-                )
-              }
-            >
-              <span
-                className={clsx(
-                  "text-lg",
-                  // Use isActive from parent NavLink
-                  isActive
-                    ? "text-indigo-500 dark:text-purple-400"
-                    : "text-gray-400 dark:text-gray-500"
-                )}
-              >
-                {item.icon}
-              </span>
-              <span className="text-sm font-medium">{item.label}</span>
-            </NavLink>
-          ))}
-        </nav>
 
         {/* Settings Dropdown */}
         <div className="pt-2 mt-4 border-t  border-indigo-100 dark:border-gray-700">
@@ -293,5 +213,6 @@ export const MvAdminSidebar: React.FC<MvAdminSidebarProps> = ({
         </div>
       </div>
     </div>
+
   );
 };

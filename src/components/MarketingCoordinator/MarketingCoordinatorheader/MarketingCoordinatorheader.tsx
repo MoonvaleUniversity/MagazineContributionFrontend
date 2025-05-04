@@ -9,8 +9,7 @@ import { MvUrl } from "../../../app/MvUrl";
 // Header Component for Marketing Coordinator (styled like student)
 export const MvMarketingCoordinatorHeader: React.FC = () => {
 
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const handleLogout = async () => {
+const handleLogout = async () => {
     try{
       await getLogout(MvUrl.LOGOUT); 
       // Remove user-related data

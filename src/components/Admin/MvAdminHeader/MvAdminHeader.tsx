@@ -6,7 +6,6 @@ import { MvUrl } from "../../../app/MvUrl";
 
 export const MvAdminHeader: React.FC = () => {
 
-  const [searchTerm, setSearchTerm] = useState<string>("");
   const handleLogout = async () => {
 
     try{

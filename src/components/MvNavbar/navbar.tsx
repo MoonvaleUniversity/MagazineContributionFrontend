@@ -1,12 +1,7 @@
-
-import { MvButton } from "../../components/MvButton";
 import React, { useState, useEffect, useRef } from "react";
 import { FaBars, FaTimes, FaUser, FaCaretDown } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { logo_dark, logo_light } from "../../app/MvConstants";
-import MvRoutes from "../../app/MvRoutes";
-import { getLogout } from "../../app/MvApi";
-import { MvUrl } from "../../app/MvUrl";
 
 export const MvNavbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -18,33 +13,12 @@ export const MvNavbar: React.FC = () => {
   const userData = localStorage.getItem("userData") || sessionStorage.getItem("userData");
   const userName = userData ? JSON.parse(userData).name : "Guest";
 
-  
-  const handleLogout = async () => {
-    try {
-      await getLogout(MvUrl.LOGOUT);
-      // Remove user-related data
-      localStorage.removeItem("userData");
-      localStorage.removeItem("userToken");
-      localStorage.removeItem("username");
-
-      sessionStorage.removeItem("userData");
-      sessionStorage.removeItem("userToken");
-      sessionStorage.removeItem("username");
-      sessionStorage.removeItem("viewed");
-      
-       ["userData", "userToken", "username"].forEach(key => {
+  // Logout handler
+  const handleLogout = () => {
+    ["userData", "userToken", "username"].forEach(key => {
       localStorage.removeItem(key);
       sessionStorage.removeItem(key);
     });
-
-      console.log("Successful logout");
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
-  // Logout handler
-  const handleLogout = () => {
-   
-
     window.location.href = "/";
   };
 
@@ -73,108 +47,12 @@ export const MvNavbar: React.FC = () => {
   }, []);
 
   return (
-
-    <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between w-full px-4 py-2 bg-secondary-100 bg-opacity-60 dark:bg-opacity-80 dark:bg-secondary-dark-800">
-      {/* Logo */}
-      <div className="flex items-center space-x-4">
-        <img src={logo_dark} alt="Logo" className="w-auto h-10 dark:hidden" />
-        <img
-          src={logo_light}
-          alt="Logo"
-          className="hidden w-auto h-10 dark:block"
-        />
-      </div>
-
-      {/* Navigation Links */}
-      <div
-        className={`flex-col md:flex md:flex-row md:space-x-8 transition-opacity duration-300 ease-in-out ${
-          isMenuOpen
-            ? "flex absolute top-14 left-0 right-0 bg-opacity-60 bg-secondary-200 dark:bg-secondary-dark-700 p-4"
-            : "hidden md:flex"
-        }`}
-      >
-        <Link
-          to="/"
-          className={`p-2 m-2 font-bold text-center transition-all duration-300 rounded-2xl hover:text-background-800 dark:hover:text-background-700 ${
-            isMenuOpen
-              ? "shadow-sm bg-secondary-400 dark:bg-secondary-dark-500 dark:shadow-secondary-500 font-title-medium hover:bg-secondary-500 dark:hover:bg-secondary-dark-400 hover:shadow-md"
-              : "bg-none"
-          }`}
-        >
-          Home
-        </Link>
-        <Link
-          to="/about"
-          className={`p-2 m-2 font-bold text-center transition-all duration-300 rounded-2xl hover:text-background-800 dark:hover:text-background-700 ${
-            isMenuOpen
-              ? "shadow-sm bg-secondary-400 dark:bg-secondary-dark-500 dark:shadow-secondary-500 font-title-medium hover:bg-secondary-500 dark:hover:bg-secondary-dark-400 hover:shadow-md"
-              : "bg-none"
-          }`}
-        >
-          About
-        </Link>
-        <Link
-          to="/services"
-          className={`p-2 m-2 font-bold text-center transition-all duration-300 rounded-2xl hover:text-background-800 dark:hover:text-background-700 ${
-            isMenuOpen
-              ? "shadow-sm bg-secondary-400 dark:bg-secondary-dark-500 dark:shadow-secondary-500 font-title-medium hover:bg-secondary-500 dark:hover:bg-secondary-dark-400 hover:shadow-md"
-              : "bg-none"
-          }`}
-        >
-          Services
-        </Link>
-        <Link
-          to="/contact"
-          className={`p-2 m-2 font-bold text-center transition-all duration-300 rounded-2xl hover:text-background-800 dark:hover:text-background-700 ${
-            isMenuOpen
-              ? "shadow-sm bg-secondary-400 dark:bg-secondary-dark-500 dark:shadow-secondary-500 font-title-medium hover:bg-secondary-500 dark:hover:bg-secondary-dark-400 hover:shadow-md"
-              : "bg-none"
-          }`}
-        >
-          Contact
-        </Link>
-      </div>
-      <div className="flex gap-4 align-center">
-        {/* Profile Section */}
-        <div className="flex items-center gap-1">
-          <div className="flex items-center space-x-4">
-            <MvButton
-              size={buttonSize}
-              className="flex items-center space-x-2 text-black dark:text-gray-300"
-            >
-              <FaUser />
-              <span>{userName}</span>
-            </MvButton>
-          </div>
-          {/* Hamburger Menu for Mobile */}
-          <div className="flex items-center md:hidden">
-            <button onClick={() => setIsMenuOpen(!isMenuOpen)}>
-              {isMenuOpen ? (
-                <FaTimes className="text-black dark:text-gray-300" />
-              ) : (
-                <FaBars className="text-black dark:text-gray-300" />
-              )}
-            </button>
-          </div>
-          <div className="flex items-center space-x-3">
-            <MvButton
-              variant="primary"
-              onClick={() => {
-                handleLogout();
-              }}
-            >
-              <span className="">Logout</span>
-            </MvButton>
-          </div>
-        </div>
-      </div>
-
     <nav className="fixed top-0 w-full bg-white dark:bg-gray-800 shadow-sm z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo Section */}
           <div className="flex-shrink-0">
-            <Link to={MvRoutes.GUEST.DASHBOARD}className="flex items-center">
+            <Link to="/" className="flex items-center">
               <img
                 src={logo_dark}
                 alt="Logo"
@@ -248,7 +126,7 @@ export const MvNavbar: React.FC = () => {
             </div>
             <div className="space-y-1">
               <Link
-                to={MvRoutes.GUEST.PROFILE_EDIT}
+                to="/profile/edit"
                 className="block px-3 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
               >
                 Edit Profile
@@ -263,7 +141,6 @@ export const MvNavbar: React.FC = () => {
           </div>
         </div>
       )}
-
     </nav>
   );
 };
