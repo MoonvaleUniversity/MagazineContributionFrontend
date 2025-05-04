@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { getAllFaculties } from "../../../services/FacultyService";
 import { MvButton } from "../../MvButton";
-import { MvDropdown, MvInput } from "../../MvInput";
+import { MvInput } from "../../MvInput";
 import { IUser } from "../../../app/Types/objects/user";
 import { getUserData } from "../../../services/AuthService";
 import { updateUser } from "../../../services/userService";
@@ -114,6 +114,11 @@ export const MvProfileEdit: React.FC = () => {
       />
       
       <MvInput
+        label="Faculty"
+        type="text"
+        value={faculties.find((faculty) => faculty.id === facultyId)?.name || ""}
+        disabled ></MvInput>
+      <MvInput
       disabled  
         label="Email"
         type="email"
@@ -122,13 +127,9 @@ export const MvProfileEdit: React.FC = () => {
         required
       />
       
-      <MvDropdown
-        
-        options={faculties.map(f => ({ value: f.id, label: f.name }))}
-        value={facultyId}
-        onChange={(e) => setFacultyId(e.target.value)}
-        required
-      />
+     <div className="flex flex-col gap-2">
+    
+      </div>
       
       <MvInput
         label="Password"

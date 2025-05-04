@@ -22,7 +22,9 @@ import { IFaculty } from '../../../app/MvObjects/faculty';
 import { IUser } from '../../../app/Types/objects/user';
 import clsx from 'clsx';
 import { FaGrinStars } from 'react-icons/fa';
+
 import UserLastLogin from '../../../pages/Admin/UserLastLogin';
+
 
 interface MarketingCoordinatorSidebarProps {
   isSidebarOpen: boolean;
@@ -170,8 +172,10 @@ export const MvMarketingCoordinatorSidebar: React.FC<MarketingCoordinatorSidebar
                 </span>
               </p>
               <p className="text-xs text-gray-500 dark:text-gray-400">
+
                  <span className="font-medium text-gray-700 dark:text-gray-300">
                  {UserLastLogin ? <UserLastLogin /> : "..."}
+
                 </span>
               </p>
             </div>

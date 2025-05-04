@@ -6,7 +6,9 @@ import { getUserData } from "../../../services/AuthService";
 import { FiHome, FiUsers, FiFile, FiUser,  FiMenu, FiX, FiSettings } from "react-icons/fi";
 import clsx from "clsx";
 import { FaGrinStars } from "react-icons/fa";
+
 import UserLastLogin from "../../../pages/Admin/UserLastLogin";
+
 
 interface MarketingManagerSidebarProps {
   isSidebarOpen: boolean;
@@ -102,8 +104,12 @@ export const MvMarketingManagerSidebar: React.FC<MarketingManagerSidebarProps> =
                 {userData?.email || 'manager@example.com'}
               </p>
               <p className="text-xs text-gray-500 dark:text-gray-400">
+
                 <span className="font-medium text-purple-600 dark:text-violet-400">
                 {UserLastLogin ? <UserLastLogin /> : "..."}
+
+              
+
                 </span>
               </p>
             </div>

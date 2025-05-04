@@ -82,11 +82,9 @@ export const MmSubmissionsView = () => {
     }
     setCurrentPage(1);
   };
-
-  const handleDownloadZip = async () => {
-    console.log("Download ZIP functionality");
+  const handleDownloadZip = () => {
+    window.location.href = "http://127.0.0.1:8080/";
   };
-
   return (
     <MarketingManagerLayout>
       <div className="max-w-6xl mx-auto p-4">
@@ -95,7 +93,7 @@ export const MmSubmissionsView = () => {
           <h2 className="text-2xl font-bold">Contribution Management</h2>
           <div className="flex gap-4">
             <MvButton onClick={handleDownloadZip} variant="accent">
-              Download as ZIP
+            Go to file Management
             </MvButton>
           </div>
         </div>

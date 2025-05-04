@@ -1,6 +1,6 @@
 
 import { MvGlobalContributions } from '../../components/MvContributions/publishedContributions';
-import MvHomeLayout from '../../layout/MvHomeLayout';
+
 
 import { detect } from "detect-browser";
 import { createBrowser } from "../../services/userService";
@@ -42,12 +42,11 @@ const GuestDashboard = () => {
     }, [browser, users?.id]);
 
   return (
-    <MvHomeLayout>
+
      
 
         <MvGlobalContributions/>
     
-    </MvHomeLayout>
   )
 }
 

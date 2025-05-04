@@ -8,9 +8,11 @@ const MvRoutes = {
   WELCOME_USER: "/welcome-user",
   CANVAS_CORNER: "/canvas-corner",
   CREATIVE_SPARKS: "/creative-sparks",
-  CONTRIBUTION_DETAILS: "/contributions/:id",
-  CONTRIBUTION: "/contributions",
+
   PUBLIC_CONTRIBUTION:"published-contributions",
+  CONTRIBUTION_DETAILS: `/contributions/:id`,
+  PUBLIC_CONTRIBUTION:"/published-contributions",
+
   STUDENTS: {
     DASHBOARD: "/students/dashboard",
     SUBMISSIONS: "/students/submissions",
@@ -50,7 +52,7 @@ const MvRoutes = {
   },
   GUEST: {
     DASHBOARD: "/guest/dashboard",
-   
+    PROFILE_EDIT: "/guest/profile-edit",
   },
 
 };

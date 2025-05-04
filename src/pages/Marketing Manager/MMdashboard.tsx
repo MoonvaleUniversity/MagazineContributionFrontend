@@ -8,7 +8,7 @@ import { IFaculty } from "../../app/MvObjects/faculty";
 import { getAllFaculties } from "../../services/FacultyService";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { MvLoader } from "../../components/MvLoader";
-import { FiDownloadCloud, FiUsers, FiFileText } from "react-icons/fi";
+import { FiUsers, FiFileText } from "react-icons/fi";
 import MvRoutes from "../../app/MvRoutes";
 import { getAllStudents } from "../../services/StudentServices";
 import { getAllCoordinators } from "../../services/CoordinatorServices";
@@ -121,7 +121,7 @@ export const MmDashboard = () => {
   // Faculty contribution data for chart
   const facultyStats = getFacultyContributions(contributions, students, faculties);
 
-  if (loading) return <MvLoader />;
+  if (loading) return <MarketingManagerLayout> <MvLoader /></MarketingManagerLayout>;
 
   return (
     <MarketingManagerLayout>
@@ -173,37 +173,37 @@ export const MmDashboard = () => {
 
           {/* Quick Actions */}
           <div className="space-y-4">
-            <div className="bg-white dark:bg-primary-800 p-4 rounded-lg shadow">
-              <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
+            <div className="bg-white h-full dark:bg-primary-800 p-4 rounded-lg shadow">
+              <h3 className="text-lg text-center pb-5 font-semibold mb-4">Quick Actions</h3>
               <div className="space-y-3">
                 <MvButton 
                   onClick={() => window.location.href = MvRoutes.MARKET_MANAGER.FACULTY}
-                  
+                  className="w-full"
                   
                 >
                   Manage Faculties
                 </MvButton>
                 <MvButton 
                   onClick={() => window.location.href = MvRoutes.MARKET_MANAGER.USERS}
-                  
+                   className="w-full"
                   
                 >
                   Manage Coordinators
                 </MvButton>
                 <MvButton 
                   onClick={() => window.location.href = MvRoutes.MARKET_MANAGER.SELECTED_CONTRIBUTIONS}
-                  
+                   className="w-full"
                   
                 >
                   View All Submissions
                 </MvButton>
                 <MvButton 
                   onClick={() => console.log("Download ZIP")}
-                  
+                   className="w-full justify-center"
                   variant="accent"
                 >
-                <FiDownloadCloud className="mr-2" />
-                  Download All Approved
+                
+                <div className="inline-block"> Go to File management system</div>
                 </MvButton>
               </div>
             </div>
@@ -233,10 +233,10 @@ export const MmDashboard = () => {
                       {faculty?.name} • {new Date(activity.created_at!).toLocaleDateString()}
                     </p>
                   </div>
-                  <span className={`px-2 py-1 text-sm rounded ${
+                  <span className={`px-2 py-1 text-sm rounded-xl ${
                     activity.is_selected_for_publication 
-                      ? "bg-green-100 text-green-800" 
-                      : "bg-blue-100 text-blue-800"
+                      ? "bg-green-400 text-black font-bold" 
+                      : "bg-yellow-200  text-black font-bold"
                   }`}>
                     {activity.is_selected_for_publication ? "Approved" : "Pending"}
                   </span>

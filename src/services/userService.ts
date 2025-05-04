@@ -15,13 +15,12 @@ export const getAllUsers = async (): Promise<User[]> => {
   };
 
   export const createUser = async (userData: Partial<User>) => {
-    try {
+    
       console.log(userData);
       const response = await postData(MvUrl.POST_USER, userData);
-      return response.data; 
-    } catch (error) {
-      console.error(error);
-    }// Returning raw data without transformation
+      console.log(response);
+      return response; 
+    // Returning raw data without transformation
   };
   
   export const updateUser = async (id: number, userData: Partial<User>) => {

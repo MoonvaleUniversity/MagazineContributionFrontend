@@ -163,6 +163,7 @@ const MvContributionDetailsPage: React.FC = () => {
           id: userData.id,
           name: userData.name,
           role: userData.role,
+          faculty_id: userData.faculty_id,
                  },
                  created_at: new Date().toISOString(),
 
@@ -181,6 +182,12 @@ const MvContributionDetailsPage: React.FC = () => {
     try {
       await MvContributionServices.toggleSave(Number(id), userData.id);
       const user = await getUser(userData.id);
+      if(localStorage.getItem("userData")){
+        localStorage.setItem("userData", JSON.stringify(user));
+      }
+      if(sessionStorage.getItem("userData")){
+        sessionStorage.setItem("userData", JSON.stringify(user));
+      }
       console.log(user.saved_contributions );
       setBookmarked(user.saved_contributions?.some(sc => sc.id === contribution.id) || false);
       setSuccessMsg(bookmarked ? "Removed from bookmarks" : "Bookmarked!");

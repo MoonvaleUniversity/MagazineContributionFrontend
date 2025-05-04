@@ -1,42 +1,29 @@
-import React, {  useState } from "react";
-import { AiOutlineLike,  AiOutlineMessage, AiOutlineEllipsis } from "react-icons/ai";
-import { FaBookmark, FaEye, FaFilePdf, FaFileWord, FaImage, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { FiThumbsUp ,FiBookmark, FiTrash, FiMessageSquare, FiThumbsDown } from "react-icons/fi";
 import { IContribution } from "../../app/Types/objects/contribution";
 
+import { getUserData } from "../../services/AuthService";
 
 interface MvCardProps {
   contribution: IContribution;
-  onStatusChange?: (newStatus: 1 | 2) => void; // Updated to match API status codes
-  isMarketingCoordinator?: boolean;
   onDelete?: () => void;
+  onStatusChange?: (newStatus: 1 | 2) => void;
 }
 
 const statusStyles = {
-  0: "bg-yellow-100 text-yellow-800 dark:bg-yellow-800/30 dark:text-yellow-500",
-  1: "bg-green-100 text-green-800 dark:bg-green-800/30 dark:text-green-500",
-  2: "bg-red-100 text-red-800 dark:bg-red-800/30 dark:text-red-500"
+  0: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400",
+  1: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
+  2: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
 };
 
-export const MvCard: React.FC<MvCardProps> = ({ 
-  contribution, 
-  onDelete = () => {}, 
-  onStatusChange,
-  isMarketingCoordinator = false  
-}) => {
+export const MvCard: React.FC<MvCardProps> = ({ contribution, onDelete }) => {
   const navigate = useNavigate();
- 
-  const [showMenu, setShowMenu] = useState(false);
-
-  // Get first image URL
+  const userData = getUserData();
+  const isOwner = userData?.id === contribution.user_id;
   const imageUrl = contribution.image_url[0]?.image_url || "/src/Assets/images/404.jpeg";
 
-  const getFileType = (url: string) => {
-    const extension = url.split('.').pop()?.toLowerCase();
-    return extension === 'pdf' ? 'PDF' : 'DOC';
-  };
-  
- 
+  const handleCardClick = () => navigate(`/contributions/${contribution.id}`);
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleString("en-US", {
@@ -48,63 +35,26 @@ export const MvCard: React.FC<MvCardProps> = ({
   };
 
   return (
-    <div className="relative place-self-center max-w-xs p-4 bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
-      {/* Context Menu */}
-      <div className="absolute top-2 right-2 ">
-        <button 
-          onClick={(e) => {
-            e.stopPropagation();
-            setShowMenu(!showMenu);
-          }}
-          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
-        >
-          <AiOutlineEllipsis className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-        </button>
-
-        {showMenu && (
-          <div 
-            className="absolute right-0 mt-1 w-40 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-10"
-            onMouseLeave={() => setShowMenu(false)}
-          >
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate(`/contributions/${contribution.id}`);
-                setShowMenu(false);
-              }}
-              className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
-            >
-              <FaEye className="mr-2" />
-              Preview
-            </button>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete();
-                setShowMenu(false);
-              }}
-              className="flex items-center w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-600"
-            >
-              <FaTrash className="mr-2" />
-              Delete
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* Image */}
-      <div className="rounded-xl overflow-hidden mt-4 relative">
+    <div 
+      className="relative bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl 
+                transition-all cursor-pointer group overflow-hidden"
+      onClick={handleCardClick}
+    >
+      {/* Image Section */}
+      <div className="relative aspect-video overflow-hidden">
         <img
           src={imageUrl}
-          alt={contribution.name}
-          className="w-full aspect-4/3 object-cover transition-transform duration-300 mt- hover:scale-105"
           onError={src => (src.currentTarget.src = "/src/Assets/images/404.jpeg")}
+          alt={contribution.name}
+          className="w-full h-full object-cover transition-transform duration-300 
+                    group-hover:scale-105"
         />
-        <div className="absolute bottom-2 right-2 bg-black/50 text-white px-2 py-1 rounded-full text-sm flex items-center">
-          <FaImage className="mr-1" />
-          <span>{contribution.image_url.length}</span>
+        <div className="absolute bottom-2 right-2 bg-black/50 text-white px-2 py-1 
+                      rounded-full text-sm flex items-center">
+          <span>{contribution.image_url.length} images</span>
         </div>
       </div>
+
 
       {/* Content */}
       <div className="mt-4 space-y-2">
@@ -126,43 +76,86 @@ export const MvCard: React.FC<MvCardProps> = ({
             {formatDate(contribution.created_at)}
           </span>
           <span className={`px-2 py-1 text-xs font-medium rounded-full ${statusStyles[contribution.is_selected_for_publication]}`}>
+
+      {/* Content Section */}
+      <div className="p-4 space-y-3">
+        {/* Header */}
+        <div className="flex items-start justify-between">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 line-clamp-2">
+              {contribution.name}
+            </h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              {formatDate(contribution.created_at)}
+            </p>
+          </div>
+          
+          <span className={`px-2.5 py-1 text-xs font-medium rounded-full 
+                          ${statusStyles[contribution.is_selected_for_publication]}`}>
+
             {contribution.is_selected_for_publication === 1 ? 'Approved' : 
              contribution.is_selected_for_publication === 2 ? 'Rejected' : 'Pending'}
           </span>
         </div>
 
-        {isMarketingCoordinator && (
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onStatusChange?.(contribution.is_selected_for_publication === 1 ? 2 : 1);
-            }}
-            className={`w-full mt-2 px-3 py-1.5 text-sm rounded-lg ${
-              contribution.is_selected_for_publication === 1 
-                ? 'bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-800/30 dark:hover:bg-red-800/40'
-                : 'bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-800/30 dark:hover:bg-green-800/40'
-            }`}
-          >
-            {contribution.is_selected_for_publication === 1 ? 'Reject Contribution' : 'Approve Contribution'}
-          </button>
-        )}
-      </div>
+        {/* Faculty Info */}
+        <div className="flex items-center gap-3">
+          {contribution.user.faculty?.image_url && (
+            <img
+              src={contribution.user.faculty.image_url}
+              alt="Faculty"
+              className="w-6 h-6 rounded-lg object-cover border-2 border-primary"
 
-      {/* Engagement Metrics */}
-      <div className="mt-4 flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
-        <div className="flex items-center space-x-3">
-          <div className="flex items-center">
-            <AiOutlineLike className="mr-1" />
-            <span>0</span>
-          </div>
-          <div className="flex items-center">
-            <AiOutlineMessage className="mr-1" />
-            <span>0</span>
+            />
+          )}
+          <div>
+            <p className="font-medium text-gray-700 dark:text-gray-300">
+              {contribution.user.faculty?.name} Faculty
+            </p>
+           
           </div>
         </div>
-        <FaBookmark className="hover:text-yellow-500 cursor-pointer" />
+  
+   
+ {/* Engagement Section - Only show for unpublished contributions */}
+ {contribution.is_selected_for_publication === 1 && (
+       
+        <div className="relative flex items-center justify-between text-gray-500 dark:text-gray-400">
+          <div className="flex gap-4">
+            <div className="flex items-center gap-1">
+              <FiThumbsUp className="text-lg" />
+              <span>{contribution.votes?.filter(v => v.type === 'upvote').length || 0}</span>
+
+            </div>
+            <div className="flex items-center gap-1">
+              <FiThumbsDown className="text-lg" />
+              <span>{contribution.votes?.filter(v => v.type === 'downvote').length || 0}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <FiMessageSquare className="text-lg" />
+              <span>{contribution.comments?.length || 0}</span>
+            </div>
+          </div>
+          <FiBookmark className="text-lg hover:text-primary dark:hover:text-primary-400" />
+        </div>
+      )}
       </div>
+      
+
+      {/* Status Change Buttons (Owner only) */}
+      {/* Delete Button (Owner only) */}
+      {isOwner && (
+        <button
+          className="absolute top-2 right-2 p-2 bg-white/90 dark:bg-gray-700/90 rounded-full 
+                    hover:bg-red-100 dark:hover:bg-red-900/50 text-red-500 transition-colors"
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete?.();
+          }}
+        >
+          <FiTrash className="w-4 h-4" />
+        </button>
+      )}
     </div>
   );
 };
-

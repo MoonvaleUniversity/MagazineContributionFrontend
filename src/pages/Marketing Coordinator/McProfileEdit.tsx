@@ -1,30 +1,16 @@
 // MvStudentProfileEdit.tsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { MvProfileEdit } from '../../components/Student/MvProfileEdit';
 import { getUserData } from '../../services/AuthService';
-import { IUser } from '../../app/Types/objects/user';
+import { Contribution, IUser } from '../../app/Types/objects/user';
 import MarketingCoordinatorLayout from '../../layout/MarketingCoordinatorLayout';
+import { useNavigate } from 'react-router-dom';
+import React from 'react';
 
 export const McProfileEdit: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'profile' | 'contributions'>('profile');
-  const userData:IUser |null = getUserData();
-  // Mock data - replace with actual API calls
-  const savedContributions = [
-    {
-      id: 1,
-      title: "AI in Modern Education",
-      date: "2024-03-15",
-      status: "Draft",
-      faculty: "Computer Science"
-    },
-    {
-      id: 2,
-      title: "Sustainable Campus Initiatives",
-      date: "2024-03-10",
-      status: "Submitted",
-      faculty: "Environmental Science"
-    }
-  ];
+    const userData:IUser |null = getUserData();
+    const savedContributions = userData?.saved_contributions || [];
 
   return (
     <MarketingCoordinatorLayout>
@@ -37,7 +23,7 @@ export const McProfileEdit: React.FC = () => {
           <div className="flex-shrink-0">
             <div className="w-24 h-24 rounded-2xl bg-white dark:bg-gray-700 flex items-center justify-center shadow-md">
               <span className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                BB
+              MV
               </span>
             </div>
           </div>
@@ -124,43 +110,60 @@ export const McProfileEdit: React.FC = () => {
   );
 };
 
-// Contribution Card Component
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const ContributionCard: React.FC<{ contribution: any }> = ({ contribution }) => {
+const ContributionCard: React.FC<{ contribution: Contribution }> = ({ contribution }) => {
+  const navigate = useNavigate();
+
   return (
-    <div className="bg-white dark:bg-gray-700 rounded-lg shadow-sm hover:shadow-md transition-shadow p-4">
+    <div 
+      className="bg-white dark:bg-gray-700 rounded-lg shadow-sm hover:shadow-md transition-shadow p-4 relative cursor-pointer"
+      onClick={() => navigate(`/contributions/${contribution.id}`)}
+      role="button"
+      tabIndex={0}
+     
+    >
+      {/* Saved Icon */}
+      <div className="absolute top-2 right-2" onClick={(e) => e.stopPropagation()}>
+        <svg
+          className="w-5 h-5 text-purple-500 hover:text-purple-600 dark:text-purple-400"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
+        </svg>
+      </div>
+
       <div className="flex items-center justify-between mb-2">
-        <span className={`text-xs font-medium px-2 py-1 rounded-full ${
-          contribution.status === 'Submitted' 
-            ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
-            : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
-        }`}>
-          {contribution.status}
-        </span>
         <span className="text-xs text-gray-500 dark:text-gray-400">
-          {contribution.date}
+          {new Date(contribution.created_at).toLocaleDateString()}
         </span>
       </div>
       
-      <h4 className="font-medium text-gray-800 dark:text-gray-200 mb-2">
-        {contribution.title}
+      <h4 className="font-medium text-gray-800 dark:text-gray-200 mb-4">
+        {contribution.name}
       </h4>
-      
-      <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-        <svg 
-          className="w-4 h-4 mr-1" 
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24"
+
+      <div className="flex justify-end">
+        <a
+          href={contribution.doc_url}
+          download
+          onClick={(e) => e.stopPropagation()}
+          className="flex items-center px-3 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors dark:bg-purple-600 dark:hover:bg-purple-700 text-sm"
         >
-          <path 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            strokeWidth={2} 
-            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" 
-          />
-        </svg>
-        {contribution.faculty}
+          <svg
+            className="w-4 h-4 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+            />
+          </svg>
+          Download
+        </a>
       </div>
     </div>
   );

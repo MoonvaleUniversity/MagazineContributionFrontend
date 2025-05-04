@@ -33,10 +33,13 @@ import { AdminProfileEdit } from "./pages/Admin/AdminProfile";
 import GuestDashboard from "./pages/Guest/GuestDashboard";
 import { MvGlobalContributions } from "./components/MvContributions/publishedContributions";
 import { MvCreativeSparksPage } from "./pages/CreativeSparks";
+
 import MostActiveUsers from "./pages/Admin/MostActiveUsers";
 import MostPageView from "./pages/Admin/MostPageView";
 import MostBrowserUse from "./pages/Admin/MostBrowserUse";
 import UserLastLogin from "./pages/Admin/UserLastLogin";
+
+import { GuestEdit } from "./pages/Guest/GuestProfileEdit";
 
 
 
@@ -216,6 +219,12 @@ function App() {
         <Route path={MvRoutes.GUEST.DASHBOARD} element={
           <ProtectedRoute roles={['Guest']}>
             <GuestDashboard/>
+          </ProtectedRoute>
+        } />
+         {/* Guest-specific routes */}
+        <Route path={MvRoutes.GUEST.PROFILE_EDIT} element={
+          <ProtectedRoute roles={['Guest']}>
+           <GuestEdit/>
           </ProtectedRoute>
         } />
 

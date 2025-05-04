@@ -10,6 +10,7 @@ export class User {
   email: string;
   emailVerifiedAt: string;
   isSuspended: number;
+  isApproved?: number;  
   version: number;
   createdBy: string | null;
   updatedBy: string | null;
@@ -32,7 +33,7 @@ export class User {
     this.createdAt = data.created_at;
     this.updatedAt = data.updated_at;
     this.role = data.role;
-   
+    this.isApproved = data.is_approved;
   }
 
   // Mapping from JSON to a User instance
@@ -43,6 +44,7 @@ export class User {
   // Convert the instance back to a plain object
   toMap(): object {
     return {
+      is_approved: this.isApproved,
       id: this.id,
       name: this.name,
       academic_year_id: this.academicYearId,

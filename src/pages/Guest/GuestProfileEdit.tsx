@@ -3,16 +3,17 @@ import React, { useState } from 'react';
 import { MvProfileEdit } from '../../components/Student/MvProfileEdit';
 import { getUserData } from '../../services/AuthService';
 import { Contribution, IUser } from '../../app/Types/objects/user';
-import AdminLayout from '../../layout/AdminLayout';
-import { useNavigate } from 'react-router-dom';
 
-export const AdminProfileEdit: React.FC = () => {
+import { useNavigate } from 'react-router-dom';
+import MvHomeLayout from '../../layout/MvHomeLayout';
+
+export const GuestEdit: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'profile' | 'contributions'>('profile');
      const userData:IUser |null = getUserData();
    const savedContributions = userData?.saved_contributions || [];
 
   return (
-    <AdminLayout>
+    <MvHomeLayout>
       {/* ... existing header code ... */}
       <div className="relative bg-gradient-to-r from-purple-50 to-purple-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl shadow-lg mb-8 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-purple-100/20 to-purple-100/20 dark:from-gray-900/50 dark:to-gray-900/50" />
@@ -105,7 +106,7 @@ export const AdminProfileEdit: React.FC = () => {
           </div>
         </div>
       )}
-    </AdminLayout>
+    </MvHomeLayout>
   );
 };
 

@@ -97,7 +97,9 @@ export const AdminDashboard = () => {
         // Process faculty data
         const facultyStats = faculties.map(faculty => {
           const facultyContribs = contributions.filter(c => 
+
             c.user.faculty?.id === faculty.id
+
           );
           
           return {
@@ -170,7 +172,7 @@ export const AdminDashboard = () => {
     fetchData();
   }, []);
 
-  if (loading) return <MvLoader />;
+  if (loading) return <AdminLayout> <MvLoader /></AdminLayout>;
 
   return (
     <>

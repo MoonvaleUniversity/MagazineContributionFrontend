@@ -11,10 +11,14 @@ import MarketingCoordinatorLayout from "../../layout/MarketingCoordinatorLayout"
 import { updateUser, createUser, deleteUser } from "../../services/userService";
 import SearchFilter from "../../components/MvSearchFilter/MvSearchFIlter";
 import { approveGuest, getAllGuest } from "../../services/GuestService";
+import { getUserData } from "../../services/AuthService";
+import { FaCheck, FaClock } from "react-icons/fa";
+
+
 
 export const McGuests = () => {
-  const [guests, setGuests] = useState<User[]>([]);
-  const [filteredGuests, setFilteredGuests] = useState<User[]>([]);
+    const [guests, setGuests] = useState<User[]>([]);
+    const [filteredGuests, setFilteredGuests] = useState<User[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
@@ -29,6 +33,7 @@ export const McGuests = () => {
     fetchGuests();
   }, []);
 
+  
   // Filter guests
   useEffect(() => {
     const filtered = guests.filter(guest => {
@@ -43,19 +48,26 @@ export const McGuests = () => {
   const fetchGuests = async () => {
     try {
       setLoading(true);
-      const data = await getAllGuest();
-      if (data) {
-        setGuests(data);
+      const userdata = getUserData();
+      const facultyid = userdata?.faculty_id;
+      let data = []; // Initialize to an empty array
+  
+      if (facultyid) {
+        data = await getAllGuest({ facultyId: facultyid.toString() });
       } else {
-        return;
+        console.warn("facultyid is undefined, fetching all guests (if applicable).");
+        data = await getAllGuest({}); // Or handle differently if no facultyId means no guests
       }
+  
+      setGuests(data);
+      setFilteredGuests(data); // Assuming you want to initialize filteredGuests with all guests
+  
     } catch (error) {
       setError(error instanceof Error ? error.message : "Failed to fetch guests");
     } finally {
       setLoading(false);
     }
   };
-
   const handleGuestAction = async (formData: {
     name: string;
     email: string;
@@ -143,11 +155,11 @@ export const McGuests = () => {
         onSearch={setSearchQuery}
         className="px-4"
       />
-      <div className="rounded-lg border border-gray-200 dark:border-gray-700">
+      <div className="rounded-lg border overflow-x-scroll border-gray-200 dark:border-gray-700">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-primary-800">
             <tr>
-              {["ID", "Name", "Email", "Faculty", "Actions"].map((header, index) => (
+              {["ID", "Name", "Email", "Faculty", "Status", "Actions"].map((header, index) => (
                 <th key={index} className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{header}</th>
               ))}
             </tr>
@@ -160,8 +172,30 @@ export const McGuests = () => {
                   <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider">{guest.name}</td>
                   <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider">{guest.email}</td>
                   <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider">{guest.faculty_id || "N/A"}</td>
-                  <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider flex gap-2">
-                    <MvButton onClick={() => handleApprove(guest.id)}>Approve</MvButton>
+                  <td className="px-6 py-3 whitespace-nowrap">
+        <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+          guest.isApproved === 1 
+            ? 'bg-green-100 text-green-800 dark:bg-green-800/30 dark:text-green-400'
+            : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800/30 dark:text-yellow-400'
+        }`}>
+          {guest.isApproved === 1 ? (
+            <>
+              <FaCheck className="mr-1.5 h-3 w-3" />
+              Approved
+            </>
+          ) : (
+            <>
+              <FaClock className="mr-1.5 h-3 w-3" />
+              Pending
+            </>
+          )}
+        </div>
+      </td>
+
+      <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 tracking-wider flex gap-2">
+        {guest.isApproved !== 1 && (
+          <MvButton onClick={() => handleApprove(guest.id)}>Approve</MvButton>
+        )}
                     <MvButton 
                       onClick={() => handleDelete(guest.id)}
                       className="bg-red-500 dark:bg-red-300"
@@ -200,6 +234,7 @@ export const McGuests = () => {
           onSubmit={handleGuestAction}
           {...(error ? { error } : {})} 
           isSubmitting={isSubmitting}
+          
           initialValues={editingGuest ? {
             name: editingGuest.name,
             email: editingGuest.email

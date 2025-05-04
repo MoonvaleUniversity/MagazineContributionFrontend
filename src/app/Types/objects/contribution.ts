@@ -46,8 +46,17 @@ export interface IUserRole {
 export interface IUser {
   id: number;
   name: string;
-  faculty?: IFaculty;
-  faculty_id?: number | null;
+  faculty: IFaculty;
+  faculty_id: number | null;
+  role: string;
+  roles?: IUserRole[];
+}
+
+export interface IUserComment {
+  id: number;
+  name: string;
+  
+  faculty_id: number |string | null;
   role: string;
   roles?: IUserRole[];
 }
@@ -58,7 +67,7 @@ export interface IContribution {
   user_id: number |string;
   closure_date_id: number |string;
   doc_url: string;
-  is_selected_for_publication: 0 | 1 | 2 ;
+  is_selected_for_publication: 0 | 1  ;
   version?: number;
   created_by?: number | null | string;
   updated_by?: number | null;
@@ -87,7 +96,7 @@ export interface IComment {
   id: number;
   content: string;
   user_id: number;
-  user: IUser;
+  user: IUserComment;
   contribution_id: number;
   created_at: string;
   updated_at?: string;

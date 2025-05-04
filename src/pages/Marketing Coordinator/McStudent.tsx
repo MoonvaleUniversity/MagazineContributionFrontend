@@ -46,10 +46,12 @@ export const McStudents  = () => {
   const fetchStudents = async () => {
     try {
       setLoading(true);
-      const data = await getAllStudents();
-      // Filter to only show Students
-      const students = data.filter(user => user.role === "Student");
-      setStudents(students);
+      const userData = getUserData();
+      if (userData?.faculty_id) {
+      const data = await getAllStudents({facultyId: String(userData.faculty_id)});
+ 
+      setStudents(data);
+      }
     } catch (error) {
       setError(error instanceof Error ? error.message : "Failed to fetch students");
     } finally {
@@ -60,35 +62,45 @@ export const McStudents  = () => {
   const handleStudentAction = async (formData: {
     name: string;
     email: string;
+    academic_year_id?: string;
     password?: string;
     comfirmPassword?: string;
     role: string;
   }) => {
     const userData: IUser | null = getUserData();
-
-
+    console.log("formdata" ,  formData.academic_year_id);
     setIsSubmitting(true);
     try {
       if (editingStudent) {
         await updateStudents(editingStudent.id, { 
-          name: formData.name, 
-          email: formData.email,
-          
+            ...formData
         });
       } else {
         if (userData) {
-          console.log("userData", userData , formData );
-        await createUser({ 
-          ...formData, 
-          faculty_id: String(userData.faculty_id),
-          role: 'student' // Force role
-        });
+          console.log("userData", userData, formData);
+          await createUser({ 
+            ...formData, 
+            faculty_id: String(userData.faculty_id),
+            role: 'student' // Force role
+          });
+
+         
         }
       }
       closeModal();
       await fetchStudents();
     } catch (error) {
-      setError(error instanceof Error ? error.message : "Operation failed");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      console.log("Error", (error as any)?.errors?.email?.[0] );
+     
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if ((error as any)?.errors?.email?.[0] == "The email has already been taken.") {
+        setError("Email already exists. Please use a different email.");
+        return; // Don't close the modal
+      }
+      else {
+        setError(error instanceof Error ? error.message : "Operation failed");    
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -142,8 +154,8 @@ export const McStudents  = () => {
         onSearch={setSearchQuery}
         className="px-4"
       />
-<div className="rounded-lg border border-gray-200 dark:border-gray-700">
-<table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+<div className="rounded-lg border overflow-x-scroll border-gray-200 dark:border-gray-700">
+<table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 ">
 <thead className="bg-gray-50 dark:bg-primary-800">
 <tr className="">
             {["ID", "Name", "Email", "Faculty", "Actions"].map((header, index) => (
@@ -159,6 +171,7 @@ export const McStudents  = () => {
                 <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{student.name}</td>
                 <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{student.email}</td>
                 <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{student.faculty_id || "N/A"}</td>
+                <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{student.academicYearId || "N/A"}</td>
                 <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider flex gap-2">
                   <MvButton onClick={() => openModal(student)}>Edit</MvButton>
                   <MvButton 
@@ -193,17 +206,20 @@ export const McStudents  = () => {
         onClose={closeModal}
         title={editingStudent ? "Edit Student" : "Create New Student"}
       >
-        <AccountCreationForm
-          fixedRole="Student"
-          onSubmit={handleStudentAction}
-          {...(error ? { error } : {})} 
-          isSubmitting={isSubmitting}
-          isAcademicYear= {true}
-          initialValues={editingStudent ? {
-            name: editingStudent.name,
-            email: editingStudent.email,
-          } : undefined}
-        />
+      <AccountCreationForm
+  fixedRole="Student"
+  onSubmit={handleStudentAction}
+  {...(error ? { error } : {})}
+  isSubmitting={isSubmitting}
+  isAcademicYear={true}
+  {...(editingStudent && { isFaculty: true })}
+  initialValues={editingStudent ? {
+    name: editingStudent.name,
+    email: editingStudent.email,
+    academic_year_id: editingStudent.academicYearId?.toString(),
+    faculty_id: editingStudent.faculty_id?.toString()
+  } : undefined}
+/>
       </MvModal>
     </MarketingCoordinatorLayout>
   );

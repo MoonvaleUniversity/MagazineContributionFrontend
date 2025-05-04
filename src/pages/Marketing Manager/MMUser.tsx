@@ -174,7 +174,7 @@ const getFacultyName = (facultyId: number | string | null): string => {
         ]}
         className="px-4"
       />
-    <div className="rounded-lg border border-gray-200 dark:border-gray-700">
+    <div className="rounded-lg overflow-x-scroll border border-gray-200 dark:border-gray-700">
     <table className="w-full border-collapse mt-min-w-full divide-y divide-gray-200 dark:divide-gray-700">
   <thead className="bg-gray-50 dark:bg-primary-800">
     <tr>
