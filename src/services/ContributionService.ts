@@ -262,6 +262,7 @@ const normalizeContribution = (data: any): IContribution => ({
       image_url: data.user.faculty.image_url,
       description: data.user.faculty.description
     },
+    faculty_id: data.user.faculty_id,
     role: data.user.role,
     roles: data.user.roles?.map(normalizeRole) || []
   }

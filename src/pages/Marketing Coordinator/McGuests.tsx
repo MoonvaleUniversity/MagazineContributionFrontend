@@ -11,10 +11,13 @@ import MarketingCoordinatorLayout from "../../layout/MarketingCoordinatorLayout"
 import { updateUser, createUser, deleteUser } from "../../services/userService";
 import SearchFilter from "../../components/MvSearchFilter/MvSearchFIlter";
 import { approveGuest, getAllGuest } from "../../services/GuestService";
+import { getUserData } from "../../services/AuthService";
+
+
 
 export const McGuests = () => {
-  const [guests, setGuests] = useState<User[]>([]);
-  const [filteredGuests, setFilteredGuests] = useState<User[]>([]);
+    const [guests, setGuests] = useState<User[]>([]);
+    const [filteredGuests, setFilteredGuests] = useState<User[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
@@ -29,6 +32,7 @@ export const McGuests = () => {
     fetchGuests();
   }, []);
 
+  
   // Filter guests
   useEffect(() => {
     const filtered = guests.filter(guest => {
@@ -43,19 +47,26 @@ export const McGuests = () => {
   const fetchGuests = async () => {
     try {
       setLoading(true);
-      const data = await getAllGuest();
-      if (data) {
-        setGuests(data);
+      const userdata = getUserData();
+      const facultyid = userdata?.faculty_id;
+      let data = []; // Initialize to an empty array
+  
+      if (facultyid) {
+        data = await getAllGuest({ facultyId: facultyid.toString() });
       } else {
-        return;
+        console.warn("facultyid is undefined, fetching all guests (if applicable).");
+        data = await getAllGuest({}); // Or handle differently if no facultyId means no guests
       }
+  
+      setGuests(data);
+      setFilteredGuests(data); // Assuming you want to initialize filteredGuests with all guests
+  
     } catch (error) {
       setError(error instanceof Error ? error.message : "Failed to fetch guests");
     } finally {
       setLoading(false);
     }
   };
-
   const handleGuestAction = async (formData: {
     name: string;
     email: string;
@@ -200,6 +211,7 @@ export const McGuests = () => {
           onSubmit={handleGuestAction}
           {...(error ? { error } : {})} 
           isSubmitting={isSubmitting}
+          
           initialValues={editingGuest ? {
             name: editingGuest.name,
             email: editingGuest.email

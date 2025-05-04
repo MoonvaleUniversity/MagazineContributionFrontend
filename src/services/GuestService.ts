@@ -4,9 +4,10 @@ import { User } from "../app/MvObjects/user";
 import { MvUrl } from "../app/MvUrl";
 import { IUser } from "../app/Types/objects/user";
 
-export const getAllGuest = async (): Promise<User[]> => {
+export const getAllGuest = async ( options?: {  facultyId?: string; }): Promise<User[]> => {
 
   const queryParams = new URLSearchParams();
+  if (options?.facultyId) queryParams.append("faculty_id", options.facultyId);
   queryParams.append("noPagination", "1");
     const response = await getData(`${MvUrl.GUESTS.INDEX}?${queryParams.toString()}`);
     console.log(response);

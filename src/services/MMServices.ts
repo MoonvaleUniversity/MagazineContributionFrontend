@@ -5,6 +5,7 @@ import { MvUrl } from "../app/MvUrl";
 import { IUser } from "../app/Types/objects/user";
 
 export const getAllManagers = async (): Promise<User[]> => {
+  
     const response = await getData(MvUrl.MANAGERS.INDEX);
     console.log(response);
     return response.data.users.data.map((userData: IUser) => User.fromJSON(userData));

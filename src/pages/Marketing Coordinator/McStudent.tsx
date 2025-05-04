@@ -73,8 +73,7 @@ export const McStudents  = () => {
     try {
       if (editingStudent) {
         await updateStudents(editingStudent.id, { 
-          name: formData.name, 
-          email: formData.email,
+            ...formData
         });
       } else {
         if (userData) {
@@ -172,6 +171,7 @@ export const McStudents  = () => {
                 <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{student.name}</td>
                 <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{student.email}</td>
                 <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{student.faculty_id || "N/A"}</td>
+                <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{student.academicYearId || "N/A"}</td>
                 <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider flex gap-2">
                   <MvButton onClick={() => openModal(student)}>Edit</MvButton>
                   <MvButton 
@@ -206,17 +206,20 @@ export const McStudents  = () => {
         onClose={closeModal}
         title={editingStudent ? "Edit Student" : "Create New Student"}
       >
-        <AccountCreationForm
-          fixedRole="Student"
-          onSubmit={handleStudentAction}
-          {...(error ? { error } : {})} 
-          isSubmitting={isSubmitting}
-          isAcademicYear= {true}
-          initialValues={editingStudent ? {
-            name: editingStudent.name,
-            email: editingStudent.email,
-          } : undefined}
-        />
+      <AccountCreationForm
+  fixedRole="Student"
+  onSubmit={handleStudentAction}
+  {...(error ? { error } : {})}
+  isSubmitting={isSubmitting}
+  isAcademicYear={true}
+  {...(editingStudent && { isFaculty: true })}
+  initialValues={editingStudent ? {
+    name: editingStudent.name,
+    email: editingStudent.email,
+    academic_year_id: editingStudent.academicYearId?.toString(),
+    faculty_id: editingStudent.faculty_id?.toString()
+  } : undefined}
+/>
       </MvModal>
     </MarketingCoordinatorLayout>
   );
