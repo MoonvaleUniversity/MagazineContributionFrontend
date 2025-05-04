@@ -55,6 +55,28 @@ export const MvCard: React.FC<MvCardProps> = ({ contribution, onDelete }) => {
         </div>
       </div>
 
+
+      {/* Content */}
+      <div className="mt-4 space-y-2">
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+          {contribution.name}
+        </h3>
+        
+        <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+          {getFileType(contribution.doc_url) === "PDF" ? (
+            <FaFilePdf className="mr-2 text-red-500" />
+          ) : (
+            <FaFileWord className="mr-2 text-blue-500" />
+          )}
+          <span>{contribution.user.faculty?.name} </span>
+        </div>
+
+        <div className="flex justify-between items-center text-sm">
+          <span className="text-gray-500 dark:text-gray-400">
+            {formatDate(contribution.created_at)}
+          </span>
+          <span className={`px-2 py-1 text-xs font-medium rounded-full ${statusStyles[contribution.is_selected_for_publication]}`}>
+
       {/* Content Section */}
       <div className="p-4 space-y-3">
         {/* Header */}
@@ -70,6 +92,7 @@ export const MvCard: React.FC<MvCardProps> = ({ contribution, onDelete }) => {
           
           <span className={`px-2.5 py-1 text-xs font-medium rounded-full 
                           ${statusStyles[contribution.is_selected_for_publication]}`}>
+
             {contribution.is_selected_for_publication === 1 ? 'Approved' : 
              contribution.is_selected_for_publication === 2 ? 'Rejected' : 'Pending'}
           </span>

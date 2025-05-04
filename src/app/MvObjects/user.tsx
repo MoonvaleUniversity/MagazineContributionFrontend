@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { IUser } from "../Types/objects/user";
 
 
@@ -16,6 +17,7 @@ export class User {
   createdAt: string;
   updatedAt: string;
   role: string;
+  total_views: any;
 
   constructor(data: IUser) {
     this.id = data.id;

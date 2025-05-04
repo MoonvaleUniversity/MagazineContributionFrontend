@@ -10,6 +10,9 @@ import { getFacultyById } from '../../../services/FacultyService';
 import clsx from 'clsx';
 import { FaGrinStars } from 'react-icons/fa';
 
+import UserLastLogin from '../../../pages/Admin/UserLastLogin';
+
+
 interface MvStudentSidebarProps {
   isSidebarOpen: boolean;
   setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -165,8 +168,10 @@ export const MvStudentSidebar: React.FC<MvStudentSidebarProps> = ({
                 </span>
               </p>
               <p className="text-xs text-gray-500 dark:text-gray-400">
-                Last Login Time: <span className="font-medium text-gray-700 dark:text-gray-300">
-                 
+
+               <span className="font-medium text-gray-700 dark:text-gray-300">
+               {UserLastLogin ? <UserLastLogin /> : "..."}
+
                 </span>
               </p>
             </div>

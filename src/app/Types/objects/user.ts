@@ -12,7 +12,12 @@ export interface IUser {
     is_approved?: number
     is_suspended: number;
     version: number;
+
+    last_login: string;
+    
+
     saved_contributions: Contribution[];
+
     created_by: string | null;
     updated_by: string | null;
     created_at: string;

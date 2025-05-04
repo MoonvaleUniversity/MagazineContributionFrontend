@@ -3,6 +3,7 @@
 import { deleteData, getData, postData, putData} from "../app/MvApi";
 import { User } from "../app/MvObjects/user";
 import { MvUrl } from "../app/MvUrl";
+import { IBrowser } from "../app/Types/objects/BrowserTrack";
 import { IUser } from "../app/Types/objects/user";
 
 export const getAllUsers = async (): Promise<User[]> => {
@@ -35,3 +36,55 @@ export const getUser = async (id: number): Promise<IUser> => {
   const response = await getData(MvUrl.SHOW_USER(id));
   return response.data.user as IUser;
 };
+
+export const getMostActiveUsers = async (): Promise<User[]> => {
+  const response = await getData(MvUrl.GET_PAGEVIEW);
+  console.log(response);  
+  return response.data;
+};
+
+export const getMostPageViews = async ()  => {
+  const response = await getData(MvUrl.SHOW_PAGEVIEW);
+  console.log(response);  
+  return response.data;
+};
+
+export const getMostBrowserUse = async ()  => {
+  const response = await getData(MvUrl.GET_BROWSER_TYPE);
+  console.log(response);  
+  return response.data;
+};
+
+export const createBrowser = async (viewData: IBrowser) => {
+  try {
+    const response = await postData(MvUrl.POST_BROWSER_TYPE, viewData);
+    return response.data;
+  } catch (error) {
+    console.error("Error posting browser info:", error);
+  }
+};
+
+export const createPageView = async (viewData: {
+  userId: number;
+  pageName : string;
+  pageId: string;
+  viewCount: number;
+}) => {
+  try {
+    // Convert camelCase keys to snake_case before sending
+    const payload = {
+      user_id: viewData.userId,
+      page_name : viewData.pageName,
+      page_id: viewData.pageId,
+      view_count: viewData.viewCount,
+    };
+
+    console.log(payload)
+
+    const response = await postData(MvUrl.POST_PAGEVIEW, payload);
+    console.log(response)
+    return response.data;
+  } catch (error) {
+    console.error("Error posting page view:", error);
+  }
+}; 

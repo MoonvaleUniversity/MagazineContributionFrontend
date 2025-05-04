@@ -7,6 +7,9 @@ import { FiHome, FiUsers, FiFile, FiUser,  FiMenu, FiX, FiSettings } from "react
 import clsx from "clsx";
 import { FaGrinStars } from "react-icons/fa";
 
+import UserLastLogin from "../../../pages/Admin/UserLastLogin";
+
+
 interface MarketingManagerSidebarProps {
   isSidebarOpen: boolean;
   setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -101,8 +104,12 @@ export const MvMarketingManagerSidebar: React.FC<MarketingManagerSidebarProps> =
                 {userData?.email || 'manager@example.com'}
               </p>
               <p className="text-xs text-gray-500 dark:text-gray-400">
-                Last login: <span className="font-medium text-purple-600 dark:text-violet-400">
-                  {new Date().toLocaleDateString()}
+
+                <span className="font-medium text-purple-600 dark:text-violet-400">
+                {UserLastLogin ? <UserLastLogin /> : "..."}
+
+              
+
                 </span>
               </p>
             </div>

@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect } from "react";
 import { FiArrowLeft, FiThumbsUp, FiThumbsDown, FiBookmark, FiEdit, FiTrash, FiMessageSquare, FiAlertCircle, FiCheckCircle, FiClock } from "react-icons/fi";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { IComment, IContribution } from "../../app/Types/objects/contribution";
 import AdminLayout from "../../layout/AdminLayout";
 import MarketingCoordinatorLayout from "../../layout/MarketingCoordinatorLayout";
@@ -10,9 +11,10 @@ import { getUserData } from "../../services/AuthService";
 import { MvContributionServices } from "../../services/ContributionService";
 import MvHomeLayout from "../../layout/MvHomeLayout";
 import { MvLoader } from "../../components/MvLoader";
-import { getUser } from "../../services/userService";
+import { createPageView, getUser } from "../../services/userService";
 import { MvModal } from "../../components/MvModal";
 import { MvButton } from "../../components/MvButton/MvButton";
+// import { createPageView } from "../../services/userService";
 
 const MvContributionDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -28,6 +30,61 @@ const MvContributionDetailsPage: React.FC = () => {
   const [comments, setComments] = useState<IComment[]>([]);
   const [Layout, setLayout] = useState(() => StudentLayout);
   const userData = getUserData();
+  
+  // const { id } = useParams();
+  const [view_count, setMinutesElapsed] = useState(0);
+  // const location = useLocation();
+  const  name  = contribution.name
+  // console.log(contribution)
+  const ONE_MINUTE = 6000; // 1 minute in milliseconds
+
+  console.log(id)
+
+  // console.log(userData);
+
+    // Track page view time
+    useEffect(() => {
+      console.log(userData?.id, id,)
+      if (!userData || !id ) return; 
+      let view_count = 0;  
+      // console.log(userData,id,name)
+  
+      const intervalId = setInterval(() => {
+        view_count = 1;
+        const viewedKey = "viewed";
+        // Check if already viewed in this session
+        const alreadyViewed = sessionStorage.getItem(viewedKey);
+        // sessionStorage.removeItem(viewedKey);
+        setMinutesElapsed(view_count);
+        try{
+          if(!alreadyViewed){
+            createPageView({
+            userId: userData.id,
+            pageName : name,
+            pageId: id,
+            viewCount: 1,
+          })
+            .then((res) => {
+              console.log("View recorded successfully:", res);
+              sessionStorage.setItem(viewedKey, "true"); // Prevent duplicate views during session
+            })
+            .catch((err) => {
+              console.error("Failed to record view:", err);
+            });
+        } else {
+          console.log("User already viewed this page in this session.");
+        }
+          console.log("Successful Data Post")
+        }catch(error){
+          console.log("Error" , error)
+        }
+      }, ONE_MINUTE);
+  
+  
+      return () => {
+        clearInterval(intervalId);
+      };
+    }, [userData, id]);
 
   useEffect(() => {
     if (userData) {

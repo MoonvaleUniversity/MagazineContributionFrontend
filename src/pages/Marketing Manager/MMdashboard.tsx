@@ -14,6 +14,10 @@ import { getAllStudents } from "../../services/StudentServices";
 import { getAllCoordinators } from "../../services/CoordinatorServices";
 import { User } from "../../app/MvObjects/user";
 
+import { detect } from "detect-browser";
+import { createBrowser } from "../../services/userService";
+import { getUserData } from "../../services/AuthService";
+
 const getFacultyContributions = (
   contributions: IContribution[],
   students: User[],
@@ -42,6 +46,38 @@ export const MmDashboard = () => {
   const [students, setStudents] = useState<User[]>([]);
   const [coordinators, setCoordinators] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+
+
+
+   const browser = detect();
+    const users = getUserData();
+  
+    useEffect(() => {
+      // Check if we've already recorded this browser info
+      const storageKey = "browserTracked";
+      const alreadyTracked = sessionStorage.getItem(storageKey);
+  
+      if (browser && users?.id && !alreadyTracked) {
+        createBrowser({
+          user_id: users?.id,
+          browser_name: browser?.name,
+          browser_version: browser?.version,
+          os: browser?.os,
+        })
+          .then((res) => {
+            console.log("View recorded successfully:", res);
+            // Set a flag in localStorage to indicate we've tracked this browser
+            sessionStorage.setItem(storageKey, "true");
+          })
+          .catch((err) => {
+            console.error("Failed to record view:", err);
+          });
+      } else if (alreadyTracked) {
+        console.log("Browser already tracked for this user");
+      } else {
+        console.log("Could not detect browser.");
+      }
+    }, [browser, users?.id]);
 
   useEffect(() => {
     const loadData = async () => {

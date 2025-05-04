@@ -1,19 +1,33 @@
 
 import { MvButton } from "../../MvButton";
 
+import { getLogout } from "../../../app/MvApi";
+import { MvUrl } from "../../../app/MvUrl";
+
 // Header Component for Marketing Manager (styled like Student)
 export const MvMarketingManagerHeader: React.FC = () => {
+
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const handleLogout = async () => {
+    try{
+      await getLogout(MvUrl.LOGOUT); 
+      // Remove user-related data
+      localStorage.removeItem('userData');
+  localStorage.removeItem('userToken');
+  localStorage.removeItem('username');
+
+  sessionStorage.removeItem('userData');
+  sessionStorage.removeItem('userToken');
+  sessionStorage.removeItem('username'); 
+  sessionStorage.removeItem('viewed') 
+
+      console.log("Successful logout");
+    }catch (error) {
+      console.error('Logout failed:', error);
+    }
+
   // const [searchTerm, setSearchTerm] = useState<string>("");
-  const handleLogout = () => {
-    // Remove user-related data
-    localStorage.removeItem('userData');
-    localStorage.removeItem('userToken');
-    localStorage.removeItem('username');
-  
-    sessionStorage.removeItem('userData');
-    sessionStorage.removeItem('userToken');
-    sessionStorage.removeItem('username');
-  
+ 
     // Redirect to login page
     window.location.href = '/';
   };
