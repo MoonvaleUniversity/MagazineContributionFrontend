@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect } from "react";
 import { IContribution } from "../../app/Types/objects/contribution";
 import { MvContributionServices } from "../../services/ContributionService";
@@ -12,6 +13,8 @@ import MarketingManagerLayout from "../../layout/MarketingManagerLayout";
 import MvHomeLayout from "../../layout/MvHomeLayout";
 import StudentLayout from "../../layout/StudentLayout";
 
+import { createPageView } from "../../services/userService";
+import { useLocation, useParams } from "react-router-dom";
 
 export const MvGlobalContributions = () => {
   const [contributions, setContributions] = useState<IContribution[]>([]);
@@ -20,6 +23,60 @@ export const MvGlobalContributions = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [Layout, setLayout] = useState(() => StudentLayout);
   const [facultyId, setFacultyId] = useState<string |number | null>(null);
+  
+
+
+  const userData = getUserData();
+  const { pageId } = useParams();
+  const [view_count, setMinutesElapsed] = useState(0);
+
+  const location = useLocation();
+  const { name } = location.state || {};
+  const ONE_MINUTE = 6000; // 1 minute in milliseconds
+
+  // Track page view time
+  useEffect(() => {
+    // console.log(userData?.id, pageId)
+    if (!userData || !pageId || !name) return; 
+    let view_count = 0;  
+    // console.log(userData,pageId,name)
+
+    const intervalId = setInterval(() => {
+      view_count = 1;
+      const viewedKey = `viewed_${userData.id}_${pageId}`;
+      // Check if already viewed in this session
+      const alreadyViewed = sessionStorage.getItem(viewedKey);
+      sessionStorage.removeItem(viewedKey);
+      setMinutesElapsed(view_count);
+      try{
+        if(!alreadyViewed){
+          createPageView({
+          userId: userData.id,
+          pageName : name,
+          pageId: pageId,
+          viewCount: 1,
+        })
+          .then((res) => {
+            console.log("View recorded successfully:", res);
+            sessionStorage.setItem(viewedKey, "true"); // Prevent duplicate views during session
+          })
+          .catch((err) => {
+            console.error("Failed to record view:", err);
+          });
+      } else {
+        console.log("User already viewed this page in this session.");
+      }
+        console.log("Successful Data Post")
+      }catch(error){
+        console.log("Error" , error)
+      }
+    }, ONE_MINUTE);
+
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [userData, pageId]);
 
   useEffect(() => {
     // Get user data and set layout

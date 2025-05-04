@@ -17,23 +17,23 @@ export const MvUrl = {
   UPDATE_CLOSURE: (id: number) => `${API_BASE_URL}/closure-dates/${id}`,
   DELETE_CLOSURE: (id: number) => `${API_BASE_URL}/closure-dates/${id}`,
 
-   // Contributions
-   CONTRIBUTIONS: {
-    INDEX: `${API_BASE_URL}/contributions`,
-    STORE: `${API_BASE_URL}/contributions`,
-    SHOW: (id: number) => `${API_BASE_URL}/contributions/${id}`,
-    UPDATE: (id: number) => `${API_BASE_URL}/contributions/${id}`,
-    DESTROY: (id: number) => `${API_BASE_URL}/contributions/${id}`,
-    DOWNLOAD: (id: number) => `${API_BASE_URL}/download/${id}`,
-    PUBLISH: (id: number) => `${API_BASE_URL}/published/${id}`,
-    EMAIL_AUTO: `${API_BASE_URL}/emailAuto`,
-    COMMENT: (id: number) => `${API_BASE_URL}/contributions/${id}/comment`,
-    DELETE_COMMENT: (id: number) => `${API_BASE_URL}/contributions/${id}/delete-comment`,
-    GET_COMMENT: (id: number) => `${API_BASE_URL}/contributions/${id}/get-comment`,
-    REVIEW: (id: number) => `${API_BASE_URL}/contributions/${id}/review`,
-    SAVE: (id: number) => `${API_BASE_URL}/contributions/${id}/save`,
-    VOTE: (id: number) => `${API_BASE_URL}/contributions/${id}/vote`,
-  },
+     // Contributions
+     CONTRIBUTIONS: {
+      INDEX: `${API_BASE_URL}/contributions`,
+      STORE: `${API_BASE_URL}/contributions`,
+      SHOW: (id: number) => `${API_BASE_URL}/contributions/${id}`,
+      UPDATE: (id: number) => `${API_BASE_URL}/contributions/${id}`,
+      DESTROY: (id: number) => `${API_BASE_URL}/contributions/${id}`,
+      DOWNLOAD: (id: number) => `${API_BASE_URL}/download/${id}`,
+      PUBLISH: (id: number) => `${API_BASE_URL}/published/${id}`,
+      EMAIL_AUTO: `${API_BASE_URL}/emailAuto`,
+      COMMENT: (id: number) => `${API_BASE_URL}/contributions/${id}/comment`,
+      DELETE_COMMENT: (id: number) => `${API_BASE_URL}/contributions/${id}/delete-comment`,
+      GET_COMMENT: (id: number) => `${API_BASE_URL}/contributions/${id}/get-comment`,
+      REVIEW: (id: number) => `${API_BASE_URL}/contributions/${id}/review`,
+      SAVE: (id: number) => `${API_BASE_URL}/contributions/${id}/save`,
+      VOTE: (id: number) => `${API_BASE_URL}/contributions/${id}/vote`,
+    },
  // Add new Creative Sparks section
  CREATIVE_SPARKS: {
   INDEX: `${API_BASE_URL}/creative-sparks`,
@@ -105,5 +105,17 @@ export const MvUrl = {
     DESTROY: (id: number) => `${API_BASE_URL}/guests/${id}`,
     APPROVE: (id: number) => `${API_BASE_URL}/guests/${id}/approve`,
   },
+
+    //Logout 
+    LOGOUT : `${API_BASE_URL}/logout`,
+
+    //Page View
+    GET_PAGEVIEW: `${API_BASE_URL}/page-views`,
+    POST_PAGEVIEW : `${API_BASE_URL}/page-views`,
+    SHOW_PAGEVIEW : `${API_BASE_URL}/most-visited-pages`,
+  
+    //Browser
+    GET_BROWSER_TYPE : `${API_BASE_URL}/browser_tracks`,
+    POST_BROWSER_TYPE : `${API_BASE_URL}/browser_tracks`,
 
 };

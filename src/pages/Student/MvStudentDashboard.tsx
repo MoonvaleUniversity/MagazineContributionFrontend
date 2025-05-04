@@ -8,6 +8,10 @@ import { MvContributionServices } from "../../services/ContributionService";
 import { useNavigate } from "react-router-dom";
 import { MvButton } from "../../components/MvButton";
 
+import { detect } from "detect-browser";
+import { createBrowser } from "../../services/userService";
+import { getUserData } from "../../services/AuthService";
+
 export const MvStudentDashboard = () => {
   const [allSubmissions, setAllSubmissions] = useState<IContribution[]>([]);
   const [recentSubmissions, setRecentSubmissions] = useState<IContribution[]>([]);
@@ -46,6 +50,37 @@ export const MvStudentDashboard = () => {
     
     loadData();
   }, []);
+
+
+   const browser = detect();
+    const users = getUserData();
+  
+    useEffect(() => {
+      // Check if we've already recorded this browser info
+      const storageKey = "browserTracked";
+      const alreadyTracked = sessionStorage.getItem(storageKey);
+  
+      if (browser && users?.id && !alreadyTracked) {
+        createBrowser({
+          user_id: users?.id,
+          browser_name: browser?.name,
+          browser_version: browser?.version,
+          os: browser?.os,
+        })
+          .then((res) => {
+            console.log("View recorded successfully:", res);
+            // Set a flag in localStorage to indicate we've tracked this browser
+            sessionStorage.setItem(storageKey, "true");
+          })
+          .catch((err) => {
+            console.error("Failed to record view:", err);
+          });
+      } else if (alreadyTracked) {
+        console.log("Browser already tracked for this user");
+      } else {
+        console.log("Could not detect browser.");
+      }
+    }, [browser, users?.id]);
 
   // Status calculation using ALL submissions
   const approvedCount = allSubmissions.filter(c => c.is_selected_for_publication === 1).length;
@@ -182,6 +217,7 @@ export const MvStudentDashboard = () => {
               <div 
               key={submission.id}
               onClick={() => navigate("/contributions/"+submission.id)}
+              // onClick={()=>navigate(`${MvRoutes.CONTRIBUTION}/${submission.id}`)}
               className="flex gap-4 p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow"
             >
               {/* Image Section */}

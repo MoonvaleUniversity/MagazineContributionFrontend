@@ -33,6 +33,10 @@ import { AdminProfileEdit } from "./pages/Admin/AdminProfile";
 import GuestDashboard from "./pages/Guest/GuestDashboard";
 import { MvGlobalContributions } from "./components/MvContributions/publishedContributions";
 import { MvCreativeSparksPage } from "./pages/CreativeSparks";
+import MostActiveUsers from "./pages/Admin/MostActiveUsers";
+import MostPageView from "./pages/Admin/MostPageView";
+import MostBrowserUse from "./pages/Admin/MostBrowserUse";
+import UserLastLogin from "./pages/Admin/UserLastLogin";
 
 
 
@@ -53,7 +57,7 @@ function App() {
         <Route path={MvRoutes.CANVAS_CORNER} element={ <CanvasCorner/>} />
         
         <Route 
-  path={MvRoutes.CONTRIBUTION_DETAILS} 
+  path={`${MvRoutes.CONTRIBUTION_DETAILS}`} 
   element={
     <ProtectedRoute roles={['Student',"Guest", 'Admin', 'Marketing Coordinator', 'Marketing Manager']}>
       <MvContributionDetailsPage />
@@ -133,6 +137,26 @@ function App() {
         <Route path={MvRoutes.ADMIN.CONTRIBUTION} element={
           <ProtectedRoute roles={['Admin']}>
             <AdminSubmissionsView/>
+          </ProtectedRoute>
+        } />
+        <Route path={MvRoutes.ADMIN.MOST_ACTIVE_USER} element={
+          <ProtectedRoute roles={['Admin']}>
+            <MostActiveUsers/>
+          </ProtectedRoute>
+        } />
+        <Route path={MvRoutes.ADMIN.PAGE} element={
+          <ProtectedRoute roles={['Admin']}>
+            <MostPageView/>
+          </ProtectedRoute>
+        } />
+         <Route path={MvRoutes.ADMIN.BROWSER_TRACK} element={
+          <ProtectedRoute roles={['Admin']}>
+            <MostBrowserUse/>
+          </ProtectedRoute>
+        } />
+         <Route path={MvRoutes.ADMIN.USER_ACTIVITIES} element={
+          <ProtectedRoute roles={['Admin']}>
+            <UserLastLogin/>
           </ProtectedRoute>
         } />
           {/* Marketing Manager-specific routes */}

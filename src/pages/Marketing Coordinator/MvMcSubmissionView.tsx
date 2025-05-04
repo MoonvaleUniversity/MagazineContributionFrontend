@@ -20,35 +20,56 @@ export const McSubmissionsView = () => {
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [selectedSubmission, setSelectedSubmission] = useState<string | null>(null);
   const [reviewContent, setReviewContent] = useState("");
-  const [pendingStatus, setPendingStatus] = useState<1 | 2 | null>(null);
 
-  // Approval Confirmation Modal
-  const handleStatusChange = async (id: string, newStatus: 1 | 2) => {
-    setSelectedSubmission(id);
-    setPendingStatus(newStatus);
-    setShowApprovalModal(true);
-  };
+// Update the handleStatusChange and confirmApproval functions
+const handleStatusChange = async (id: string) => {
+  setSelectedSubmission(id);
+  setShowApprovalModal(true);
+};
 
-  const confirmApproval = async () => {
-    if (!selectedSubmission || !pendingStatus) return;
+const confirmApproval = async () => {
+  if (!selectedSubmission) return;
+  
+  try {
+    // Call the publish endpoint
+    await MvContributionServices.publishContribution(selectedSubmission);
     
-    try {
-      await MvContributionServices.publishContribution(selectedSubmission);
-      setAllSubmissions(prev => prev.map(sub => 
-        sub.id === selectedSubmission ? { 
-          ...sub, 
-          is_selected_for_publication: pendingStatus 
-        } : sub
-      ));
-    } catch (error) {
-      console.error("Error updating status:", error);
-    } finally {
-      setShowApprovalModal(false);
-      setSelectedSubmission(null);
-      setPendingStatus(null);
-    }
-  };
+    // Update local state
+    setAllSubmissions(prev => prev.map(sub => 
+      sub.id.toString() === selectedSubmission ? { 
+        ...sub, 
+        is_selected_for_publication: 1 // Set to approved status
+      } : sub
+    ));
+  } catch (error) {
+    console.error("Error updating status:", error);
+  } finally {
+    setShowApprovalModal(false);
+    setSelectedSubmission(null);
+  }
+};
+ // Calculate days since submission
+ const getDaysPending = (createdAt: string) => {
+  const createdDate = Date.parse(createdAt);
+  const diffTime = Date.now() - createdDate;
+  return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+};
 
+const getStatus = (contribution: IContribution) => {
+  if (contribution.is_selected_for_publication === 1) return 'approved';
+  const daysPending = getDaysPending(contribution.created_at);
+  return daysPending > 14 ? 'pending-overdue' : 'pending';
+};
+const calculateStats = () => {
+  const stats = { approved: 0, pending: 0, overdue: 0 };
+  allSubmissions.forEach(sub => {
+    const status = getStatus(sub);
+    if (status === 'approved') stats.approved++;
+    if (status === 'pending') stats.pending++;
+    if (status === 'pending-overdue') stats.overdue++;
+  });
+  return stats;
+};
   // Review Functionality
   const handleReviewInit = (id: string) => {
     setSelectedSubmission(id);
@@ -75,24 +96,11 @@ export const McSubmissionsView = () => {
     }
   };
 
-  const calculateStats = () => {
-    const stats = { approved: 0, pending: 0, rejected: 0 };
-    allSubmissions.forEach(sub => {
-      const status = getStatus(sub);
-      stats[status]++;
-    });
-    return stats;
-  };
-
-  const getStatus = (contribution: IContribution) => {
-    if (contribution.is_selected_for_publication === 1) return 'approved';
-    if (contribution.is_selected_for_publication === 2) return 'rejected';
-    return 'pending';
-  };
 
   const filteredSubmissions = allSubmissions.filter(submission => {
     const matchesSearch = submission.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === "all" || getStatus(submission) === statusFilter;
+    const status = getStatus(submission);
+    const matchesStatus = statusFilter === "all" || status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
@@ -154,14 +162,13 @@ export const McSubmissionsView = () => {
   return (
     <MarketingCoordinatorLayout>
       <div className="max-w-6xl mx-auto p-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <MvStats title="Total Submissions" value={allSubmissions.length} trend="neutral" />
+        <div className="grid grid-cols-1 lg:grid-cols-4 md:grid-cols-2  gap-4 mb-6">
+        <MvStats title="Total Submissions" value={allSubmissions.length} trend="neutral" />
           <MvStats title="Approved" value={calculateStats().approved} trend="positive" />
-          <MvStats title="Pending" value={calculateStats().pending} trend="neutral" />
-          <MvStats title="Rejected" value={calculateStats().rejected} trend="negative" />
-        </div>
+          <MvStats title="Pending (<14 days)" value={calculateStats().pending} trend="neutral" />
+          <MvStats title="Pending (>14 days)" value={calculateStats().overdue} trend="negative" /> </div>
 
-        <SearchFilter
+          <SearchFilter
           placeholder="Search submissions..."
           onSearch={handleSearch}
           onFilterChange={handleFilterChange}
@@ -170,9 +177,9 @@ export const McSubmissionsView = () => {
             label: "Status",
             options: [
               { value: "all", label: "All" },
-              { value: "pending", label: "Pending" },
-              { value: "approved", label: "Approved" },
-              { value: "rejected", label: "Rejected" }
+              { value: "pending", label: "Pending (<14 days)" },
+              { value: "pending-overdue", label: "Pending (>14 days)" },
+              { value: "approved", label: "Approved" }
             ]
           }]}
           className="my-4"
@@ -181,7 +188,7 @@ export const McSubmissionsView = () => {
         <MvContributionTable
           contributions={currentSubmissions}
           onDelete={(id) => handleDelete(id.toString())}
-          onStatusChange={(id, status) => handleStatusChange(id.toString(), status)}
+          onStatusChange={(id) => handleStatusChange(id.toString())}
           onReview={handleReviewInit}
           isMarketingCoordinator
         />

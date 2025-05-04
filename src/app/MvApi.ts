@@ -1,5 +1,7 @@
+/* eslint-disable no-useless-catch */
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 import { UNSAFE_createBrowserHistory } from "react-router-dom";
+import { MvUrl } from "./MvUrl";
 
 const history = UNSAFE_createBrowserHistory();
 console.log(history);
@@ -149,4 +151,41 @@ export const updateMultimedia = async <T>(url: string, data: FormData): Promise<
       }
       throw error; // Re-throw the error if you want to handle it later
     }
+  };
+
+  export const getLogout = async (url:string) => {
+    localStorage.removeItem('userData');
+    localStorage.removeItem('userToken');
+    localStorage.removeItem('username');
+    
+    sessionStorage.removeItem('userData');
+    sessionStorage.removeItem('userToken');
+    sessionStorage.removeItem('username');
+    
+    sessionStorage.removeItem('browserTracked') 
+  try {
+    const response = await api.get(url);
+    return response;
+} catch (error) {
+    throw error;  
+}
+}
+
+interface PageViewParams {
+    userId: string;
+    pageId?: string; // Optional since we can get it from location
+    timeSpent: number;
+    minuteCounter: number;
+  }
+  
+  export const recordPageView = ({ userId, pageId, timeSpent, minuteCounter } : PageViewParams) => {
+    return api.post('/page-view', {
+      user_id: userId,
+      page_id: pageId,
+      time_spent: timeSpent,
+      minute_counter: minuteCounter
+    });
+  };
+export const getViewedPages = () => {
+    return api.get(MvUrl.GET_USERS);
   };

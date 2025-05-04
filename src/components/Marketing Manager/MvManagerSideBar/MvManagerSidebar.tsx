@@ -1,120 +1,115 @@
-import { FiHome, FiUsers, FiFile, FiUser,  FiChevronDown, FiMenu, FiX } from "react-icons/fi";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { MvButton } from "../../MvButton";
 import MvRoutes from "../../../app/MvRoutes";
 import { getUserData } from "../../../services/AuthService";
+import { FiHome, FiUsers, FiFile, FiUser,  FiMenu, FiX, FiSettings } from "react-icons/fi";
+import clsx from "clsx";
+import { FaGrinStars } from "react-icons/fa";
+import UserLastLogin from "../../../pages/Admin/UserLastLogin";
 
 interface MarketingManagerSidebarProps {
   isSidebarOpen: boolean;
   setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const MvMarketingManagerSidebar: React.FC<MarketingManagerSidebarProps> = ({ isSidebarOpen, setIsSidebarOpen }) => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-const [userData, setUserData] = useState<{ name?: string; email?: string } | null>(null);
+export const MvMarketingManagerSidebar: React.FC<MarketingManagerSidebarProps> = ({ 
+  isSidebarOpen, 
+  setIsSidebarOpen 
+}) => {
+
+  const [userData, setUserData] = useState<{ name?: string; email?: string } | null>(null);
 
   useEffect(() => {
-    setUserData(getUserData())
+    setUserData(getUserData());
   }, []);
+
   const navItems = [
-    { icon: <FiHome />, label: "Dashboard", to:  MvRoutes.MARKET_MANAGER.DASHBOARD },
-    { icon: <FiUsers />, label: "Faculties", to:  MvRoutes.MARKET_MANAGER.FACULTY },
-    { icon: <FiFile />, label: "Selected Contributions", to: MvRoutes.MARKET_MANAGER.SELECTED_CONTRIBUTIONS},
+    { icon: <FiHome />, label: "Dashboard", to: MvRoutes.MARKET_MANAGER.DASHBOARD },
+    { icon: <FiUsers />, label: "Faculties", to: MvRoutes.MARKET_MANAGER.FACULTY },
+    { icon: <FiFile />, label: "Contributions", to: MvRoutes.MARKET_MANAGER.SELECTED_CONTRIBUTIONS },
     { icon: <FiUsers />, label: "Users", to: MvRoutes.MARKET_MANAGER.USERS },
     { icon: <FiUser />, label: "Profile", to: MvRoutes.MARKET_MANAGER.PROFILE_EDIT },
+    { icon: <FaGrinStars />, label: 'Explore Contributions', to: MvRoutes.PUBLIC_CONTRIBUTION },
   ];
-
-  // Set a random last login time within the last 24 hours
-  const lastLogin = new Date();
-  lastLogin.setHours(lastLogin.getHours() - Math.floor(Math.random() * 24));
 
   return (
     <div className="relative">
-      {/* Toggle Button for Small Screens */}
+      {/* Mobile Toggle Button */}
       <MvButton
         size="sm"
-        className="fixed py-3 z-50 text-white transition-all left-2 rounded-4xl top-2 lg:hidden"
-        variant="secondary"
+        className="fixed z-50 pt-2 text-white transition-all shadow-lg lg:hidden left-4 top-4 rounded-4xl bg-purple-500 hover:bg-purple-600"
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        aria-label="Toggle sidebar"
       >
-        {isSidebarOpen ? <FiX className="w-6 h-6" /> : <FiMenu className="w-6 h-6" />}
+        {isSidebarOpen ? <FiX className="w-5 h-5" /> : <FiMenu className="w-5 h-5" />}
       </MvButton>
 
-      {/* Sidebar */}
+      {/* Sidebar Container */}
       <div
-        className={`absolute top-0 left-0 w-64 h-screen p-4 text-black dark:text-white border-r border-primary-500 bg-secondary-400 dark:bg-secondary-dark-600 dark:border-primary-dark-500 transition-transform duration-300 ease-in-out z-30 ${
-          isSidebarOpen ? "transform-none" : "max-lg:hidden"
-        } lg:block`}
+        className={clsx(
+          "fixed top-0 left-0 w-64 h-screen p-6 bg-gradient-to-b",
+          "from-purple-50 to-violet-50 dark:from-gray-800 dark:to-gray-900",
+          "border-r border-violet-100 dark:border-gray-700 shadow-xl transition-all duration-300 z-40",
+          isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        )}
       >
-        {/* Sidebar Header / Title */}
-        <div className="flex justify-center mb-8">
-          <span className="text-xl font-bold">Marketing Manager</span>
+        {/* Header Section */}
+        <div className="flex items-center mb-12 space-x-3">
+          <div className="p-2 bg-purple-500 rounded-lg shadow-md">
+            <FiSettings className="w-6 h-6 text-white" />
+          </div>
+          <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent">
+            Manager
+          </span>
         </div>
 
-        {/* Navigation Links */}
-        <nav className="space-y-2">
+        {/* Navigation Menu */}
+        <nav className="space-y-1.5">
           {navItems.map((item, index) => (
             <NavLink
               key={index}
               to={item.to}
               className={({ isActive }) =>
-                `flex items-center space-x-4 p-2 rounded-4xl ${
+                clsx(
+                  "flex items-center space-x-4 p-3 rounded-2xl transition-all",
+                  "hover:bg-white hover:shadow-md dark:hover:bg-gray-800",
                   isActive
-                    ? "bg-secondary-600 text-black font-bold"
-                    : "text-primary-800 hover:bg-secondary-600 dark:text-secondary-dark-200 dark:hover:bg-secondary-dark-700"
-                }`
+                    ? "bg-white shadow-md dark:bg-gray-800 text-purple-600 dark:text-violet-400"
+                    : "text-gray-600 dark:text-gray-300"
+                )
               }
             >
-              <span className="text-lg">{item.icon}</span>
-              <span className="text-md">{item.label}</span>
+              <span className={clsx(
+                "text-lg",
+             "text-purple-500 dark:text-violet-400" , "text-gray-400 dark:text-gray-500"
+              )}>
+                {item.icon}
+              </span>
+              <span className="text-sm font-medium">{item.label}</span>
             </NavLink>
           ))}
         </nav>
 
-        {/* Dropdown for Settings */}
-        <div className="pt-4 mt-8 border-t border-primary-500 dark:border-primary-dark-500">
-          <div
-            className="flex items-center justify-between p-3 text-primary-800 dark:text-primary-dark-200 cursor-pointer"
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          >
-            <span>Settings</span>
-            <FiChevronDown
-              className={`text-primary-800 font-bold dark:text-primary-dark-500 transition-transform ${
-                isDropdownOpen ? "rotate-180" : ""
-              }`}
-            />
-          </div>
-          {isDropdownOpen && (
-            <div className="pl-4 text-gray-600 dark:text-primary-dark-200">
-              <div className="p-2 rounded-4xl hover:bg-secondary-200 dark:hover:bg-secondary-dark-700">General</div>
-              <div className="p-2 rounded-4xl hover:bg-secondary-200 dark:hover:bg-secondary-dark-700">Account</div>
-             
-            </div>
-          )}
-        </div>
-
-        {/* User Profile Info */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-300 dark:border-primary-dark-500">
-        <div className="flex items-center space-x-3">
-            <img
-              src="/src/Assets/images/404.jpeg"
-              alt="Student avatar"
-              className="w-10 h-10 rounded-full"
-            />
-            <div>
-              <p className="text-sm font-medium">{userData?.name || 'Unknown User'}</p>
-              <p className="text-xs dark:text-primary-dark-200">{userData?.email || 'student@example.com'}</p>
-              <p className="text-xs text-gray-500 dark:text-primary-dark-300">
-              Last login: 
+        {/* User Profile Section */}
+        <div className="absolute bottom-0 left-0 right-0 p-6 bg-violet-50 dark:bg-gray-800 border-t border-violet-100 dark:border-gray-700">
+          <div className="flex items-center space-x-3">
+          
+            <div className="flex-1">
+              <p className="text-md font-medium text-gray-700 dark:text-gray-200 ">
+                {userData?.name || 'Marketing Manager'}
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                {userData?.email || 'manager@example.com'}
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                <span className="font-medium text-purple-600 dark:text-violet-400">
+                {UserLastLogin ? <UserLastLogin /> : "..."}
+                </span>
               </p>
             </div>
-          
           </div>
         </div>
       </div>
     </div>
   );
 };
-

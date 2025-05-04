@@ -10,6 +10,7 @@ export interface IUser {
     email_verified_at: string;
     is_suspended: number;
     version: number;
+    last_login: string;
     saved_contributions: IContribution[];
     created_by: string | null;
     updated_by: string | null;

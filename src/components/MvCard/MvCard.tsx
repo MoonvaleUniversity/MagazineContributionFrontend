@@ -118,7 +118,7 @@ export const MvCard: React.FC<MvCardProps> = ({
           ) : (
             <FaFileWord className="mr-2 text-blue-500" />
           )}
-          <span>{contribution.user.faculty.name} </span>
+          <span>{contribution.user.faculty?.name} </span>
         </div>
 
         <div className="flex justify-between items-center text-sm">

@@ -7,8 +7,13 @@ import AdminLayout from "../../layout/AdminLayout";
 import { MvContributionServices } from "../../services/ContributionService";
 import { getAllUsers } from "../../services/userService";
 import { getAllFaculties } from "../../services/FacultyService";
+import MostBrowserUse from "./MostBrowserUse";
+// import BrowserTrack from "../BrowserTrack";
+import { detect } from "detect-browser";
+import { createBrowser } from "../../services/userService";
+import { getUserData } from "../../services/AuthService";
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+// const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 interface ProcessedData {
   totalUsers: number;
@@ -45,6 +50,37 @@ export const AdminDashboard = () => {
     activeUsers: []
   });
 
+
+   const browser = detect();
+    const users = getUserData();
+  
+    useEffect(() => {
+      // Check if we've already recorded this browser info
+      const storageKey = "browserTracked";
+      const alreadyTracked = sessionStorage.getItem(storageKey);
+  
+      if (browser && users?.id && !alreadyTracked) {
+        createBrowser({
+          user_id: users?.id,
+          browser_name: browser?.name,
+          browser_version: browser?.version,
+          os: browser?.os,
+        })
+          .then((res) => {
+            console.log("View recorded successfully:", res);
+            // Set a flag in localStorage to indicate we've tracked this browser
+            sessionStorage.setItem(storageKey, "true");
+          })
+          .catch((err) => {
+            console.error("Failed to record view:", err);
+          });
+      } else if (alreadyTracked) {
+        console.log("Browser already tracked for this user");
+      } else {
+        console.log("Could not detect browser.");
+      }
+    }, [browser, users?.id]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -61,7 +97,7 @@ export const AdminDashboard = () => {
         // Process faculty data
         const facultyStats = faculties.map(faculty => {
           const facultyContribs = contributions.filter(c => 
-            c.user.faculty.id === faculty.id
+            c.user.faculty?.id === faculty.id
           );
           
           return {
@@ -137,6 +173,8 @@ export const AdminDashboard = () => {
   if (loading) return <MvLoader />;
 
   return (
+    <>
+    {/* <BrowserTrack/> */}
     <AdminLayout>
       <div className="max-w-7xl mx-auto px-4 py-6">
         {/* Key Metrics */}
@@ -261,7 +299,7 @@ export const AdminDashboard = () => {
          <div className="bg-white p-4 rounded-lg shadow dark:bg-gray-800">
             <h3 className="text-lg font-semibold mb-4 dark:text-white">Browser Usage</h3>
             <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
+              {/* <PieChart>
                 <Pie
                   data={processedData.browserUsage}
                   cx="50%"
@@ -278,7 +316,8 @@ export const AdminDashboard = () => {
                 </Pie>
                 <Tooltip />
                 <Legend />
-              </PieChart>
+              </PieChart> */}
+              <MostBrowserUse/>
             </ResponsiveContainer>
          </div>
      
@@ -355,6 +394,6 @@ export const AdminDashboard = () => {
           </div>
         </div>
       </div>
-    </AdminLayout>
+    </AdminLayout></>
   );
 };
