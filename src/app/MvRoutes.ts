@@ -9,14 +9,15 @@ const MvRoutes = {
   CANVAS_CORNER: "/canvas-corner",
   CREATIVE_SPARKS: "/creative-sparks",
 
-  PUBLIC_CONTRIBUTION:"published-contributions",
-  CONTRIBUTION_DETAILS: `/contributions/:id`,
+  PUBLIC_CONTRIBUTION:"/published-contributions",
+  CONTRIBUTION_DETAILS: `/contributions/`,
 
 
   STUDENTS: {
     DASHBOARD: "/students/dashboard",
     SUBMISSIONS: "/students/submissions",
-    CONTRIBUTION_FORM: "/students/contribution-form",
+    CONTRIBUTION_FORM: "/students/contribution-form/:id?",
+
     PROFILE_EDIT: "/students/profile-edit",
     CONTRIBUTION_ID: "/students/contributions/:id",
     CONTRIBUTION: "/students/contributions",

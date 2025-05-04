@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { MvButton } from "../../MvButton";
 import { MvInput, MvFileUpload, MvCheckbox } from "../../MvInput";
 import { MvModal } from "../../MvModal";
@@ -7,155 +7,213 @@ import { getUserData } from "../../../services/AuthService";
 import { MvLoader } from "../../MvLoader";
 import { MvTermsAndConditions } from "../../MvToC";
 import { getClosureDatebyAcademicYear } from "../../../services/ClosureDateService";
+import { useParams, useNavigate } from "react-router-dom";
 
 export const MvContributionForm: React.FC = () => {
   const [title, setTitle] = useState("");
-
   const [document, setDocument] = useState<File | null>(null);
   const [images, setImages] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
-  // Document preview modal state
   const [isDocModalOpen, setIsDocModalOpen] = useState(false);
   const [docPreviewContent, setDocPreviewContent] = useState<string | null>(null);
+  const [existingDocUrl, setExistingDocUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const isEditMode = !!id;
 
- 
-const handleFilesSelect = (selectedFiles: File[]) => {
-  // Process all files to separate images and document
-  const newImages: File[] = [];
-  let newDocument: File | null = null;
-  let errorMessage: string | null = null;
+  const [existingImages, setExistingImages] = useState<Array<{id: number, url: string}>>([]);
+  const [imagesToDelete, setImagesToDelete] = useState<number[]>([]);
 
-  // First pass: Validate files
-  for (const file of selectedFiles) {
-    if (file.type.startsWith("image/")) {
-      if (newImages.length >= 5) {
-        errorMessage = "Maximum 5 images allowed";
-        break;
+  useEffect(() => {
+    const loadContributionData = async () => {
+      if (isEditMode && id) {
+        try {
+          const contribution = await MvContributionServices.getContributionById(id);
+          setTitle(contribution.name);
+          setExistingDocUrl(contribution.doc_url);
+          // Store both ID and URL for existing images
+          setExistingImages(contribution.image_url.map(img => ({
+            id: img.id,
+            url: img.image_url
+          })) || []);
+        } catch (error) {
+          console.error("Failed to load contribution:", error);
+        
+        }
       }
-      newImages.push(file);
-    } else if (file.type.startsWith("application/")) {
-      if (newDocument) {
-        errorMessage = "Only one document allowed";
-        break;
+    };
+    loadContributionData();
+  }, [id, isEditMode, navigate]);
+
+  const handleFilesSelect = (selectedFiles: File[]) => {
+    const newImages: File[] = [];
+    let newDocument: File | null = null;
+    let errorMessage: string | null = null;
+
+    for (const file of selectedFiles) {
+      if (file.type.startsWith("image/")) {
+        if (newImages.length >= 5) {
+          errorMessage = "Maximum 5 images allowed";
+          break;
+        }
+        newImages.push(file);
+      } else if (file.type === "application/pdf" || 
+                 file.type === "application/msword" || 
+                 file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+        if (newDocument) {
+          errorMessage = "Only one document allowed";
+          break;
+        }
+        newDocument = file;
       }
-      newDocument = file;
     }
-  }
 
-  if (errorMessage) {
-    setError(errorMessage);
-    return;
-  }
+    if (errorMessage) {
+      setError(errorMessage);
+      return;
+    }
 
-  // Update states with complete list
-  setError(null);
-  setDocument(newDocument);
-  setImages(newImages);
-};
-   
-  
+    setError(null);
+    if (newDocument) setDocument(newDocument);
+    if (newImages.length > 0) setImages(prev => [...prev, ...newImages]);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(images);
 
+    // Validation
     if (!title.trim()) {
       setError("Please enter a title.");
       return;
     }
-    if (!document) {
+
+    if (!isEditMode && !document) {
       setError("Please upload a document.");
       return;
     }
-    if (images.length === 0) {
+
+    if (!isEditMode && images.length === 0) {
       setError("Please upload at least one image.");
       return;
     }
+
     if (!termsAccepted) {
       setError("Please accept the Terms and Conditions.");
       return;
     }
 
-    setError(null);
     setIsSubmitting(true);
     try {
-      
-      let closureDateId = 0;
-      let userId = 0;
-      let academicId = 0;
       const userData = getUserData();
-      
-      if (userData) {
-        try {
-          
-          userId = userData?.id || 0;
-          academicId = userData?.academic_year_id|| 0;
-          const closuredata = await getClosureDatebyAcademicYear(academicId.toString());
-          closureDateId = closuredata[0]?.id || 0;
-          console.log(academicId);
-        } catch (error) {
-          console.error('Error parsing userData:', error);
-        }
+      if (!userData) throw new Error("Authentication required");
+
+      if (isEditMode && id) {
+        await MvContributionServices.updateContribution(
+          Number(id),
+          {
+            name: title,
+            delete_images: imagesToDelete // Send only IDs of images to delete
+          },
+          {
+            doc: document || undefined,
+            images: images.length > 0 ? images : undefined
+          }
+        );
+        alert("Contribution updated successfully!");
+      } else {
+        // Create new contribution
+        const academicId = userData.academic_year_id || 0;
+        const closureData = await getClosureDatebyAcademicYear(academicId.toString());
+        const closureDateId = closureData[0]?.id || 0;
+
+        await MvContributionServices.createContribution(
+          userData.id,
+          closureDateId,
+          title,
+          document!,
+          images
+        );
+        alert("Contribution submitted successfully!");
       }
 
-      await MvContributionServices.createContribution(
-        userId,
-        closureDateId,
-        title,
-        document,
-        images
-      );
-
-      alert("Contribution submitted successfully!");
-      
-      // Reset form
-      setTitle("");
-    
-      setDocument(null);
-      setImages([]);
-      setTermsAccepted(false);
-      setIsSubmitting(false);
+      // Reset form and redirect
+      resetForm();
+      navigate("/submissions");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error : any) {
-      console.log(error?.response.data.message );
-      if( error?.response.data.message   === "You already created this contribution.") {
-        setError("You have already created contribution with the same title");
-        setIsSubmitting(false);
-        
-        return
-        
-      }
-      console.error("Error submitting contribution:", error);
-      setError("An error occurred while submitting your contribution.");
+    } catch (error: any) {
+      handleSubmissionError(error);
+    } finally {
       setIsSubmitting(false);
     }
   };
 
+  const resetForm = () => {
+    setTitle("");
+    setDocument(null);
+    setImages([]);
+    setExistingDocUrl(null);
+    setExistingImages([]);
+    setTermsAccepted(false);
+  };
+  const handleDeleteExistingImage = (imageId: number) => {
+    setImagesToDelete(prev => [...prev, imageId]);
+    setExistingImages(prev => prev.filter(img => img.id !== imageId));
+  };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleSubmissionError = (error: any) => {
+    const errorMessage = error.response?.data?.message || 
+      (isEditMode ? "Failed to update contribution" : "Failed to submit contribution");
+    
+    if (errorMessage.includes("already created")) {
+      setError("You already have a contribution with this title");
+    } else {
+      setError(errorMessage);
+    }
+  };
+
+  const removeImage = (index: number) => {
+    setImages(prev => prev.filter((_, i) => i !== index));
+  };
+
   return (
-    <>
+    <div className="max-w-2xl mx-auto p-4">
       <form
         onSubmit={handleSubmit}
-        className="w-11/12 max-sm/w-11/12 p-6 mx-auto space-y-4 shadow-lg bg-background-100/40 dark:bg-primary-700 rounded-2xl"
-        encType="multipart/form-data"
+        className="space-y-6 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg"
       >
-        {isSubmitting ? <MvLoader/> : ""}
-        <h2 className="text-xl text-center font-semibold ">
-          Submit Your Magazine Contribution
+        <h2 className="text-2xl font-bold text-center">
+          {isEditMode ? "Edit Contribution" : "New Contribution"}
         </h2>
-        {error && <p className="text-sm text-red-500">{error}</p>}
-        
+
+        {isSubmitting && <MvLoader />}
+
         <MvInput
-          label="Title"
+          label="Contribution Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
         />
-        
-       
-        
+
+        {existingDocUrl && (
+          <div className="mb-4">
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              Current document:{" "}
+              <a
+                href={existingDocUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline"
+              >
+                View current document
+              </a>
+            </p>
+          </div>
+        )}
+
         <MvFileUpload
           onFilesSelect={handleFilesSelect}
           onDocumentClick={(preview) => {
@@ -164,16 +222,52 @@ const handleFilesSelect = (selectedFiles: File[]) => {
           }}
           ref={fileInputRef}
           multiple={true}
-          accept="image/*,application/*"
+          accept=".pdf,.doc,.docx,image/*"
         />
-        <div className="text-sm text-gray-500">
-          Upload requirements: 
-          <ul className="list-disc pl-4">
-            <li>1 document file (PDF, Word, etc.)</li>
-            <li>Up to 5 images</li>
-          </ul>
+
+        <div className="grid grid-cols-3 gap-2">
+        {existingImages.map((image, index) => (
+        <div key={`existing-${image.id}`} className="relative group">
+          <img
+            src={image.url}
+            alt={`Existing ${index + 1}`}
+            className="h-32 w-full object-cover rounded border border-gray-200"
+          />
+          <button
+            type="button"
+            onClick={() => handleDeleteExistingImage(image.id)}
+            className="absolute top-1 right-1 text-red-500 hover:text-red-700"
+          >
+            ×
+          </button>
+          <span className="absolute top-1 left-1 text-xs bg-gray-800 text-white px-2 py-1 rounded">
+            Existing
+          </span>
         </div>
-        
+      ))}
+          {images.map((file, index) => (
+            <div key={`new-${index}`} className="relative group">
+              <img
+                src={URL.createObjectURL(file)}
+                alt={`New ${index + 1}`}
+                className="h-32 w-full object-cover rounded border border-blue-200"
+              />
+              <button
+                type="button"
+                onClick={() => removeImage(index)}
+                className="absolute top-1 right-1 text-red-500 hover:text-red-700"
+              >
+                ×
+              </button>
+              <span className="absolute bottom-1 left-1 text-xs bg-blue-600 text-white px-2 py-1 rounded">
+                New
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {error && <p className="text-red-500 text-sm">{error}</p>}
+
         <div className="flex items-center gap-2">
           <MvCheckbox
             id="terms"
@@ -184,19 +278,22 @@ const handleFilesSelect = (selectedFiles: File[]) => {
           <button
             type="button"
             onClick={() => setShowTermsModal(true)}
-            className="text-primary-600 dark:text-primary-dark-300 hover:underline"
+            className="text-blue-600 dark:text-blue-400 hover:underline"
           >
             Terms and Conditions
           </button>
         </div>
 
-
-        <MvButton type="submit" className="w-full bg-purple-600 hover:bg-purple-700 hover:dark:bg-purple-400 dark:bg-purple-500 dark:text-white" disabled={isSubmitting}>
-          {isSubmitting ? "Submitting..." : "Submit"}
+        <MvButton
+          type="submit"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Processing..." : isEditMode ? "Update Contribution" : "Submit Contribution"}
         </MvButton>
       </form>
-       {/* Terms and Conditions Modal */}
-       <MvTermsAndConditions
+
+      <MvTermsAndConditions
         isOpen={showTermsModal}
         onClose={() => setShowTermsModal(false)}
         onAccept={() => {
@@ -204,20 +301,23 @@ const handleFilesSelect = (selectedFiles: File[]) => {
           setShowTermsModal(false);
         }}
       />
+
       <MvModal
         isOpen={isDocModalOpen}
         onClose={() => setIsDocModalOpen(false)}
         title="Document Preview"
+        className="max-w-3xl"
       >
         {docPreviewContent ? (
-          <div
-            className="document-preview"
-            dangerouslySetInnerHTML={{ __html: docPreviewContent }}
+          <iframe 
+            src={docPreviewContent}
+            className="w-full h-96 border-none rounded-lg"
+            title="Document preview"
           />
         ) : (
-          <p>No preview available.</p>
+          <p className="text-gray-500">No preview available</p>
         )}
       </MvModal>
-    </>
+    </div>
   );
 };

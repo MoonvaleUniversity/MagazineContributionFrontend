@@ -1,7 +1,7 @@
   import React from "react";
   import { IContribution } from "../../app/Types/objects/contribution";
   import { useNavigate } from "react-router-dom";
-  import { FaFilePdf, FaFileWord, FaImage, FaTrash, FaEye, FaLock, FaComment, FaCheck } from "react-icons/fa";
+  import { FaFilePdf, FaFileWord, FaImage, FaTrash, FaEye, FaLock, FaComment, FaCheck, FaEdit } from "react-icons/fa";
   import { IClosureDate } from "../../app/MvObjects/clousuredate";
 import { MvButton } from "../MvButton";
 
@@ -15,6 +15,8 @@ import { MvButton } from "../MvButton";
     isMarketingCoordinator?: boolean;
     isMarketingManager?: boolean;
     isAdmin?: boolean;
+    onEdit?: (id: number) => void;
+    isEditing?: boolean;
   }
 
   const MvContributionTable: React.FC<MvContributionTableProps> = ({
@@ -24,16 +26,19 @@ import { MvButton } from "../MvButton";
     onStatusChange,
     onDownloadZip,
     onReview,
+    onEdit,
+  isEditing = false,
     isMarketingCoordinator = false,
     isMarketingManager = false,
     isAdmin = false,
+    
   }) => {
     const navigate = useNavigate();
 
     // Status determination based on API codes
     const getStatus = (contribution: IContribution) => {
       if (contribution.is_selected_for_publication === 1) return "Approved";
-      if (contribution.is_selected_for_publication === 2) return "Rejected";
+   
       if (contribution.is_selected_for_publication === 0) return "Pending";
     };
 
@@ -199,6 +204,21 @@ import { MvButton } from "../MvButton";
                             ZIP
                           </button>
                         )}
+
+            {isEditing && ( <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit?.(Number(contribution.id));
+            }}
+           
+            className={`flex items-center ${
+              
+                "text-yellow-600 hover:text-yellow-900 dark:text-yellow-400 dark:hover:text-yellow-300"
+            }`}
+          >
+            <FaEdit className="mr-1" />
+            Edit
+          </button>)}
                           {/* Review Button */}
                       {isMarketingCoordinator && (
                         <button

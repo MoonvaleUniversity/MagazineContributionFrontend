@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { getData, uploadMultimedia, postData, deleteData, } from "../app/MvApi";
+import { getData, uploadMultimedia, postData, deleteData, updateMultimedia, } from "../app/MvApi";
 import { MvUrl } from "../app/MvUrl";
 import { IContribution, IComment, IVote, ApiContributionResponse } from "../app/Types/objects/contribution";
 
@@ -56,6 +56,42 @@ export const MvContributionServices = {
     }
   },
 
+  updateContribution: async (
+    id: number,
+    updateData: {
+      name?: string;
+      closure_date_id?: number;
+      delete_images?: number[];
+    },
+    files?: {
+      doc?: File;
+      images?: File[];
+    }
+  ) => {
+    const formData = new FormData();
+    
+    // Append JSON data
+    formData.append('data', JSON.stringify(updateData));
+    formData.append("_method", "PUT"); // Corrected to use PUT method
+    // Append files
+    if (files?.doc) formData.append('doc', files.doc);
+    if (files?.images) {
+      files.images.forEach(file => 
+        formData.append('images[]', file));
+    }
+  
+    try {
+      const response = await updateMultimedia(
+        MvUrl.CONTRIBUTIONS.UPDATE(id),
+        formData
+      );
+      return response;
+    } catch (error) {
+      console.error(`Error updating contribution ${id}:`, error);
+      throw error;
+    }
+  },
+  
   // Publish contribution with proper response handling
   publishContribution: async (id: string): Promise<boolean> => {
     try {
@@ -198,22 +234,6 @@ submitReview: async (
   }
 },
 
-// Update existing contribution
-updateContribution: async (
-  id: number,
-  updateData: Partial<IContribution>
-): Promise<IContribution> => {
-  try {
-    const response = await postData<{ data: IContribution }>(
-      MvUrl.CONTRIBUTIONS.UPDATE(id),
-      updateData
-    );
-    return response.data.data;
-  } catch (error) {
-    console.error(`Error updating contribution ${id}:`, error);
-    throw error;
-  }
-} 
 };
 
 // Helper functions

@@ -9,6 +9,8 @@ import SearchFilter from "../../components/MvSearchFilter/MvSearchFIlter";
 import { MvStats } from "../../components/MvStats/MvStats";
 import { MvModal } from "../../components/MvModal";
 import { MvTextarea } from "../../components/MvInput";
+import { useNavigate } from "react-router-dom";
+import MvRoutes from "../../app/MvRoutes";
 
 export const McSubmissionsView = () => {
   const [allSubmissions, setAllSubmissions] = useState<IContribution[]>([]);
@@ -27,13 +29,21 @@ const handleStatusChange = async (id: string) => {
   setShowApprovalModal(true);
 };
 
+const navigate = useNavigate();
+const handleEdit = (id: number) => {
+ 
+  navigate(`${MvRoutes.STUDENTS.CONTRIBUTION_FORM}/${id}`);
+};
 const confirmApproval = async () => {
   if (!selectedSubmission) return;
   
   try {
     // Call the publish endpoint
     await MvContributionServices.publishContribution(selectedSubmission);
-    
+    // Inside the component
+
+
+
     // Update local state
     setAllSubmissions(prev => prev.map(sub => 
       sub.id.toString() === selectedSubmission ? { 
@@ -190,6 +200,8 @@ const calculateStats = () => {
           onDelete={(id) => handleDelete(id.toString())}
           onStatusChange={(id) => handleStatusChange(id.toString())}
           onReview={handleReviewInit}
+          isEditing
+          onEdit={handleEdit}
           isMarketingCoordinator
         />
 
