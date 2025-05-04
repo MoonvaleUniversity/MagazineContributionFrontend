@@ -11,7 +11,7 @@ const MvRoutes = {
 
   PUBLIC_CONTRIBUTION:"published-contributions",
   CONTRIBUTION_DETAILS: `/contributions/:id`,
-  PUBLIC_CONTRIBUTION:"/published-contributions",
+
 
   STUDENTS: {
     DASHBOARD: "/students/dashboard",
