@@ -99,13 +99,13 @@ export const MvAdminSidebar: React.FC<MvAdminSidebarProps> = ({
     </MvButton>
  
      {/* Sidebar Container */}
-    <div
-      className={`fixed top-0 left-0 w-64 h-screen p-6 bg-gradient-to-b from-secondary-300 to-indigo-200 dark:from-secondary-dark-500 dark:to-gray-800 border-r border-indigo-100 dark:border-gray-700 shadow-xl transition-all duration-300 z-40 ${
-        isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-      }`}
-    >
+     <div
+        className={`fixed top-0 left-0 w-64 h-screen p-6 bg-gradient-to-b from-secondary-300 to-indigo-200 dark:from-secondary-dark-500 dark:to-gray-800 border-r border-indigo-100 dark:border-gray-700 shadow-xl transition-all duration-300 z-40 ${
+          isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        } flex flex-col`}
+      >
       {/* Logo Section */}
-      <div className="flex items-center justify-between mb-12">
+      <div className="flex items-center justify-between mb-6 shrink-0">
         <div className="flex items-center space-x-3">
           <div className="p-2 bg-indigo-600 rounded-lg shadow-md">
             <FiSettings className="w-4 h-4 text-white" />
@@ -116,6 +116,7 @@ export const MvAdminSidebar: React.FC<MvAdminSidebarProps> = ({
         </div>
       </div>
 
+      <div className="flex-1 overflow-y-auto pr-1 space-y-4 scrollbar-hide">
       {/* Navigation Menu */}
       <nav className="space-y-1.5">
         {navItems.map((item, index ,isActive) => (
@@ -147,7 +148,7 @@ export const MvAdminSidebar: React.FC<MvAdminSidebarProps> = ({
       </nav>
 
         {/* Settings Dropdown */}
-        <div className="pt-2 mt-4 border-t  border-indigo-100 dark:border-gray-700">
+        <div className="pt-2 mt-4 border-t border-indigo-100 dark:border-gray-700">
           <div
             className="flex items-center justify-between p-3 rounded-xl cursor-pointer hover:bg-white dark:hover:bg-gray-800 transition-colors"
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -184,9 +185,10 @@ export const MvAdminSidebar: React.FC<MvAdminSidebarProps> = ({
             </div>
           )}
         </div>
+        </div>
 
         {/* User Profile */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 bg-indigo-100 dark:bg-gray-800 border-t border-indigo-100 dark:border-gray-700">
+        <div className="shrink-0 pt-4 mt-4 border-t border-indigo-100 dark:border-gray-700">
           <div className="flex items-center space-x-3">
             <div className="relative">
               <img
