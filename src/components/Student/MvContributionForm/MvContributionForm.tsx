@@ -20,6 +20,7 @@ export const MvContributionForm: React.FC = () => {
   const [isDocModalOpen, setIsDocModalOpen] = useState(false);
   const [docPreviewContent, setDocPreviewContent] = useState<string | null>(null);
   const [existingDocUrl, setExistingDocUrl] = useState<string | null>(null);
+  const [isPublished, setIsPublished] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const navigate = useNavigate();
   const { id } = useParams();
@@ -35,6 +36,9 @@ export const MvContributionForm: React.FC = () => {
           const contribution = await MvContributionServices.getContributionById(id);
           setTitle(contribution.name);
           setExistingDocUrl(contribution.doc_url);
+          if(contribution.is_selected_for_publication == 1) {
+            setIsPublished(true);
+          }
           // Store both ID and URL for existing images
           setExistingImages(contribution.image_url.map(img => ({
             id: img.id,
@@ -292,7 +296,7 @@ export const MvContributionForm: React.FC = () => {
         <MvButton
           type="submit"
           className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-          disabled={isSubmitting}
+          disabled={isSubmitting || isPublished}
         >
           {isSubmitting ? "Processing..." : isEditMode ? "Update Contribution" : "Submit Contribution"}
         </MvButton>
