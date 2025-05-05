@@ -152,6 +152,8 @@ export const MvStudentSubmissionsView = () => {
           <MvContributionTable
             contributions={currentSubmissions}
             onDelete={(id)=>handleDelete(id.toString())}
+            isEditing={true}
+            onEdit={(id) => navigate(`/students/contribution-form/${id}`)}
           />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

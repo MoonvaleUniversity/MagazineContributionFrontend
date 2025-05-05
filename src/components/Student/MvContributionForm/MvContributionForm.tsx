@@ -147,7 +147,7 @@ export const MvContributionForm: React.FC = () => {
 
       // Reset form and redirect
       resetForm();
-      navigate("/submissions");
+      navigate("/students/submissions");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       handleSubmissionError(error);
