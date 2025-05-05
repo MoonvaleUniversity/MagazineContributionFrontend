@@ -65,21 +65,8 @@ export const MvContributionForm: React.FC = () => {
           errorMessage = "Maximum 5 images allowed";
           break;
         }
-          // Create Set of existing image names from server
-  const existingImageNames = new Set(
-    existingImages.map(img => {
-      const urlParts = img.url.split('/');
-      return urlParts[urlParts.length - 1]; // Extract filename from URL
-    })
-  );
+       
 
-  // Create Set of new image names already in state
-  const currentImageNames = new Set(images.map(img => img.name));
-
-        if (existingImageNames.has(file.name) || currentImageNames.has(file.name)) {
-          errorMessage = `Image '${file.name}' already exists`;
-          break;
-        }
   
         newImages.push(file);
         console.log("New image added:", newImages);
@@ -172,7 +159,8 @@ export const MvContributionForm: React.FC = () => {
       // Reset form and redirect
       resetForm();
       if(userData.role === "student") {
-        navigate(MvRoutes.STUDENTS.CONTRIBUTION);
+        navigate(MvRoutes.STUDENTS.SUBMISSIONS
+        );
       }
       else{
         navigate(MvRoutes.MARKET_COORDINATOR.CONTRIBUTIONS);
