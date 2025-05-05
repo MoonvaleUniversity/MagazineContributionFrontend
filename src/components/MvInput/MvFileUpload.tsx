@@ -22,7 +22,7 @@ export const MvFileUpload = forwardRef<HTMLInputElement, FileUploadProps>(
       "application/msword",
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     ];
-
+    
     const processFiles = useCallback((selectedFiles: File[]) => {
       const newImages: File[] = [];
       const newDocuments: File[] = [];

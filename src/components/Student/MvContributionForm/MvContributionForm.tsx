@@ -19,7 +19,7 @@ export const MvContributionForm: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [isDocModalOpen, setIsDocModalOpen] = useState(false);
-  const [docPreviewContent, setDocPreviewContent] = useState<string | null>(null);
+  const [docPreviewContent, setDocPreviewContent] = useState<string | null>(null); 
   const [existingDocUrl, setExistingDocUrl] = useState<string | null>(null);
   const [isPublished, setIsPublished] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -29,7 +29,7 @@ export const MvContributionForm: React.FC = () => {
 
   const [existingImages, setExistingImages] = useState<Array<{id: number, url: string}>>([]);
   const [imagesToDelete, setImagesToDelete] = useState<number[]>([]);
-
+  
   useEffect(() => {
     const loadContributionData = async () => {
       if (isEditMode && id) {
@@ -47,25 +47,30 @@ export const MvContributionForm: React.FC = () => {
           })) || []);
         } catch (error) {
           console.error("Failed to load contribution:", error);
-        
+          
         }
       }
     };
     loadContributionData();
   }, [id, isEditMode, navigate]);
-
+  
   const handleFilesSelect = (selectedFiles: File[]) => {
     const newImages: File[] = [];
     let newDocument: File | null = null;
     let errorMessage: string | null = null;
+    console.log("File imput ref:", fileInputRef);
 
     for (const file of selectedFiles) {
       if (file.type.startsWith("image/")) {
+        if(existingImages.length + newImages.length >= 5) {
+          errorMessage = "Maximum 5 images allowed";
+            break;
+          }
         if (newImages.length >= 5) {
           errorMessage = "Maximum 5 images allowed";
           break;
         }
-       
+     
 
   
         newImages.push(file);
@@ -73,9 +78,12 @@ export const MvContributionForm: React.FC = () => {
       } else if (file.type === "application/pdf" || 
                  file.type === "application/msword" || 
                  file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
-        if (newDocument) {
-          errorMessage = "Only one document allowed";
-          break;
+        
+                  
+        
+                  if (newDocument) {
+                  errorMessage = "Only one document allowed";
+                  break;
         }
         newDocument = file;
       }
@@ -155,10 +163,9 @@ export const MvContributionForm: React.FC = () => {
         );
         alert("Contribution submitted successfully!");
       }
-
       // Reset form and redirect
       resetForm();
-      if(userData.role === "student") {
+      if(userData.role.toLowerCase() == "student") {
         navigate(MvRoutes.STUDENTS.SUBMISSIONS
         );
       }
@@ -241,6 +248,7 @@ export const MvContributionForm: React.FC = () => {
         <MvFileUpload
           onFilesSelect={handleFilesSelect}
           onDocumentClick={(preview) => {
+           
             setDocPreviewContent(preview);
             setIsDocModalOpen(true);
           }}
@@ -307,7 +315,12 @@ export const MvContributionForm: React.FC = () => {
             Terms and Conditions
           </button>
         </div>
-          <span>{isPublished ?? "The Contribution Already Published. You cant edit"}</span>
+        {isPublished && (
+  <p className="text-red-600 text-sm font-semibold">
+    This contribution has already been published and cannot be edited.
+  </p>
+)}
+
         <MvButton
           type="submit"
           className="w-full bg-blue-600 hover:bg-blue-700 text-white"
@@ -327,22 +340,29 @@ export const MvContributionForm: React.FC = () => {
         }}
       />
 
-      <MvModal
-        isOpen={isDocModalOpen}
-        onClose={() => setIsDocModalOpen(false)}
-        title="Document Preview"
-        className="max-w-3xl"
-      >
-        {docPreviewContent ? (
-          <iframe 
-            src={docPreviewContent}
-            className="w-full h-96 border-none rounded-lg"
-            title="Document preview"
-          />
-        ) : (
-          <p className="text-gray-500">No preview available</p>
-        )}
-      </MvModal>
+<MvModal
+  isOpen={isDocModalOpen}
+  onClose={() => setIsDocModalOpen(false)}
+  title="Document Preview"
+  className="max-w-3xl"
+>
+  {docPreviewContent ? (
+    <div 
+      className="docx-wrapper"
+      dangerouslySetInnerHTML={{ __html: docPreviewContent }}
+      style={{
+        maxWidth: '100%',
+        width: '80vw',
+        height: '80vh',
+        overflow: 'scroll',
+       overflowX: 'scroll',
+        padding: '20px'
+      }}
+    />
+  ) : (
+    <p className="text-gray-500">No preview available</p>
+  )}
+</MvModal>
     </div>
   );
 };
