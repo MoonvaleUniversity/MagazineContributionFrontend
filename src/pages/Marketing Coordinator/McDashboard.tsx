@@ -64,7 +64,7 @@ export const McDashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        const userData = JSON.parse((localStorage.getItem('userData') ?? sessionStorage.getItem("userData")) || '{}');
         const facultyId = userData.faculty_id;
 
         // Fetch contributions

@@ -246,7 +246,7 @@ const MvContributionDetailsPage: React.FC = () => {
         </button>
         {!isApproved && isOwner && (
         <div className="flex gap-4">
-          <button 
+          <button onClick={() => navigate(`/students/contribution-form/${id}`)}
           className="flex items-center gap-2 px-4 py-2 border border-primary-700 text-primary-500 font-bold hover:text-white bg-secondary-300 rounded-3xl hover:bg-primary  hover:bg-purple-500  transition-colors"
           >
           <FiEdit className="w-5 h-5" /> 
