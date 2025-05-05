@@ -100,8 +100,8 @@ const getFacultyName = (facultyId: number | string | null): string => {
         }
         closeModal();
         await fetchUsers();
-      } catch (error) {
-        setError(error instanceof Error ? error.message : "Operation failed");
+      } catch (error: any) {
+        setError(error?.message ?? "Operation failed");
       } finally {
         setIsSubmitting(false);
       }
