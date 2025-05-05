@@ -82,21 +82,21 @@ export const MvStudentDashboard = () => {
 const getStatus = (contribution: IContribution) => {
   // First check if explicitly approved/rejected
   if (contribution.is_selected_for_publication === 1) return 'approved';
-  if (contribution.is_selected_for_publication === 0) return 'rejected';
+  if (contribution.is_selected_for_publication === 0) return 'pending';
 
   
   // Then check pending status based on days
   const createdAt = new Date(contribution.created_at!);
   const now = new Date();
   const diffDays = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 3600 * 24));
-  return diffDays > 3 ? 'rejected' : 'pending';
+  return diffDays > 4 ? 'pending >14' : 'pending';
 };
 
 // Fix 3: Proper counting logic
 const approvedCount = allSubmissions.filter(c => c.is_selected_for_publication === 1).length;
 const rejectedCount = allSubmissions.filter(c => 
   c.is_selected_for_publication === 0 || 
-  (c.is_selected_for_publication === null && getStatus(c) === 'rejected')
+  (c.is_selected_for_publication === null && getStatus(c) === 'pending >14')
 ).length;
 
   return (

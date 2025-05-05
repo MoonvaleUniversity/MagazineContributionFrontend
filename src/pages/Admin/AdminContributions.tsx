@@ -20,7 +20,7 @@ export const AdminSubmissionsView = () => {
 
   const getStatus = (contribution: IContribution) => {
     if (contribution.is_selected_for_publication === 1) return 'approved';
-    if (contribution.is_selected_for_publication === 0) return 'rejected';
+    if (contribution.is_selected_for_publication === 0) return 'pending';
     return 'pending';
   };
 
@@ -58,7 +58,7 @@ export const AdminSubmissionsView = () => {
     allSubmissions.forEach(sub => {
       const status = getStatus(sub);
       if (status === 'approved') stats.approved++;
-      else if (status === 'rejected') stats.rejected++;
+      else if (status === 'pending') stats.rejected++;
       else {
         stats.pending++;
         if (getDaysSinceCreation(sub) > 14) stats.overdue++;
@@ -131,7 +131,7 @@ export const AdminSubmissionsView = () => {
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
     <MvStats title="Total" value={allSubmissions.length} trend="neutral" />
     <MvStats title="Approved" value={calculateStats().approved} trend="positive" />
-    <MvStats title="Rejected" value={calculateStats().rejected} trend="negative" />
+    <MvStats title="Pending (+14 days)" value={calculateStats().rejected} trend="negative" />
     <MvStats title="Pending" value={calculateStats().pending} trend="neutral" />
     <MvStats title="Overdue" value={calculateStats().overdue} trend="negative" />
   </div>               
@@ -149,7 +149,7 @@ export const AdminSubmissionsView = () => {
                 { value: "all", label: "All" },
                 { value: "pending", label: "Pending" },
                 { value: "approved", label: "Approved" },
-                { value: "rejected", label: "Rejected" },
+               
                 { value: "overdue", label: "Without Comment (14+ days)" }
               ]
             }

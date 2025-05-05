@@ -27,7 +27,7 @@ export const MvStudentSubmissionsView = () => {
     const createdAt = new Date(contribution.created_at!);
     const now = new Date();
     const diffDays = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 3600 * 24));
-    return diffDays > 3 ? 'rejected' : 'pending';
+    return diffDays > 14 ? 'rejected' : 'pending';
   };
 
   // Filter and search submissions
@@ -127,7 +127,7 @@ export const MvStudentSubmissionsView = () => {
                 { value: "all", label: "All" },
                 { value: "pending", label: "Pending" },
                 { value: "approved", label: "Approved" },
-                { value: "rejected", label: "Rejected" }
+                { value: "rejected", label: "Pending >14" }
               ]
             }
           ]}

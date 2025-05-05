@@ -363,7 +363,7 @@ export const MvCreativeSparksPage = () => {
             No creative sparks found. {userRole === "admin" && "Create your first one!"}
           </div>
         ) : (
-          <div className="sparks-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div id="sparks-grid" className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredSparks.map((spark) => (
               <div
                 key={spark.id}

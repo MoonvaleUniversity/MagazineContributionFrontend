@@ -62,7 +62,7 @@ export const MvContributionServices = {
       name?: string;
       closure_date_id?: number;
       delete_images?: number[];
-      user_id: number;
+      
     },
     files?: {
       doc?: File;
@@ -89,8 +89,7 @@ export const MvContributionServices = {
         formData.append("delete_images[]", id.toString());
       });
     }
-    formData.append("user_id", updateData.user_id.toString());
-  
+   
     try {
       const response = await updateMultimedia(
         MvUrl.CONTRIBUTIONS.UPDATE(id),

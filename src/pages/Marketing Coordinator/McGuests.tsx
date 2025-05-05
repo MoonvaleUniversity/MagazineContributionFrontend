@@ -207,7 +207,7 @@ export const McGuests = () => {
               ))
             ) : (
               <tr>
-                <td colSpan={5} className="text-center p-4">
+                <td colSpan={6} className="text-center p-4">
                   {guests.length === 0 ? "No Guests found" : "No matching Guests"}
                 </td>
               </tr>

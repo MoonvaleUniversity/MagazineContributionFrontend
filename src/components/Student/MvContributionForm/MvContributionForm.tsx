@@ -8,6 +8,7 @@ import { MvLoader } from "../../MvLoader";
 import { MvTermsAndConditions } from "../../MvToC";
 import { getClosureDatebyAcademicYear } from "../../../services/ClosureDateService";
 import { useParams, useNavigate } from "react-router-dom";
+import MvRoutes from "../../../app/MvRoutes";
 
 export const MvContributionForm: React.FC = () => {
   const [title, setTitle] = useState("");
@@ -64,7 +65,24 @@ export const MvContributionForm: React.FC = () => {
           errorMessage = "Maximum 5 images allowed";
           break;
         }
+          // Create Set of existing image names from server
+  const existingImageNames = new Set(
+    existingImages.map(img => {
+      const urlParts = img.url.split('/');
+      return urlParts[urlParts.length - 1]; // Extract filename from URL
+    })
+  );
+
+  // Create Set of new image names already in state
+  const currentImageNames = new Set(images.map(img => img.name));
+
+        if (existingImageNames.has(file.name) || currentImageNames.has(file.name)) {
+          errorMessage = `Image '${file.name}' already exists`;
+          break;
+        }
+  
         newImages.push(file);
+        console.log("New image added:", newImages);
       } else if (file.type === "application/pdf" || 
                  file.type === "application/msword" || 
                  file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
@@ -83,7 +101,9 @@ export const MvContributionForm: React.FC = () => {
 
     setError(null);
     if (newDocument) setDocument(newDocument);
-    if (newImages.length > 0) setImages(prev => [...prev, ...newImages]);
+
+    if (newImages.length > 0) setImages([...newImages]);
+    console.log("New images added:", images);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -125,7 +145,7 @@ export const MvContributionForm: React.FC = () => {
             name: title,
             delete_images: imagesToDelete, // Send only IDs of images to delete
             closure_date_id: closureDateId,
-            user_id: userData.id
+      
           },
           {
             doc: document || undefined,
@@ -151,7 +171,14 @@ export const MvContributionForm: React.FC = () => {
 
       // Reset form and redirect
       resetForm();
-      navigate("/students/submissions");
+      if(userData.role === "student") {
+        navigate(MvRoutes.STUDENTS.CONTRIBUTION);
+      }
+      else{
+        navigate(MvRoutes.MARKET_COORDINATOR.CONTRIBUTIONS);
+      }
+
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       handleSubmissionError(error);
@@ -292,12 +319,13 @@ export const MvContributionForm: React.FC = () => {
             Terms and Conditions
           </button>
         </div>
-
+          <span>{isPublished ?? "The Contribution Already Published. You cant edit"}</span>
         <MvButton
           type="submit"
           className="w-full bg-blue-600 hover:bg-blue-700 text-white"
           disabled={isSubmitting || isPublished}
         >
+      
           {isSubmitting ? "Processing..." : isEditMode ? "Update Contribution" : "Submit Contribution"}
         </MvButton>
       </form>

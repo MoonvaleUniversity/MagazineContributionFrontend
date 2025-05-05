@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { FaBars, FaTimes, FaUser, FaCaretDown } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { logo_dark, logo_light } from "../../app/MvConstants";
+import MvRoutes from "../../app/MvRoutes";
+import UserLastLogin from "../../pages/Admin/UserLastLogin";
 
 export const MvNavbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -126,10 +128,11 @@ export const MvNavbar: React.FC = () => {
             </div>
             <div className="space-y-1">
               <Link
-                to="/profile/edit"
+                to={MvRoutes.GUEST.PROFILE_EDIT}
                 className="block px-3 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
               >
                 Edit Profile
+                <br> <small>Last Login{UserLastLogin ? <UserLastLogin /> : "..."}</small></br>
               </Link>
               <button
                 onClick={handleLogout}
