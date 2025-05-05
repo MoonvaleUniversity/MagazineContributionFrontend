@@ -8,7 +8,7 @@ import { MvContributionServices } from '../../services/ContributionService';
 import { IContribution } from '../../app/Types/objects/contribution';
 import { User } from '../../app/MvObjects/user';
 import { useNavigate } from 'react-router-dom';
-import { getAllGuest } from '../../services/GuestService';
+import { getAllGuest, approveGuest } from '../../services/GuestService';
 import MvRoutes from '../../app/MvRoutes';
 import { ResponsiveContainer, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Line, PieChart, Pie, Cell, Legend } from 'recharts';
 
@@ -108,8 +108,22 @@ export const McDashboard = () => {
     fetchDashboardData();
   }, []);
 
-  const handleApproveGuest = async () => {
-    // Implement approval logic
+  const handleApproveGuest = async (id: number) => {
+   if (window.confirm("Approve this guest?")) {
+      try {
+        setLoading(true);
+        await approveGuest(id);
+        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        const facultyId = userData.faculty_id;
+        const users = await getAllGuest({ facultyId: facultyId });
+        const pendingGuests = users.filter(u =>  u.isApproved === 0);
+        setPendingGuests(pendingGuests);
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+        setError(error instanceof Error ? error.message : "Approval failed");
+      }
+    }
   };
 
   return (
@@ -200,7 +214,7 @@ export const McDashboard = () => {
                       <p className="text-sm text-gray-500">{guest.email}</p>
                     </div>
                     <div className="flex gap-2">
-                      <MvButton size="sm" onClick={() => handleApproveGuest()}>
+                      <MvButton size="sm" onClick={() => handleApproveGuest(guest.id)}>
                         Approve
                       </MvButton>
                       

@@ -103,7 +103,7 @@ export const MvMarketingManagerSidebar: React.FC<MarketingManagerSidebarProps> =
               <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                 {userData?.email || 'manager@example.com'}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <div className="text-xs text-gray-500 dark:text-gray-400">
 
                 <span className="font-medium text-purple-600 dark:text-violet-400">
                 {UserLastLogin ? <UserLastLogin /> : "..."}
@@ -111,7 +111,7 @@ export const MvMarketingManagerSidebar: React.FC<MarketingManagerSidebarProps> =
               
 
                 </span>
-              </p>
+              </div>
             </div>
           </div>
         </div>

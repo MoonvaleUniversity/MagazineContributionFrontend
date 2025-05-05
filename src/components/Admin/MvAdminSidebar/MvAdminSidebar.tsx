@@ -203,11 +203,11 @@ export const MvAdminSidebar: React.FC<MvAdminSidebarProps> = ({
               <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                 {userData?.email || "admin@example.com"}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <div className="text-xs text-gray-500 dark:text-gray-400">
                 <span className="font-medium text-gray-700 dark:text-gray-300">
                   {UserLastLogin ? <UserLastLogin /> : "..."}
                 </span>
-              </p>{" "}
+              </div>{" "}
             </div>
           </div>
         </div>
