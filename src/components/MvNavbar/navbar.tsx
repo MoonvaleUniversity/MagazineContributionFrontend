@@ -86,7 +86,7 @@ export const MvNavbar: React.FC = () => {
               {isProfileOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 rounded-lg shadow-xl border border-gray-200 dark:border-gray-600">
                   <Link
-                    to="/profile/edit"
+                    to={MvRoutes.GUEST.PROFILE_EDIT}
                     className="block px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 rounded-t-lg"
                   >
                     Edit Profile

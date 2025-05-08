@@ -96,12 +96,12 @@ function App() {
           </ProtectedRoute>
         } />
         <Route path={MvRoutes.STUDENTS.CONTRIBUTION_FORM_EDIT} element={
-          <ProtectedRoute roles={['Student']}>
+          <ProtectedRoute roles={['Student', "Marketing Coordinator"]}>
             <MvStudentContributionForm />
           </ProtectedRoute>
         } />
           <Route path={MvRoutes.STUDENTS.CONTRIBUTION_FORM} element={
-          <ProtectedRoute roles={['Student']} >
+          <ProtectedRoute roles={['Student' , "Marketing Coordinator"]} >
             <MvStudentContributionForm />
           </ProtectedRoute>
         } />

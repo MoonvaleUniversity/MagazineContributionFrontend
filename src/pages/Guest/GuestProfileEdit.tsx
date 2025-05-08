@@ -15,7 +15,7 @@ export const GuestEdit: React.FC = () => {
   return (
     <MvHomeLayout>
       {/* ... existing header code ... */}
-      <div className="relative bg-gradient-to-r from-purple-50 to-purple-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl shadow-lg mb-8 overflow-hidden">
+      <div className="relative mt-20 bg-gradient-to-r from-purple-50 to-purple-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl shadow-lg mb-8 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-purple-100/20 to-purple-100/20 dark:from-gray-900/50 dark:to-gray-900/50" />
         
         <div className="relative p-8 flex flex-col md:flex-row items-start gap-6">
